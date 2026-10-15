@@ -1,28 +1,28 @@
-'use client';
+import fs from 'fs';
+import path from 'path';
 
-import React, { useEffect, useState } from 'react';
+interface Props {
+  params: Promise<{
+    cliente: string;
+  }>;
+}
 
-export default function PaginaClinicaMinimalista() {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export default async function PaginaClinicaMinimalista({ params }: Props) {
+  // 1. Obtém o nome do cliente a partir da URL (ex: 'renovar', 'z1')
+  const { cliente } = await params;
 
-  useEffect(() => {
-    fetch('/api/active-lead')
-      .then((res) => res.json())
-      .then((json) => {
-        setData(json);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Erro ao carregar active_lead.json:', err);
-        setLoading(false);
-      });
-  }, []);
+  // 2. Caminho do ficheiro JSON em src/data/clinicas/[cliente].json
+  const filePath = path.join(process.cwd(), 'src', 'data', 'clinicas', `${cliente}.json`);
 
-  if (loading) {
+  let data = null;
+  try {
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    data = JSON.parse(fileContents);
+  } catch (error) {
     return (
-      <div style={{ backgroundColor: '#003a2b', color: '#fff', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <h2>A carregar apresentação da clínica...</h2>
+      <div style={{ backgroundColor: '#003a2b', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
+        <h2>Nenhum cadastro ativo encontrado para "{cliente}".</h2>
+        <p style={{ marginTop: '10px', color: '#cbd5e1' }}>Verifique se o ficheiro {cliente}.json existe na pasta src/data/clinicas/.</p>
       </div>
     );
   }
@@ -37,6 +37,33 @@ export default function PaginaClinicaMinimalista() {
     );
   }
 
+  // 3. Trava de Expiração de 2 Dias (Degustação Comercial)
+  const agora = new Date();
+  const dataExpiracao = lead.expira_em ? new Date(lead.expira_em) : null;
+
+  if (!lead.ativo || (dataExpiracao && agora > dataExpiracao)) {
+    return (
+      <div style={{ backgroundColor: '#0f172a', color: '#ffffff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
+        <div style={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '40px 24px', maxWidth: '500px', width: '100%', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+          <span style={{ fontSize: '40px', marginBottom: '16px', display: 'block' }}>⏳</span>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '12px', color: '#f8fafc' }}>Demonstração Expirada</h1>
+          <p style={{ fontSize: '14px', color: '#94a3b8', lineHeight: 1.6, marginBottom: '24px' }}>
+            O período de degustação da demonstração do website para <strong>{lead.nome}</strong> chegou ao fim.
+          </p>
+          <a
+            href={`https://wa.me/55${lead.telefone ? lead.telefone.replace(/\D/g, '') : ''}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ backgroundColor: '#10b981', color: '#ffffff', fontWeight: 700, fontSize: '14px', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', display: 'inline-block' }}
+          >
+            Falar no WhatsApp para Reativar
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Dados do Lead
   const nomeExibir = lead.nome || 'Clínica Renovar - Fisioterapia, Pilates e Estética';
   const telLimpo = lead.telefone ? lead.telefone.replace(/\D/g, '') : '';
   const whatsappURL = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(`Olá! Vi o site da ${nomeExibir} e gostaria de agendar uma consulta.`)}` : '#';
@@ -76,10 +103,10 @@ export default function PaginaClinicaMinimalista() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <img src={fotoLogotipo} alt="Logo" style={{ maxHeight: '55px', width: 'auto', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            <img src={fotoLogotipo} alt="Logo" style={{ maxHeight: '55px', width: 'auto', objectFit: 'contain' }} />
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <span style={{ fontSize: '16px', fontWeight: 900, color: corTextoVerde, letterSpacing: '0.3px' }}>
-                Clínica Renovar - Fisioterapia, Pilates e Estética
+                {nomeExibir}
               </span>
               <span style={{ fontSize: '10px', color: corLaranjaOficial, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px', marginTop: '2px' }}>
                 ATENDIMENTO DOMICILIAR • REABILITAÇÃO DO IDOSO • QUIROPRAXIA
@@ -113,7 +140,7 @@ export default function PaginaClinicaMinimalista() {
           </div>
 
           <div style={{ borderRadius: '20px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', overflow: 'hidden', width: '100%' }}>
-            <img src={fotoPrincipal} alt="Fisioterapia" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            <img src={fotoPrincipal} alt="Fisioterapia" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
           </div>
         </div>
       </section>
@@ -149,7 +176,7 @@ export default function PaginaClinicaMinimalista() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
             {fotosGaleria.map((foto, idx) => (
               <div key={idx} style={{ width: '280px', height: '220px', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                <img src={foto} alt="Estrutura" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                <img src={foto} alt="Estrutura" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             ))}
           </div>
@@ -161,7 +188,7 @@ export default function PaginaClinicaMinimalista() {
           
           <div style={{ backgroundColor: '#ffffff', padding: '8px', borderRadius: '12px', textAlign: 'center', width: '280px', flexShrink: 0 }}>
             <div style={{ width: '100%', height: 'auto', borderRadius: '8px', overflow: 'hidden' }}>
-              <img src={fotoFachadaReal} alt="Fachada" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              <img src={fotoFachadaReal} alt="Fachada" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
             </div>
             <span style={{ display: 'block', fontSize: '12px', color: '#0f172a', fontWeight: 800, marginTop: '8px' }}>
               Nossa Fachada

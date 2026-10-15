@@ -1,0 +1,20 @@
+{
+  "enviado_em": "2026-10-15T09:00:00-03:00",
+  "lead": {
+    "id": "lead_1791578479620800700",
+    "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
+    "endereco": "Clínica Renovar - Fisioterapia, Pilates e Estética - R. Antônio de Oliveira, 123",
+    "telefone": "(88) 99711-0085",
+    "nicho": "clinicas",
+    "cidade": "Iguatu - CE",
+    "estado": "CE",
+    "categoria": "Physical therapy clinic",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "expira_em": "2026-10-17T23:59:59-03:00",
+    "ativo": true
+  }
+}
