@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 interface Props {
   params: Promise<{
     cliente: string;
@@ -8,16 +5,14 @@ interface Props {
 }
 
 export default async function PaginaClinicaMinimalista({ params }: Props) {
-  // 1. Obtém o nome do cliente a partir da URL (ex: 'renovar', 'z1')
+  // 1. Obtém o nome do cliente a partir da URL
   const { cliente } = await params;
-
-  // 2. Caminho do ficheiro JSON em src/data/clinicas/[cliente].json
-  const filePath = path.join(process.cwd(), 'src', 'data', 'clinicas', `${cliente}.json`);
 
   let data = null;
   try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    data = JSON.parse(fileContents);
+    // Importação dinâmica nativa do Next.js (funciona perfeitamente no local e na Vercel)
+    const jsonModule = await import(`@/data/clinicas/${cliente}.json`);
+    data = jsonModule.default || jsonModule;
   } catch (error) {
     return (
       <div style={{ backgroundColor: '#003a2b', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
@@ -37,7 +32,7 @@ export default async function PaginaClinicaMinimalista({ params }: Props) {
     );
   }
 
-  // 3. Trava de Expiração de 2 Dias (Degustação Comercial)
+  // 2. Trava de Expiração de 2 Dias (Degustação Comercial)
   const agora = new Date();
   const dataExpiracao = lead.expira_em ? new Date(lead.expira_em) : null;
 
@@ -146,7 +141,7 @@ export default async function PaginaClinicaMinimalista({ params }: Props) {
       </section>
 
       <section style={{ maxWidth: '1200px', margin: '60px auto', padding: '0 20px' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 900, textAlign: 'center', color: corVerdeEscuro, marginBottom: '8px' }}>
+        <h2 style={{ fontSize: '28px', fontWeight 900, textAlign: 'center', color: corVerdeEscuro, marginBottom: '8px' }}>
           Nossas Especialidades
         </h2>
         <p style={{ textAlign: 'center', color: '#64748b', fontSize: '15px', marginBottom: '40px' }}>
