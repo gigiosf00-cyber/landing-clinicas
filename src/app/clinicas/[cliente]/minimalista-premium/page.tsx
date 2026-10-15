@@ -10,7 +10,7 @@ export default async function PaginaClinicaMinimalista({ params }: Props) {
 
   let data = null;
   try {
-    // Importação dinâmica nativa do Next.js (funciona localmente e na Vercel)
+    // Importação dinâmica nativa do Next.js
     const jsonModule = await import(`@/data/clinicas/${cliente}.json`);
     data = jsonModule.default || jsonModule;
   } catch (error) {
@@ -199,7 +199,7 @@ export default async function PaginaClinicaMinimalista({ params }: Props) {
               <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ flex: '1 1 auto', minWidth: '140px', backgroundColor: corVerdeOficial, color: '#fff', fontWeight: 700, fontSize: '12px', padding: '10px 12px', borderRadius: '6px', textDecoration: 'none' }}>
                 💬 Chamar WhatsApp
               </a>
-              <a href={mapsURL} target="_blank" rel="noopener noreferrer" style={{ flex: '1 1 auto', minWidth: '140px', backgroundColor: corLaranjaOficial, color: '#fff', fontWeight 700, fontSize: '12px', padding: '10px 12px', borderRadius: '6px', textDecoration: 'none' }}>
+              <a href={mapsURL} target="_blank" rel="noopener noreferrer" style={{ flex: '1 1 auto', minWidth: '140px', backgroundColor: corLaranjaOficial, color: '#fff', fontWeight: 700, fontSize: '12px', padding: '10px 12px', borderRadius: '6px', textDecoration: 'none' }}>
                 📍 Maps (GPS)
               </a>
             </div>
