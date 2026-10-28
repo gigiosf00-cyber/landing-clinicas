@@ -98,6 +98,9 @@ export const servicosBarbearia = [
   }
 ];
 
+// Compatibilidade para evitar falhas no build da Vercel em rotas de consultório
+export const servicosConsultorio = servicosBarbearia;
+
 export function fotosPorCategoria(fotos: string[]) {
   if (!Array.isArray(fotos)) {
     return [];
