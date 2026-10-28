@@ -1,14 +1,14 @@
 {
-  "enviado_em": "2026-10-13T16:44:11.553212-03:00",
+  "enviado_em": "2026-10-28T00:35:35-03:00",
   "lead": {
-    "id": "lead_1791578479620800700",
-    "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
-    "endereco": "Clínica Renovar - Fisioterapia, Pilates e Estética - R. Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775",
-    "telefone": "(88) 99711-0085",
+    "id": "lead_1791579919783007100",
+    "nome": "Gusmão barbershop",
+    "endereco": "Gusmão barbershop - R. Eurípedes de Paula, 213 - Jardim Elvira, Osasco - SP, 06250-020",
+    "telefone": "(11) 98648-3600",
     "nicho": "",
-    "cidade": "Iguatu - CE",
+    "cidade": "Osasco - SP",
     "estado": "",
-    "categoria": "Physical therapy clinic",
+    "categoria": "Barber shop",
     "status": "SITE CRIADO",
     "tem_site": false,
     "website": "",
@@ -17,17 +17,36 @@
     "situacao_cadastral": "",
     "abertura_data": "",
     "fotos": [
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/foto1.jpg"
+      "/fotos/custom/gusmao-01-capa.jpg",
+      "/fotos/custom/gusmao-02-fachada.jpg",
+      "/fotos/custom/gusmao-nova2.jpg",
+      "/fotos/custom/gusmao-nova3.jpg",
+      "/fotos/custom/gusmao-nova4.jpg",
+      "/fotos/custom/gusmao-nova5.jpg",
+      "/fotos/custom/gusmao-nova6.jpg",
+      "/fotos/custom/gusmao-nova7.jpg",
+      "/fotos/gusmao-barbershop/foto1.jpg",
+      "/fotos/gusmao-barbershop/foto10.jpg"
     ],
     "fotos_ambiente": [
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/foto1.jpg"
+      "/fotos/custom/gusmao-01-capa.jpg",
+      "/fotos/custom/gusmao-02-fachada.jpg",
+      "/fotos/custom/gusmao-nova2.jpg",
+      "/fotos/custom/gusmao-nova3.jpg",
+      "/fotos/custom/gusmao-nova4.jpg",
+      "/fotos/custom/gusmao-nova5.jpg",
+      "/fotos/custom/gusmao-nova6.jpg",
+      "/fotos/custom/gusmao-nova7.jpg",
+      "/fotos/gusmao-barbershop/foto1.jpg",
+      "/fotos/gusmao-barbershop/foto10.jpg"
     ],
-    "avaliacao": 5,
-    "horarios": "terça-feira, 07:00–20:00",
-    "criado_em": "2026-10-09T17:41:19.6208007-03:00",
-    "atualizado_em": "2026-10-13T18:09:39.617Z"
+    "criado_em": "2026-10-09T18:05:19.7830071-03:00",
+    "atualizado_em": "2026-10-28T00:35:35.2937833-03:00"
   },
-  "nicho_pasta": "clinicas",
-  "template": "minimalista-premium",
-  "url_demo": "http://localhost:3000/clinicas/minimalista-premium"
+  "nicho_pasta": "barbearia",
+  "slug": "gusmao-barbershop",
+  "template": "vintage-retro",
+  "url_demo": "https://landing-g67.vercel.app/barbearia/gusmao-barbershop/vintage-retro",
+  "url_local": "http://localhost:3000/barbearia/gusmao-barbershop/vintage-retro",
+  "url_oficial": "https://meu-site.vercel.app/gusmao-barbershop"
 }

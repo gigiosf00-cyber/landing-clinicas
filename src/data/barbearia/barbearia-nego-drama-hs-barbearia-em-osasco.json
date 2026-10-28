@@ -1,0 +1,96 @@
+{
+  "enviado_em": "2026-10-24T22:37:49-03:00",
+  "lead": {
+    "id": "lead_1791579919783007100",
+    "nome": "Barbearia Nego Drama HS | Barbearia em Osasco",
+    "endereco": "Barbearia Nego Drama HS | Barbearia em Osasco - R. Natanael Tito Salmon, 369 - Centro, Osasco - SP, 06016-075",
+    "telefone": "(11) 95685-1107",
+    "nicho": "",
+    "cidade": "Osasco - SP",
+    "estado": "",
+    "categoria": "Barber shop",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "fotos": [
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto1.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto2.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto3.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto4.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto5.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto6.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto7.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto8.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto9.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto10.jpg"
+    ],
+    "fotos_ambiente": [
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto1.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto2.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto3.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto4.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto5.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto6.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto7.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto8.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto9.jpg",
+      "/fotos/barbearia-nego-drama-hs-barbearia-em-osasco/foto10.jpg"
+    ],
+    "avaliacao": 4.6,
+    "total_avaliacoes": 36,
+    "horarios": "segunda-feira: 10:00 – 21:00 • terça-feira: 10:00 – 21:00 • quarta-feira: 10:00 – 21:00 • quinta-feira: 10:00 – 21:00 • sexta-feira: 10:00 – 21:00 • sábado: 10:00 – 20:00 • domingo: Fechado",
+    "maps_url": "https://maps.google.com/?cid=7687387993202986146",
+    "horarios_semana": [
+      "segunda-feira: 10:00 – 21:00",
+      "terça-feira: 10:00 – 21:00",
+      "quarta-feira: 10:00 – 21:00",
+      "quinta-feira: 10:00 – 21:00",
+      "sexta-feira: 10:00 – 21:00",
+      "sábado: 10:00 – 20:00",
+      "domingo: Fechado"
+    ],
+    "reviews": [
+      {
+        "autor": "Thailaine souza santos",
+        "nota": 5,
+        "texto": "Quero deixar aqui meu elogio ao Miguel, um profissional simplesmente incrível! Meu irmãozinho é cliente dele na unidade do supermercado Rossi, na Av. Kenkiti Shimomoto, e só temos coisas boas a dizer.\n\nDesde o atendimento até o resultado final, tudo é impecável. Ele é extremamente atencioso, cuidadoso e demonstra muito conhecimento no que faz. Dá pra ver que trabalha com amor e dedicação, sempre preocupado em entregar exatamente o que o cliente deseja — ou até melhor!\n\nMeu irmão sempre sai de lá feliz, com o corte perfeito e a autoestima lá em cima. Isso não tem preço!\n\nSem dúvidas, um dos melhores cabeleireiros que já conhecemos. Recomendo de olhos fechados! 💖",
+        "tempo": "6 meses atrás",
+        "foto": "https://lh3.googleusercontent.com/a-/ALV-UjV15oC83cYcXMUUGODkF5UCCl3L9kJUUoF8q3N75kmGrbWwTx0Bwg=s128-c0x00000000-cc-rp-mo"
+      },
+      {
+        "autor": "Juliana Santos",
+        "nota": 5,
+        "texto": "Levei meu filho por indicação da prima dele, gostamos do atendimento e o do corte!",
+        "tempo": "6 meses atrás",
+        "foto": "https://lh3.googleusercontent.com/a-/ALV-UjWnMEEZ5XCB0MSakmWvp7Uv1swZE3a3Towfzb9f74BbAoyBcup_=s128-c0x00000000-cc-rp-mo-ba3"
+      },
+      {
+        "autor": "Leticia Marques",
+        "nota": 5,
+        "texto": "Lugar aconchegante e todos atenciosos, corto o cabelo do meu filho de 1 ano e 10 meses com a Suelen e ela é maravilhosa, atenciosa e paciente. E deixa o cabelo do meu bebê perfeito, faz o pezinho fica muito lindo e o preço super acessível. Aliás entrei no Google para achar o link deles para agendar o corte do meu filho e vim olhar as avaliações por curiosidade e achei um absurdo. Tive que deixar registrado a minha avaliação.",
+        "tempo": "2 anos atrás",
+        "foto": "https://lh3.googleusercontent.com/a/ACg8ocIyROx9gPCc45Mvx-j7mbzueKoEpLALPa5Gcc2tpNOdxHaARw=s128-c0x00000000-cc-rp-mo-ba2"
+      },
+      {
+        "autor": "Alan Andre",
+        "nota": 5,
+        "texto": "Barbearia top atendimento de qualidade  profissionais de  excelência e preço justo",
+        "tempo": "3 semanas atrás",
+        "foto": "https://lh3.googleusercontent.com/a/ACg8ocJngLvsELsDZg52586aPCu6hm7nWO8nX-62qVUAxpb7DF-NYw=s128-c0x00000000-cc-rp-mo"
+      }
+    ],
+    "status_negocio": "OPERATIONAL",
+    "criado_em": "2026-10-09T18:05:19.7830071-03:00",
+    "atualizado_em": "2026-10-24T22:37:49.2379733-03:00"
+  },
+  "nicho_pasta": "barbearia",
+  "slug": "barbearia-nego-drama-hs-barbearia-em-osasco",
+  "template": "minimalista-premium",
+  "url_demo": "https://landing-g67.vercel.app/barbearia/barbearia-nego-drama-hs-barbearia-em-osasco/minimalista-premium",
+  "url_local": "http://localhost:3000/barbearia/barbearia-nego-drama-hs-barbearia-em-osasco/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/barbearia-nego-drama-hs-barbearia-em-osasco"
+}

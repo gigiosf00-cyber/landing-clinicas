@@ -1,0 +1,40 @@
+{
+  "enviado_em": "2026-10-13T16:44:11.553212-03:00",
+  "lead": {
+    "id": "lead_1791578479620800700",
+    "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
+    "endereco": "Clínica Renovar - Fisioterapia, Pilates e Estética - R. Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775",
+    "telefone": "(88) 99711-0085",
+    "nicho": "",
+    "cidade": "Iguatu - CE",
+    "estado": "",
+    "categoria": "Physical therapy clinic",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "fotos": [
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar8.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar7.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar2.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar5.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar6.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar9.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar10.jpg"
+    ],
+    "fotos_ambiente": [
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/foto1.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/reonovar1.jpg"
+    ],
+    "avaliacao": 5,
+    "horarios": "terça-feira, 07:00–20:00",
+    "criado_em": "2026-10-09T17:41:19.6208007-03:00",
+    "atualizado_em": "2026-10-13T18:09:39.617Z"
+  },
+  "nicho_pasta": "clinicas",
+  "template": "minimalista-premium",
+  "url_demo": "http://localhost:3000/clinicas/minimalista-premium"
+}

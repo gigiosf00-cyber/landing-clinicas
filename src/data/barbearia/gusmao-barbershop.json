@@ -1,0 +1,50 @@
+{
+    "enviado_em":  "2026-10-28T00:35:35-03:00",
+    "lead":  {
+                 "id":  "lead_1791579919783007100",
+                 "nome":  "Gusmão barbershop",
+                 "endereco":  "Gusmão barbershop - R. Eurípedes de Paula, 213 - Jardim Elvira, Osasco - SP, 06250-020",
+                 "telefone":  "(11) 98648-3600",
+                 "nicho":  "",
+                 "cidade":  "Osasco - SP",
+                 "estado":  "",
+                 "categoria":  "Barber shop",
+                 "status":  "SITE CRIADO",
+                 "tem_site":  false,
+                 "website":  "",
+                 "cnpj":  "",
+                 "razao_social":  "",
+                 "situacao_cadastral":  "",
+                 "abertura_data":  "",
+                 "fotos":  [
+                               "/fotos/custom/gusmao-01-capa.jpg",
+                               "/fotos/custom/gusmao-02-fachada.jpg",
+                               "/fotos/custom/gusmao-nova2.jpg",
+                               "/fotos/custom/gusmao-nova3.jpg",
+                               "/fotos/custom/gusmao-nova4.jpg",
+                               "/fotos/custom/gusmao-nova5.jpg",
+                               "/fotos/custom/gusmao-nova6.jpg",
+                               "/fotos/custom/gusmao-nova7.jpg",
+                               "/fotos/gusmao-barbershop/foto10.jpg"
+                           ],
+                 "fotos_ambiente":  [
+                                        "/fotos/custom/gusmao-01-capa.jpg",
+                                        "/fotos/custom/gusmao-02-fachada.jpg",
+                                        "/fotos/custom/gusmao-nova2.jpg",
+                                        "/fotos/custom/gusmao-nova3.jpg",
+                                        "/fotos/custom/gusmao-nova4.jpg",
+                                        "/fotos/custom/gusmao-nova5.jpg",
+                                        "/fotos/custom/gusmao-nova6.jpg",
+                                        "/fotos/custom/gusmao-nova7.jpg",
+                                        "/fotos/gusmao-barbershop/foto10.jpg"
+                                    ],
+                 "criado_em":  "2026-10-09T18:05:19.7830071-03:00",
+                 "atualizado_em":  "2026-10-28T00:35:35.2937833-03:00"
+             },
+    "nicho_pasta":  "barbearia",
+    "slug":  "gusmao-barbershop",
+    "template":  "vintage-retro",
+    "url_demo":  "https://landing-g67.vercel.app/barbearia/gusmao-barbershop/vintage-retro",
+    "url_local":  "http://localhost:3000/barbearia/gusmao-barbershop/vintage-retro",
+    "url_oficial":  "https://meu-site.vercel.app/gusmao-barbershop"
+}
