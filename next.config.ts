@@ -1,9 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Garante que a Vercel empacota os ficheiros JSON da pasta data para a rota das barbearias
+  // Força o empacotamento de toda a pasta src/data em todas as rotas da Vercel
   outputFileTracingIncludes: {
-    '/barbearia/**': ['./src/data/**/*'],
+    '/**/*': ['./src/data/**/*'],
   },
 };
 
