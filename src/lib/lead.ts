@@ -17,10 +17,25 @@ export interface LeadData {
   mapa?: string;
   mapaEmbed?: string;
   streetView?: string;
+  nicho?: string;            // Opcional para não exigir o campo em todas as páginas
+  cidade?: string;           // Opcional
+  estado?: string;           // Opcional
+  categoria?: string;        // Opcional
+  total_avaliacoes?: number; // Opcional
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  const pastas = ['barbearia', 'clinica', 'consultorio'];
+  const pastas = [
+    'barbearia',
+    'clinica',
+    'consultorio',
+    'lanchonete',
+    'pizzaria',
+    'restaurante',
+    'salaoblz',
+    'ofic-elérica',
+    'ofina-mecanica'
+  ];
 
   for (const pasta of pastas) {
     try {
@@ -30,8 +45,8 @@ export function carregarLead(cliente: string): LeadData | null {
         const parsed = JSON.parse(fileContent);
         return parsed.lead || parsed;
       }
-    } catch (error) {
-      // Ignora e tenta a pasta seguinte
+    } catch {
+      // Tenta a próxima pasta caso falhe nesta
     }
   }
 

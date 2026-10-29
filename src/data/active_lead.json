@@ -1,5 +1,5 @@
 {
-  "enviado_em": "2026-10-28T11:43:58-03:00",
+  "enviado_em": "2026-10-29T16:44:45-03:00",
   "lead": {
     "id": "lead_1791579919783007100",
     "nome": "Gusmão barbershop",
@@ -12,6 +12,7 @@
     "status": "SITE CRIADO",
     "tem_site": false,
     "website": "",
+    "instagram": "https://www.instagram.com/gusmaobarbershop?igsh=MWE2ZWtvaGhld3N4dQ==",
     "cnpj": "",
     "razao_social": "",
     "situacao_cadastral": "",
@@ -26,7 +27,7 @@
       "/fotos/custom/gusmao-nova6.jpg",
       "/fotos/custom/gusmao-nova7.jpg",
       "/fotos/gusmao-barbershop/foto1.jpg",
-      "/fotos/gusmao-barbershop/foto10.jpg"
+      "/fotos/gusmao-barbershop/foto2.jpg"
     ],
     "fotos_ambiente": [
       "/fotos/custom/gusmao-01-capa.jpg",
@@ -38,15 +39,59 @@
       "/fotos/custom/gusmao-nova6.jpg",
       "/fotos/custom/gusmao-nova7.jpg",
       "/fotos/gusmao-barbershop/foto1.jpg",
-      "/fotos/gusmao-barbershop/foto10.jpg"
+      "/fotos/gusmao-barbershop/foto2.jpg"
     ],
+    "avaliacao": 4.5,
+    "total_avaliacoes": 84,
+    "horarios": "segunda-feira: 08:00 – 20:00 • terça-feira: 08:00 – 20:00 • quarta-feira: 08:00 – 20:00 • quinta-feira: 08:00 – 20:00 • sexta-feira: 08:00 – 20:00 • sábado: 08:00 – 20:00 • domingo: 09:00 – 14:00",
+    "maps_url": "https://maps.google.com/?cid=13225047255143385440",
+    "horarios_semana": [
+      "segunda-feira: 08:00 – 20:00",
+      "terça-feira: 08:00 – 20:00",
+      "quarta-feira: 08:00 – 20:00",
+      "quinta-feira: 08:00 – 20:00",
+      "sexta-feira: 08:00 – 20:00",
+      "sábado: 08:00 – 20:00",
+      "domingo: 09:00 – 14:00"
+    ],
+    "reviews": [
+      {
+        "autor": "Douglas Takenobu",
+        "nota": 5,
+        "texto": "Excelente local para cortar seu cabelo e atendimento ótimo desde entrada até finalização.",
+        "tempo": "9 meses atrás",
+        "foto": "https://lh3.googleusercontent.com/a-/ALV-UjUmx-69VAJvtSyDvTmX7dcpeGEY8Mw5nnqMaQmMraEImTBKCa9-=s128-c0x00000000-cc-rp-mo-ba3"
+      },
+      {
+        "autor": "Werickson Santos",
+        "nota": 5,
+        "texto": "Os caras são profissa e o atendimento é bom! Corta conforme for chegando sem precisar agendar! E o preço tá bom tbm!",
+        "tempo": "um ano atrás",
+        "foto": "https://lh3.googleusercontent.com/a-/ALV-UjUS9XiUZpRufz3nU6geYN2zIDWrS_5GHaJtBXSl86N1zAUnuDrK=s128-c0x00000000-cc-rp-mo"
+      },
+      {
+        "autor": "Eliseu carimbos",
+        "nota": 4,
+        "texto": "Bom custo benefício,  o problema e a rotatividade dos barbeiros",
+        "tempo": "8 meses atrás",
+        "foto": "https://lh3.googleusercontent.com/a/ACg8ocJUoW-ta9kZkeamitqGKpvCoCCoSEXPuF-2gTmC9oP_KGcLuQ=s128-c0x00000000-cc-rp-mo-ba4"
+      },
+      {
+        "autor": "peu apenas-2",
+        "nota": 5,
+        "texto": "Recomendo bons profissionais e atendimento rápido oque nessa região não e comum",
+        "tempo": "8 anos atrás",
+        "foto": "https://lh3.googleusercontent.com/a/ACg8ocKGWKs2mmX1cZuW-1N5a7D0BBDhXglR6Nb-TTRgYgyhNxktKQ=s128-c0x00000000-cc-rp-mo-ba2"
+      }
+    ],
+    "status_negocio": "OPERATIONAL",
     "criado_em": "2026-10-09T18:05:19.7830071-03:00",
-    "atualizado_em": "2026-10-28T11:43:58.3743868-03:00"
+    "atualizado_em": "2026-10-29T16:44:45.5829315-03:00"
   },
   "nicho_pasta": "barbearia",
   "slug": "gusmao-barbershop",
-  "template": "vintage-retro",
-  "url_demo": "https://landing-g67.vercel.app/barbearia/gusmao-barbershop/vintage-retro",
-  "url_local": "http://localhost:3000/barbearia/gusmao-barbershop/vintage-retro",
+  "template": "minimalista-premium",
+  "url_demo": "https://landing-g67.vercel.app/barbearia/gusmao-barbershop/minimalista-premium",
+  "url_local": "http://localhost:3000/barbearia/gusmao-barbershop/minimalista-premium",
   "url_oficial": "https://meu-site.vercel.app/gusmao-barbershop"
 }
