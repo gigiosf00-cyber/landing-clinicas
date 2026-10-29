@@ -21,21 +21,27 @@ export interface LeadData {
 
 export function carregarLead(cliente: string): LeadData | null {
   try {
-    const filePath = path.join(process.cwd(), 'src', 'data', 'barbearia', `${cliente}.json`);
-    if (!fs.existsSync(filePath)) {
-      return null;
-    }
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const parsed = JSON.parse(fileContent);
-    
-    // A MÁGICA: Se os dados vierem dentro do envelope "lead", nós extraímos!
+    // 1. Tenta carregar via require (empacotado nativamente no build da Vercel)
+    const parsed = require(`@/data/barbearia/${cliente}.json`);
     if (parsed && parsed.lead) {
       return parsed.lead;
     }
     return parsed;
-    
-  } catch (error) {
-    console.error('Erro ao carregar lead:', error);
+  } catch (errorRequire) {
+    try {
+      // 2. Fallback via fs (para o ambiente local Node.js)
+      const filePath = path.join(process.cwd(), 'src', 'data', 'barbearia', `${cliente}.json`);
+      if (fs.existsSync(filePath)) {
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const parsed = JSON.parse(fileContent);
+        if (parsed && parsed.lead) {
+          return parsed.lead;
+        }
+        return parsed;
+      }
+    } catch (errorFs) {
+      console.error('Erro ao carregar lead:', errorFs);
+    }
     return null;
   }
 }
