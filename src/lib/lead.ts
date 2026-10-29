@@ -51,6 +51,14 @@ export function obterLogo(lead: LeadData): string | null {
   return null;
 }
 
+// Exportação necessária para evitar falhas de compilação em rotas legadas no build da Vercel
+export function fotoCapa(lead: LeadData): string | null {
+  if (lead && Array.isArray(lead.fotos) && lead.fotos.length > 0) {
+    return lead.fotos[0];
+  }
+  return null;
+}
+
 export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const telLimpo = lead.telefone ? lead.telefone.replace(/\D/g, '') : '';
   const whatsapp = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
