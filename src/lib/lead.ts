@@ -17,7 +17,7 @@ export interface LeadData {
   mapa?: string;
   mapaEmbed?: string;
   streetView?: string;
-  nicho?: string;            // Opcional para não exigir o campo em todas as páginas
+  nicho?: string;            // Opcional
   cidade?: string;           // Opcional
   estado?: string;           // Opcional
   categoria?: string;        // Opcional
@@ -25,17 +25,8 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  const pastas = [
-    'barbearia',
-    'clinica',
-    'consultorio',
-    'lanchonete',
-    'pizzaria',
-    'restaurante',
-    'salaoblz',
-    'ofic-elérica',
-    'ofina-mecanica'
-  ];
+  // Apenas nichos ativos e sem caracteres especiais
+  const pastas = ['barbearia', 'clinica'];
 
   for (const pasta of pastas) {
     try {
@@ -72,26 +63,26 @@ export function fotoCapa(lead: LeadData): string | null {
 }
 
 export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
-  const telLimpo = lead.telefone ? lead.telefone.replace(/\D/g, '') : '';
+  const telLimpo = lead?.telefone ? lead.telefone.replace(/\D/g, '') : '';
   const whatsapp = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
 
   return {
-    nome: lead.nome || 'Estabelecimento',
-    endereco: lead.endereco || '',
-    enderecoCompleto: lead.endereco || '',
+    nome: lead?.nome || 'Estabelecimento',
+    endereco: lead?.endereco || '',
+    enderecoCompleto: lead?.endereco || '',
     tel: telLimpo,
     whatsapp,
-    instagram: lead.instagram || '',
-    avaliacao: lead.avaliacao || 0,
-    totalAval: lead.totalAval || 0,
-    reviews: lead.reviews || [],
-    horarios: lead.horarios || '',
-    horariosSemana: lead.horariosSemana || [],
-    statusAgora: lead.statusAgora || { aberto: null, texto: '' },
-    resumo: lead.resumo || '',
-    mapa: lead.mapa || '#',
-    mapaEmbed: lead.mapaEmbed || '',
-    streetView: lead.streetView || ''
+    instagram: lead?.instagram || '',
+    avaliacao: lead?.avaliacao || 0,
+    totalAval: lead?.totalAval || 0,
+    reviews: lead?.reviews || [],
+    horarios: lead?.horarios || '',
+    horariosSemana: lead?.horariosSemana || [],
+    statusAgora: lead?.statusAgora || { aberto: null, texto: '' },
+    resumo: lead?.resumo || '',
+    mapa: lead?.mapa || '#',
+    mapaEmbed: lead?.mapaEmbed || '',
+    streetView: lead?.streetView || ''
   };
 }
 
