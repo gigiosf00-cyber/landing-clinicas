@@ -20,17 +20,27 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  try {
-    // 1. Tenta carregar via require (empacotado nativamente no build da Vercel)
-    const parsed = require(`@/data/barbearia/${cliente}.json`);
-    if (parsed && parsed.lead) {
-      return parsed.lead;
-    }
-    return parsed;
-  } catch (errorRequire) {
+  const pastas = ['barbearia', 'clinica', 'consultorio'];
+
+  // 1. Tenta carregar via require dinâmico (Empacotado nativamente no build da Vercel)
+  for (const pasta of pastas) {
     try {
-      // 2. Fallback via fs (para o ambiente local Node.js)
-      const filePath = path.join(process.cwd(), 'src', 'data', 'barbearia', `${cliente}.json`);
+      const parsed = require(`@/data/${pasta}/${cliente}.json`);
+      if (parsed && parsed.lead) {
+        return parsed.lead;
+      }
+      if (parsed) {
+        return parsed;
+      }
+    } catch {
+      // Continua a busca na próxima pasta caso não encontre nesta
+    }
+  }
+
+  // 2. Fallback via sistema de ficheiros (fs) para ambiente de desenvolvimento local
+  for (const pasta of pastas) {
+    try {
+      const filePath = path.join(process.cwd(), 'src', 'data', pasta, `${cliente}.json`);
       if (fs.existsSync(filePath)) {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
         const parsed = JSON.parse(fileContent);
@@ -40,10 +50,11 @@ export function carregarLead(cliente: string): LeadData | null {
         return parsed;
       }
     } catch (errorFs) {
-      console.error('Erro ao carregar lead:', errorFs);
+      console.error(`Erro ao carregar lead localmente (${pasta}):`, errorFs);
     }
-    return null;
   }
+
+  return null;
 }
 
 export function obterFotos(lead: LeadData): string[] {
