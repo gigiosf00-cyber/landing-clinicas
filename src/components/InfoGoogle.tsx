@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Clock, Camera, Star, Phone, MapPin, ChevronRight, X, Navigation, Scissors, MessageCircle, Calendar } from 'lucide-react';
+import { Clock, Camera, Star, Phone, MapPin, ChevronRight, X, Navigation, Scissors, MessageCircle, Calendar, HeartPulse } from 'lucide-react';
 
 export interface TemaInfo {
   fundo: string; 
@@ -14,15 +14,7 @@ export interface TemaInfo {
 
 // ÍCONE DO INSTAGRAM EM SVG NATIVO
 const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg 
-    className={className} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
@@ -50,13 +42,13 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
     semana = safeD.horarios.split(sep).map((s: string) => s.trim()).filter(Boolean);
   } else {
     semana = [
-      'segunda-feira: 08:00 – 20:00',
-      'terça-feira: 08:00 – 20:00',
-      'quarta-feira: 08:00 – 20:00',
-      'quinta-feira: 08:00 – 20:00',
-      'sexta-feira: 08:00 – 20:00',
-      'sábado: 08:00 – 20:00',
-      'domingo: 09:00 – 14:00'
+      'segunda-feira: 08:00 – 19:00',
+      'terça-feira: 08:00 – 19:00',
+      'quarta-feira: 08:00 – 19:00',
+      'quinta-feira: 08:00 – 19:00',
+      'sexta-feira: 08:00 – 19:00',
+      'sábado: 08:00 – 13:00',
+      'domingo: Fechado'
     ];
   }
 
@@ -71,9 +63,9 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ', ' + enderecoBusca)}&z=17&output=embed`;
   
   const defaultReviews = [
-    { autor: 'Marcelo Silva', texto: 'Excelente atendimento, corte impecável e ambiente muito agradável.', nota: 5 },
-    { autor: 'Rodrigo Oliveira', texto: 'Barbearia top de linha! Pontualidade e atenção aos detalhes.', nota: 5 },
-    { autor: 'Carlos Eduardo', texto: 'Profissionais atenciosos. Recomendo a todos da região.', nota: 5 }
+    { autor: 'Maria Fernanda', texto: 'Atendimento excelente! Profissionais muito atenciosos e ambiente super acolhedor.', nota: 5 },
+    { autor: 'Rodrigo Oliveira', texto: 'Profissionais top de linha! Pontualidade e atenção aos detalhes.', nota: 5 },
+    { autor: 'Carlos Eduardo', texto: 'Atendimento atencioso e diferenciado. Recomendo a todos da região.', nota: 5 }
   ];
 
   const rawReviews = Array.isArray(safeD.reviews) ? safeD.reviews : (Array.isArray(safeD.avaliacoes) ? safeD.avaliacoes : []);
@@ -81,38 +73,58 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
   const totalAval = safeD.totalAval || safeD.total_avaliacoes || 84;
   const telNumero = safeD.tel || safeD.telefone || safeD.phone || '11986483600';
   
-  // GERAÇÃO INTELIGENTE DO LINK DO INSTAGRAM DO CLIENTE
+  // DETECÇÃO AUTOMÁTICA DE NICHO
+  const ehClinica = (safeD.nome || '').toLowerCase().includes('clinica') || 
+                    (safeD.nome || '').toLowerCase().includes('fisioterapia') ||
+                    (safeD.nome || '').toLowerCase().includes('estetica') ||
+                    (safeD.categoria || '').toLowerCase().includes('saude') ||
+                    (safeD.categoria || '').toLowerCase().includes('fisio');
+
+  // INSTAGRAM INTELIGENTE
   const rawInsta = safeD.instagram || safeD.insta || safeD.instaUrl || '';
   let instaLink = '';
-
   if (rawInsta) {
-    if (rawInsta.startsWith('http://') || rawInsta.startsWith('https://')) {
-      instaLink = rawInsta;
-    } else {
-      const handle = rawInsta.replace('@', '').trim();
-      instaLink = `https://instagram.com/${handle}`;
-    }
+    instaLink = rawInsta.startsWith('http') ? rawInsta : `https://instagram.com/${rawInsta.replace('@', '').trim()}`;
   } else {
-    // Fallback direto para o perfil do cliente (ex: https://instagram.com/gusmaobarbershop)
-    const handleGerado = nomeEstabelecimento
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]/g, "");
-    instaLink = `https://instagram.com/${handleGerado}`;
+    instaLink = `https://instagram.com/${nomeEstabelecimento.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "")}`;
   }
 
-  const servicosReais = [
+  // DINÂMICA DE SERVIÇOS POR NICHO
+  const servicosDoLead = Array.isArray(safeD.servicos) && safeD.servicos.length > 0 
+    ? safeD.servicos.map((s: any) => typeof s === 'string' ? { nome: s, desc: 'Atendimento especializado e personalizado.' } : s)
+    : [];
+
+  const servicosBarbearia = [
     { nome: 'Corte Social', desc: 'Estilo clássico executado com precisão e excelente acabamento.' },
     { nome: 'Corte com Navalha', desc: 'Acabamento profissional de alta definição e contorno perfeito.' },
     { nome: 'Cortes Infantis', desc: 'Atendimento especializado e paciente para os mais novos.' },
     { nome: 'Shampoo & Condicionador', desc: 'Tratamento capilar com produtos específicos para cabelos curtos.' }
   ];
 
+  const servicosClinica = [
+    { nome: 'Fisioterapia Geral', desc: 'Reabilitação motora, alívio de dores e tratamento funcional.' },
+    { nome: 'Pilates Clínico', desc: 'Postura, flexibilidade e fortalecimento com acompanhamento profissional.' },
+    { nome: 'Estética Corporal', desc: 'Tratamentos especializados para rejuvenescimento e cuidados com a pele.' },
+    { nome: 'Quiropraxia', desc: 'Ajustes articulares e desalinhamentos da coluna para alívio imediato.' }
+  ];
+
+  const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : (ehClinica ? servicosClinica : servicosBarbearia);
+
+  // ESTILOS DINÂMICOS DE COR CONFORME A MARCA
+  const btnClasse = ehClinica 
+    ? "inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-100 text-xs font-bold transition-all shadow-md"
+    : "inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all shadow-md";
+
+  const iconCor = ehClinica ? "text-emerald-400" : "text-amber-500";
+  const destaqueCor = ehClinica ? "text-emerald-400" : "text-amber-400";
+  const btnCtaCor = ehClinica 
+    ? "w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:scale-[1.01]"
+    : "w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:scale-[1.01]";
+
   return (
     <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className="w-full select-none relative scroll-smooth">
       
-      {/* 1. AÇÕES RÁPIDAS E HORÁRIOS */}
+      {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
       <section className="max-w-6xl mx-auto px-6 pt-6 pb-10">
         {st.texto && (
           <div className="text-center mb-6">
@@ -124,23 +136,23 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
         )}
         
         <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={() => setHorariosAbertos(!horariosAbertos)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
-            <Clock className="w-4 h-4 text-amber-500" /> Horários
+          <button onClick={() => setHorariosAbertos(!horariosAbertos)} className={btnClasse}>
+            <Clock className={`w-4 h-4 ${iconCor}`} /> Horários
           </button>
-          <a href="#fotos" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
-            <Camera className="w-4 h-4 text-amber-500" /> Fotos
+          <a href="#fotos" className={btnClasse}>
+            <Camera className={`w-4 h-4 ${iconCor}`} /> Fotos
           </a>
-          <a href="#avaliacoes" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
-            <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> Avaliações
+          <a href="#avaliacoes" className={btnClasse}>
+            <Star className={`w-4 h-4 ${iconCor} fill-current`} /> Avaliações
           </a>
-          <a href={instaLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
-            <InstagramIcon className="w-4 h-4 text-amber-500" /> Instagram
+          <a href={instaLink} target="_blank" rel="noreferrer" className={btnClasse}>
+            <InstagramIcon className={`w-4 h-4 ${iconCor}`} /> Instagram
           </a>
         </div>
 
         {horariosAbertos && (
           <div className="max-w-md mx-auto mt-6 bg-neutral-900 border border-neutral-800 rounded-2xl p-5 text-neutral-200 shadow-xl">
-            <h3 className="font-bold text-sm text-amber-400 mb-3 flex items-center gap-2"><Clock className="w-4 h-4"/> Grade de Horários</h3>
+            <h3 className={`font-bold text-sm ${destaqueCor} mb-3 flex items-center gap-2`}><Clock className="w-4 h-4"/> Grade de Horários</h3>
             <ul className="space-y-2">
               {semana.map((l, idx) => (
                 <li key={idx} className="flex justify-between text-xs py-1 border-b border-neutral-800/50 last:border-0 text-neutral-400">
@@ -152,21 +164,22 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
         )}
       </section>
 
-      {/* 2. SERVIÇOS REAIS - CONTAINER UNIFICADO COM BOTÃO LARGURA TOTAL */}
+      {/* 2. SERVIÇOS REAIS UNIFICADOS */}
       <section className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
         <h2 className="text-xl font-black uppercase text-white mb-6 flex items-center gap-2">
-          <Scissors className="text-amber-500 w-5 h-5"/> Serviços
+          {ehClinica ? <HeartPulse className={`w-5 h-5 ${iconCor}`} /> : <Scissors className={`w-5 h-5 ${iconCor}`} />} 
+          Serviços
         </h2>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {servicosReais.map((s, idx) => (
+            {servicosReais.map((s: any, idx: number) => (
               <div 
                 key={idx} 
-                className="bg-neutral-950/60 border border-neutral-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/40 transition-colors group"
+                className="bg-neutral-950/60 border border-neutral-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/40 transition-colors group"
               >
                 <div>
-                  <h3 className="text-white font-bold text-sm mb-2 group-hover:text-amber-400 transition-colors">
+                  <h3 className="text-white font-bold text-sm mb-2 group-hover:text-emerald-400 transition-colors">
                     {s.nome}
                   </h3>
                   <p className="text-neutral-400 text-xs leading-relaxed">
@@ -179,14 +192,14 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
 
           <div className="pt-2">
             <a 
-              href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um horário na ${nomeEstabelecimento}.`)}`} 
+              href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um atendimento na ${nomeEstabelecimento}.`)}`} 
               target="_blank" 
               rel="noreferrer" 
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-xl shadow-amber-500/10 hover:scale-[1.01]"
+              className={btnCtaCor}
             >
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-4 h-4"/>
               <span>Agendar Qualquer Serviço via WhatsApp</span>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4"/>
             </a>
           </div>
         </div>
@@ -209,7 +222,7 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 brightness-90 group-hover:brightness-105" 
                 />
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-white drop-shadow-md" />
+                  <Camera className="w-6 h-6 text-white drop-shadow-md"/>
                 </div>
               </div>
             ))}
@@ -220,8 +233,10 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
       {/* MODAL LIGHTBOX FOTOS */}
       {fotoModal && (
         <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-pointer">
-          <img src={fotoModal} className="max-w-full max-h-[85vh] rounded-2xl border border-neutral-800 shadow-2xl" />
-          <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 transition"><X className="w-6 h-6" /></button>
+          <img src={fotoModal} alt="Foto Ampliada" className="max-w-full max-h-[85vh] rounded-2xl border border-neutral-800 shadow-2xl" />
+          <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 transition">
+            <X className="w-6 h-6"/>
+          </button>
         </div>
       )}
 
@@ -232,8 +247,10 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
           {reviewsList.map((r: any, i: number) => (
             <div key={i} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 shadow-md flex flex-col justify-between">
               <div>
-                <div className="flex text-amber-400 gap-1 mb-3">
-                  {[...Array(r.nota || 5)].map((_, idx) => <Star key={idx} className="w-4 h-4 fill-amber-400" />)}
+                <div className="flex text-emerald-400 gap-1 mb-3">
+                  {[...Array(r.nota || 5)].map((_, idx) => (
+                    <Star key={idx} className={`w-4 h-4 fill-current ${ehClinica ? 'text-emerald-400' : 'text-amber-400'}`} />
+                  ))}
                 </div>
                 <p className="text-xs text-neutral-300 mb-4 italic leading-relaxed">“{r.texto || r.text}”</p>
               </div>
@@ -243,13 +260,13 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO COM MAPA EM MODO NOTURNO */}
+      {/* 5. LOCALIZAÇÃO COM MAPA NOTURNO */}
       <section className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900 pb-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-xl font-black uppercase text-white">Onde Estamos</h2>
             <p className="text-xs text-neutral-400 flex items-center gap-1.5 mt-1">
-              <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
+              <MapPin className={`w-4 h-4 shrink-0 ${iconCor}`} />
               {enderecoBusca}
             </p>
           </div>
@@ -258,9 +275,9 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
             href={urlOficialMaps} 
             target="_blank" 
             rel="noreferrer" 
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-black px-6 py-3 rounded-xl shadow-lg transition-transform hover:scale-105"
+            className={ehClinica ? "inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-black text-xs font-black px-6 py-3 rounded-xl shadow-lg transition-transform hover:scale-105" : "inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-black px-6 py-3 rounded-xl shadow-lg transition-transform hover:scale-105"}
           >
-            <Navigation className="w-4 h-4 fill-black" /> Abrir no Google Maps Oficial
+            <Navigation className="w-4 h-4 fill-black"/> Abrir no Google Maps Oficial
           </a>
         </div>
 
@@ -277,10 +294,10 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
         </div>
       </section>
 
-      {/* DOCK MOBILE FIXO NO RODAPÉ */}
+      {/* DOCK MOBILE FIXO */}
       <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
-        <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><MessageCircle className="w-4 h-4" /> WhatsApp</a>
-        <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-neutral-800 text-amber-400 border border-neutral-700 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><Navigation className="w-4 h-4" /> Como Chegar</a>
+        <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><MessageCircle className="w-4 h-4"/> WhatsApp</a>
+        <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`flex-1 bg-neutral-800 ${iconCor} border border-neutral-700 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition`}><Navigation className="w-4 h-4"/> Como Chegar</a>
       </div>
 
     </div>

@@ -1,5 +1,5 @@
 {
-  "enviado_em": "2026-10-13T16:44:11.553212-03:00",
+  "enviado_em": "2026-11-05T18:01:24-03:00",
   "lead": {
     "id": "lead_1791578479620800700",
     "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
@@ -17,24 +17,36 @@
     "situacao_cadastral": "",
     "abertura_data": "",
     "fotos": [
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar8.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar7.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar2.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar5.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar6.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar9.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/renovar10.jpg"
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto1.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto11.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto12.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto2.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto3.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto5.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto6.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto7.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto8.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto9.jpg"
     ],
     "fotos_ambiente": [
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/foto1.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce/reonovar1.jpg"
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto1.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto11.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto12.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto2.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto3.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto5.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto6.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto7.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto8.jpg",
+      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto9.jpg"
     ],
-    "avaliacao": 5,
-    "horarios": "terça-feira, 07:00–20:00",
     "criado_em": "2026-10-09T17:41:19.6208007-03:00",
-    "atualizado_em": "2026-10-13T18:09:39.617Z"
+    "atualizado_em": "2026-11-05T18:01:24.9998415-03:00"
   },
-  "nicho_pasta": "clinicas",
-  "template": "minimalista-premium",
-  "url_demo": "http://localhost:3000/clinicas/minimalista-premium"
+  "nicho_pasta": "clinica",
+  "slug": "clinica-renovar-fisioterapia-pilates-e-estetica",
+  "template": "moderno-urban",
+  "url_demo": "https://landing-g67.vercel.app/clinica/clinica-renovar-fisioterapia-pilates-e-estetica/moderno-urban",
+  "url_local": "http://localhost:3000/clinica/clinica-renovar-fisioterapia-pilates-e-estetica/moderno-urban",
+  "url_oficial": "https://meu-site.vercel.app/clinica-renovar-fisioterapia-pilates-e-estetica"
 }
