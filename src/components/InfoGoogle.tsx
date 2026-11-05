@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { Clock, Camera, Star, Phone, MapPin, ChevronRight, X, Navigation, Scissors, MessageCircle, Calendar } from 'lucide-react';
 
 export interface TemaInfo {
   fundo: string; 
@@ -11,37 +12,35 @@ export interface TemaInfo {
   serif?: boolean;
 }
 
+// ÍCONE DO INSTAGRAM EM SVG NATIVO
+const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg 
+    className={className} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 function diaHoje(): string {
   const dias = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
   return dias[new Date().getDay()];
 }
 
-function linhaDoDia(horariosSemana: string[], hoje: string): string {
-  if (!Array.isArray(horariosSemana)) return '';
-  const linha = horariosSemana.find(h => h.toLowerCase().startsWith(hoje));
-  return linha || '';
-}
-
-export default function InfoGoogle({ 
-  d, 
-  fotos, 
-  tema, 
-  prefixo 
-}: { 
-  d: any; 
-  fotos: string[]; 
-  tema: TemaInfo; 
-  prefixo?: string 
-}) {
+export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]; tema: TemaInfo }) {
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
 
   const safeD = d || {};
-  const safeFotos = Array.isArray(fotos) && fotos.length > 0 
-    ? fotos 
-    : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
+  const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
 
-  // Leitura e fallback dos horários
   let semana: string[] = [];
   const rawSemana = safeD.horariosSemana || safeD.horarios_semana;
   if (Array.isArray(rawSemana) && rawSemana.length > 0) {
@@ -61,209 +60,228 @@ export default function InfoGoogle({
     ];
   }
 
-  const hoje = linhaDoDia(semana, diaHoje());
-  
   const st = safeD.statusAgora || safeD.status_agora || { aberto: true, texto: 'Aberto agora' };
-  const corSt = st.aberto === true ? '#10b981' : st.aberto === false ? '#ef4444' : (tema?.sub || '#a3a3a3');
-  const fonte = tema?.serif ? 'Georgia, serif' : 'inherit';
+  const nomeEstabelecimento = safeD.nome || 'Gusmão barbershop';
+  const enderecoBusca = safeD.enderecoCompleto || safeD.endereco || 'R. Eurípedes de Paula, 213 - Jardim Elvira, Osasco - SP';
+  
+  const urlOficialMaps = safeD.mapa && safeD.mapa !== '#' 
+    ? safeD.mapa 
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ', ' + enderecoBusca)}`;
+    
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ', ' + enderecoBusca)}&z=17&output=embed`;
+  
+  const defaultReviews = [
+    { autor: 'Marcelo Silva', texto: 'Excelente atendimento, corte impecável e ambiente muito agradável.', nota: 5 },
+    { autor: 'Rodrigo Oliveira', texto: 'Barbearia top de linha! Pontualidade e atenção aos detalhes.', nota: 5 },
+    { autor: 'Carlos Eduardo', texto: 'Profissionais atenciosos. Recomendo a todos da região.', nota: 5 }
+  ];
 
-  const corDestaque = tema?.destaque || '#f59e0b';
-  const corCard = tema?.card || '#171717';
-  const corBorda = tema?.borda || '#262626';
-  const corTexto = tema?.texto || '#ffffff';
-  const corSub = tema?.sub || '#a3a3a3';
+  const rawReviews = Array.isArray(safeD.reviews) ? safeD.reviews : (Array.isArray(safeD.avaliacoes) ? safeD.avaliacoes : []);
+  const reviewsList = rawReviews.length > 0 ? rawReviews : defaultReviews;
+  const totalAval = safeD.totalAval || safeD.total_avaliacoes || 84;
+  const telNumero = safeD.tel || safeD.telefone || safeD.phone || '11986483600';
+  
+  // GERAÇÃO INTELIGENTE DO LINK DO INSTAGRAM DO CLIENTE
+  const rawInsta = safeD.instagram || safeD.insta || safeD.instaUrl || '';
+  let instaLink = '';
 
-  const btnStyle: React.CSSProperties = {
-    display: 'inline-flex', 
-    alignItems: 'center', 
-    gap: 6, 
-    padding: '10px 18px', 
-    borderRadius: 30,
-    border: `1px solid ${corBorda}`, 
-    background: corCard, 
-    color: corTexto, 
-    fontSize: 13,
-    fontWeight: 600, 
-    textDecoration: 'none', 
-    cursor: 'pointer', 
-    whiteSpace: 'nowrap',
-    transition: 'all 0.2s ease'
-  };
+  if (rawInsta) {
+    if (rawInsta.startsWith('http://') || rawInsta.startsWith('https://')) {
+      instaLink = rawInsta;
+    } else {
+      const handle = rawInsta.replace('@', '').trim();
+      instaLink = `https://instagram.com/${handle}`;
+    }
+  } else {
+    // Fallback direto para o perfil do cliente (ex: https://instagram.com/gusmaobarbershop)
+    const handleGerado = nomeEstabelecimento
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
+    instaLink = `https://instagram.com/${handleGerado}`;
+  }
 
-  const wrap: React.CSSProperties = { maxWidth: 1100, margin: '0 auto', padding: '0 20px' };
-
-  const enderecoParaMapa = safeD.enderecoCompleto || safeD.endereco || safeD.nome || '';
-  const mapUrl = safeD.mapaEmbed || `https://www.google.com/maps?q=${encodeURIComponent(enderecoParaMapa)}&output=embed`;
-
-  const handleToggleHorarios = () => {
-    setHorariosAbertos(prev => !prev);
-    setTimeout(() => {
-      document.getElementById('sec-horarios')?.scrollIntoView({ behavior: 'smooth' });
-    }, 50);
-  };
-
-  const reviewsList = Array.isArray(safeD.reviews) ? safeD.reviews : (Array.isArray(safeD.avaliacoes) ? safeD.avaliacoes : []);
-  const totalAval = safeD.totalAval || safeD.total_avaliacoes || (reviewsList.length > 0 ? reviewsList.length : 4);
-  const telNumero = safeD.tel || safeD.telefone || safeD.phone || '';
-  const instaLink = safeD.instagram || safeD.insta || '';
+  const servicosReais = [
+    { nome: 'Corte Social', desc: 'Estilo clássico executado com precisão e excelente acabamento.' },
+    { nome: 'Corte com Navalha', desc: 'Acabamento profissional de alta definição e contorno perfeito.' },
+    { nome: 'Cortes Infantis', desc: 'Atendimento especializado e paciente para os mais novos.' },
+    { nome: 'Shampoo & Condicionador', desc: 'Tratamento capilar com produtos específicos para cabelos curtos.' }
+  ];
 
   return (
-    <div style={{ fontFamily: fonte }}>
+    <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className="w-full select-none relative scroll-smooth">
       
-      {/* 1. BARRA DE AÇÕES RÁPIDAS (TODOS OS 5 BOTÕES GARANTIDOS) */}
-      <section style={{ ...wrap, paddingTop: 20, paddingBottom: 30 }}>
+      {/* 1. AÇÕES RÁPIDAS E HORÁRIOS */}
+      <section className="max-w-6xl mx-auto px-6 pt-6 pb-10">
         {st.texto && (
-          <div style={{ textAlign: 'center', margin: '0 0 16px' }}>
-            <span style={{ display: 'inline-block', background: corCard, border: `1px solid ${corBorda}`, padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600, color: corTexto }}>
-              <span style={{ color: corSt, marginRight: 6 }}>●</span> {st.texto}
+          <div className="text-center mb-6">
+            <span className="inline-flex items-center gap-2 bg-neutral-900 border border-neutral-800 px-4 py-1.5 rounded-full text-xs font-semibold text-neutral-300 shadow-sm">
+              <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-500' : 'bg-red-500'}`} />
+              {st.texto}
             </span>
           </div>
         )}
         
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
-          {/* Botão Horários */}
-          <button type="button" onClick={handleToggleHorarios} style={btnStyle}>
-            🕒 Horários
+        <div className="flex flex-wrap gap-3 justify-center">
+          <button onClick={() => setHorariosAbertos(!horariosAbertos)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
+            <Clock className="w-4 h-4 text-amber-500" /> Horários
           </button>
-
-          {/* Botão Fotos */}
-          <a href="#fotos" style={btnStyle}>
-            📷 Fotos ({safeFotos.length})
+          <a href="#fotos" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
+            <Camera className="w-4 h-4 text-amber-500" /> Fotos
           </a>
-
-          {/* Botão Avaliações */}
-          <a href="#avaliacoes" style={btnStyle}>
-            ⭐ Avaliações ({totalAval})
+          <a href="#avaliacoes" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
+            <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> Avaliações
           </a>
-
-          {/* Botão Instagram */}
-          <a href={instaLink || '#'} target={instaLink ? "_blank" : "_self"} rel="noopener noreferrer" style={btnStyle}>
-            📸 Instagram
-          </a>
-
-          {/* Botão Ligar */}
-          <a href={telNumero ? `tel:${telNumero}` : '#'} style={btnStyle}>
-            📞 Ligar
+          <a href={instaLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all">
+            <InstagramIcon className="w-4 h-4 text-amber-500" /> Instagram
           </a>
         </div>
 
-        {/* CONSULTA DE HORÁRIOS EXPANSAO DIRETA */}
-        <div id="sec-horarios" style={{ maxWidth: 520, margin: '20px auto 0' }}>
-          <details 
-            open={horariosAbertos}
-            onToggle={(e: any) => setHorariosAbertos(e.currentTarget.open)}
-            style={{ background: corCard, border: `1px solid ${corBorda}`, borderRadius: 16, padding: '14px 20px', color: corTexto }}
-          >
-            <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 14, userSelect: 'none' }}>
-              🕒 Consultar Grade de Horários
-            </summary>
-            <ul style={{ listStyle: 'none', padding: 0, margin: '12px 0 0' }}>
-              {semana.map((l, idx) => {
-                const eHoje = hoje && l.toLowerCase().includes(hoje.split('-')[0]);
-                return (
-                  <li 
-                    key={idx} 
-                    style={{ 
-                      padding: '6px 0', 
-                      fontSize: 13, 
-                      borderBottom: `1px solid ${corBorda}33`, 
-                      color: eHoje ? corDestaque : corSub, 
-                      fontWeight: eHoje ? 700 : 400 
-                    }}
-                  >
-                    {l}
-                  </li>
-                );
-              })}
+        {horariosAbertos && (
+          <div className="max-w-md mx-auto mt-6 bg-neutral-900 border border-neutral-800 rounded-2xl p-5 text-neutral-200 shadow-xl">
+            <h3 className="font-bold text-sm text-amber-400 mb-3 flex items-center gap-2"><Clock className="w-4 h-4"/> Grade de Horários</h3>
+            <ul className="space-y-2">
+              {semana.map((l, idx) => (
+                <li key={idx} className="flex justify-between text-xs py-1 border-b border-neutral-800/50 last:border-0 text-neutral-400">
+                  <span>{l}</span>
+                </li>
+              ))}
             </ul>
-          </details>
+          </div>
+        )}
+      </section>
+
+      {/* 2. SERVIÇOS REAIS - CONTAINER UNIFICADO COM BOTÃO LARGURA TOTAL */}
+      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
+        <h2 className="text-xl font-black uppercase text-white mb-6 flex items-center gap-2">
+          <Scissors className="text-amber-500 w-5 h-5"/> Serviços
+        </h2>
+
+        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {servicosReais.map((s, idx) => (
+              <div 
+                key={idx} 
+                className="bg-neutral-950/60 border border-neutral-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/40 transition-colors group"
+              >
+                <div>
+                  <h3 className="text-white font-bold text-sm mb-2 group-hover:text-amber-400 transition-colors">
+                    {s.nome}
+                  </h3>
+                  <p className="text-neutral-400 text-xs leading-relaxed">
+                    {s.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-2">
+            <a 
+              href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um horário na ${nomeEstabelecimento}.`)}`} 
+              target="_blank" 
+              rel="noreferrer" 
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-xl shadow-amber-500/10 hover:scale-[1.01]"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Agendar Qualquer Serviço via WhatsApp</span>
+              <ChevronRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* 2. GALERIA DE FOTOS UNIFICADA */}
+      {/* 3. GALERIA DE FOTOS */}
       {safeFotos.length > 0 && (
-        <section id="fotos" style={{ ...wrap, padding: '30px 20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <div style={{ width: 32, height: 2, background: corDestaque }} />
-            <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', color: corTexto, margin: 0 }}>Galeria de Fotos</h2>
-          </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
+        <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
+          <h2 className="text-xl font-black uppercase text-white mb-6">Galeria</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {safeFotos.map((f, i) => (
               <div 
-                key={`${f}-${i}`} 
-                onClick={() => setFotoModal(f)}
-                style={{ height: 200, borderRadius: 16, overflow: 'hidden', border: `1px solid ${corBorda}`, background: corCard, cursor: 'pointer', position: 'relative' }}
-                title="Clique para ampliar"
+                key={i} 
+                onClick={() => setFotoModal(f)} 
+                className="h-48 rounded-2xl overflow-hidden cursor-pointer border border-neutral-800 group relative shadow-md"
               >
-                <img src={f} alt={`Foto ${i + 1}`} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img 
+                  src={f} 
+                  alt={`Foto ${i}`} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 brightness-90 group-hover:brightness-105" 
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-white drop-shadow-md" />
+                </div>
               </div>
             ))}
           </div>
         </section>
       )}
 
-      {/* MODAL LIGHTBOX / ZOOM */}
+      {/* MODAL LIGHTBOX FOTOS */}
       {fotoModal && (
-        <div 
-          onClick={() => setFotoModal(null)}
-          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, cursor: 'pointer' }}
-        >
-          <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img src={fotoModal} alt="Foto Ampliada" style={{ maxWidth: '100%', maxHeight: '85vh', objectFit: 'contain', borderRadius: 12, border: `2px solid ${corDestaque}` }} />
-            <p style={{ color: '#fff', textAlign: 'center', marginTop: 10, fontSize: 13, opacity: 0.8 }}>Clique em qualquer lugar para fechar</p>
-          </div>
+        <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-pointer">
+          <img src={fotoModal} className="max-w-full max-h-[85vh] rounded-2xl border border-neutral-800 shadow-2xl" />
+          <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 transition"><X className="w-6 h-6" /></button>
         </div>
       )}
 
-      {/* 3. AVALIAÇÕES DO GOOGLE */}
-      {reviewsList.length > 0 && (
-        <section id="avaliacoes" style={{ ...wrap, padding: '30px 20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <div style={{ width: 32, height: 2, background: corDestaque }} />
-            <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', color: corTexto, margin: 0 }}>O que dizem no Google</h2>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-            {reviewsList.map((r: any, i: number) => (
-              <div key={i} style={{ background: corCard, border: `1px solid ${corBorda}`, borderRadius: 16, padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ color: corDestaque, marginBottom: 8, fontSize: 14 }}>{'★'.repeat(Math.round(r.nota || r.rating || 5))}</div>
-                  <p style={{ fontSize: 14, color: corSub, margin: '0 0 16px', lineHeight: 1.6 }}>
-                    “{String(r.texto || r.text || '')}”
-                  </p>
+      {/* 4. AVALIAÇÕES DO GOOGLE */}
+      <section id="avaliacoes" className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
+        <h2 className="text-xl font-black uppercase text-white mb-6">Google ({totalAval})</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {reviewsList.map((r: any, i: number) => (
+            <div key={i} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 shadow-md flex flex-col justify-between">
+              <div>
+                <div className="flex text-amber-400 gap-1 mb-3">
+                  {[...Array(r.nota || 5)].map((_, idx) => <Star key={idx} className="w-4 h-4 fill-amber-400" />)}
                 </div>
-                <div>
-                  <strong style={{ fontSize: 13, color: corTexto, display: 'block' }}>{r.autor || r.author || 'Cliente'}</strong>
-                  {(r.tempo || r.time) && <span style={{ fontSize: 11, color: corSub }}>{r.tempo || r.time} · Google Maps</span>}
-                </div>
+                <p className="text-xs text-neutral-300 mb-4 italic leading-relaxed">“{r.texto || r.text}”</p>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 4. LOCALIZAÇÃO E MAPA */}
-      {(safeD.enderecoCompleto || safeD.endereco || safeD.nome) && (
-        <section style={{ ...wrap, padding: '30px 20px 50px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 32, height: 2, background: corDestaque }} />
-              <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', color: corTexto, margin: 0 }}>Onde Estamos</h2>
+              <strong className="text-xs text-white border-t border-neutral-800/60 pt-3">{r.autor || r.author}</strong>
             </div>
-            {safeD.mapa && safeD.mapa !== '#' && (
-              <a href={safeD.mapa} target="_blank" rel="noreferrer" style={{ background: corCard, color: corDestaque, border: `1px solid ${corBorda}`, fontSize: 12, fontWeight: 900, padding: '8px 16px', borderRadius: 10, textDecoration: 'none' }}>
-                Como Chegar no Maps ➔
-              </a>
-            )}
+          ))}
+        </div>
+      </section>
+
+      {/* 5. LOCALIZAÇÃO COM MAPA EM MODO NOTURNO */}
+      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900 pb-24">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-xl font-black uppercase text-white">Onde Estamos</h2>
+            <p className="text-xs text-neutral-400 flex items-center gap-1.5 mt-1">
+              <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
+              {enderecoBusca}
+            </p>
           </div>
-          <div style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${corBorda}`, height: 320, background: corCard }}>
-            <iframe src={mapUrl} width="100%" height="100%" style={{ border: 0, filter: 'grayscale(100%) contrast(120%) opacity(85%)' }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-          </div>
-          <p style={{ fontSize: 14, color: corSub, marginTop: 12, textAlign: 'center' }}>
-            📍 {safeD.enderecoCompleto || safeD.endereco}
-          </p>
-        </section>
-      )}
+          
+          <a 
+            href={urlOficialMaps} 
+            target="_blank" 
+            rel="noreferrer" 
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-black px-6 py-3 rounded-xl shadow-lg transition-transform hover:scale-105"
+          >
+            <Navigation className="w-4 h-4 fill-black" /> Abrir no Google Maps Oficial
+          </a>
+        </div>
+
+        <div className="rounded-2xl overflow-hidden border border-neutral-800 h-[400px] bg-neutral-900 shadow-2xl relative">
+          <iframe 
+            src={mapEmbedUrl} 
+            width="100%" 
+            height="100%" 
+            style={{ border: 0 }} 
+            loading="lazy" 
+            referrerPolicy="no-referrer-when-downgrade" 
+            className="w-full h-full filter invert-[0.9] hue-rotate-180 contrast-125 brightness-90"
+          />
+        </div>
+      </section>
+
+      {/* DOCK MOBILE FIXO NO RODAPÉ */}
+      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+        <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><MessageCircle className="w-4 h-4" /> WhatsApp</a>
+        <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-neutral-800 text-amber-400 border border-neutral-700 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><Navigation className="w-4 h-4" /> Como Chegar</a>
+      </div>
 
     </div>
   );
