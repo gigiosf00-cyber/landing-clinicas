@@ -25,15 +25,18 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  // Incluídas todas as pastas de nichos presentes no projeto para evitar retorno nulo no build
+  // Incluídas absolutamente TODAS as rotas mapeadas em src/app para não falhar o build
   const pastas = [
     'barbearia', 
     'clinica', 
+    'consultorio', 
+    'hamburgueria', 
+    'lanchonete', 
+    'ofic-elétrica', 
+    'ofina-mecanica', 
     'pizzaria', 
     'restaurante', 
-    'salaoblz', 
-    'consultorio', 
-    'hamburgueria'
+    'salaoblz'
   ];
 
   for (const pasta of pastas) {
