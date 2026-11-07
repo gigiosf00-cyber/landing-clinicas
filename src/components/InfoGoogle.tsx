@@ -24,12 +24,14 @@ export default function InfoGoogle({
   d, 
   fotos, 
   tema, 
-  semServicos = false 
+  semServicos = false,
+  prefixo
 }: { 
   d: any; 
   fotos: string[]; 
   tema: TemaInfo;
   semServicos?: boolean;
+  prefixo?: string; // <-- Adicionado para aceitar prefixo sem erro de TS
 }) {
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
@@ -59,7 +61,6 @@ export default function InfoGoogle({
   const st = safeD.statusAgora || safeD.status_agora || { aberto: true, texto: 'Aberto agora' };
   const nomeEstabelecimento = safeD.nome || 'Clínica Renovar';
   
-  // Garantir o endereço limpo com o CEP formatado
   const enderecoBusca = safeD.enderecoCompleto || safeD.endereco || 'R. Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775';
   
   const urlOficialMaps = safeD.mapa && safeD.mapa !== '#' 
@@ -70,7 +71,6 @@ export default function InfoGoogle({
   
   const reviewsList = Array.isArray(safeD.reviews) ? safeD.reviews : (Array.isArray(safeD.avaliacoes) ? safeD.avaliacoes : []);
   
-  // GARANTE O NÚMERO 15 QUANDO NÃO HOUVER REVIEWS DE TEXTO RASPADOS
   const totalAval = Number(safeD.totalAval || safeD.total_avaliacoes || (reviewsList.length > 0 ? reviewsList.length : 15));
   const telNumero = safeD.tel || safeD.telefone || safeD.phone || '88997110085';
 
