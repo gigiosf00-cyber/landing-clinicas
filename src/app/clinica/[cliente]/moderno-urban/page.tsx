@@ -8,10 +8,7 @@ interface Props {
 }
 
 export default async function PaginaClinicaModerna({ params }: Props) {
-  // 1. Obtém o nome do cliente a partir da URL
   const { cliente } = await params;
-
-  // Busca em src/data/** (aceita slug completo ou só o início, ex.: clinica-renovar)
   const lead: any = carregarLead(cliente);
 
   if (!lead) {
@@ -30,39 +27,43 @@ export default async function PaginaClinicaModerna({ params }: Props) {
   const whatsappURL = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(`Olá! Vi o site da ${nomeExibir} e gostaria de agendar uma consulta.`)}` : '#';
   const mapsURL = lead.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.endereco || nomeExibir)}`;
 
-  const corVerdeOficial = '#10b981';
-  const corVerdeEscuro = '#022c22';
   const corLaranjaOficial = '#f97316'; 
   const corTextoVerde = '#064e3b'; 
 
   const pastaImagens = '/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce';
-  // Logo real (public/fotos/{slug}/logo.png); a foto 0 da API NÃO é mais usada como logo
   const fotoLogotipo = obterLogo(lead) || ((lead.fotos && lead.fotos.length) ? '' : `${pastaImagens}/renovar8.jpg`);
   const fotosTodas = obterFotos(lead);
-  const fachadaNomeada = fotosTodas.find((u) => /\/(fachada|exterior)[^/]*$/i.test(u));
+  
   const d = dadosBase(lead, `Olá! Vi o site da ${lead.nome} e gostaria de agendar uma consulta.`);
-  const fotoPrincipal = (lead.fotos && lead.fotos[1]) || `${pastaImagens}/renovar7.jpg`; 
-  const fotoFachadaReal = fachadaNomeada || (lead.fotos_ambiente && lead.fotos_ambiente[0]) || `${pastaImagens}/foto1.jpg`; 
 
-  const todosOsServicos = [
-    { titulo: 'Fisioterapia na Coluna Vertebral', desc: 'Tratamento focado na coluna, alívio contínuo da dor e recuperação do movimento.' },
-    { titulo: 'Fisioterapia Traumato-Ortopédica', desc: 'Reabilitação pós-cirúrgica, fraturas, luxações e lesões articulares.' },
-    { titulo: 'Atendimento Domiciliar', desc: 'Fisioterapia no conforto do seu lar com flexibilidade e total praticidade.' },
-    { titulo: 'Reabilitação do Idoso', desc: 'Treino de equilíbrio, prevenção de quedas e autonomia para a terceira idade.' },
-    { titulo: 'Pilates Terapêutico & Clínico', desc: 'Aparelhos completos para postura e flexibilidade com turmas reduzidas.' },
-    { titulo: 'Quiropraxia', desc: 'Ajustes articulares focados em restaurar a função da coluna e aliviar dores.' },
-    { titulo: 'Ventosaterapia', desc: 'Alívio de tensões musculares, melhora da circulação e relaxamento profundo.' },
-    { titulo: 'Estética Avançada', desc: 'Procedimentos faciais e corporais focados no seu cuidado integral.' },
-    { titulo: 'Palmilhas Posturais', desc: 'Avaliação biomecânica e confecção de palmilhas sob medida.' }
-  ];
+  // HERO CAPA: Pega a foto da coluna (foto1.jpg)
+  const fotoFachadaHero = (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg'))) 
+    || (fotosTodas && fotosTodas[0]) 
+    || `${pastaImagens}/foto1.jpg`;
+
+  // NOSSA SEDE (RODAPÉ): Força a busca pela foto11.jpg (fachada real com a porta de vidro)
+  const fotoSedeReal = (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11'))) 
+    || `${pastaImagens}/foto11.jpg`; 
+
+  const temaClaroInfo = {
+    fundo: '#f1f5f9',
+    card: '#ffffff',
+    borda: '#cbd5e1',
+    texto: '#022c22',
+    sub: '#475569',
+    destaque: '#10b981',
+    serif: false
+  };
 
   return (
     <div style={{ backgroundColor: '#f1f5f9', color: '#0f172a', minHeight: '100vh', fontFamily: '"Inter", system-ui, sans-serif' }}>
       
+      {/* BANNER SUPERIOR */}
       <div style={{ background: 'linear-gradient(90deg, #022c22 0%, #064e3b 100%)', color: '#34d399', textAlign: 'center', padding: '10px 16px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.05em' }}>
         ⚡ PROPOSTA DE DESIGN MODERNO PARA: {nomeExibir.toUpperCase()}
       </div>
 
+      {/* HEADER FIXO (SEM BOTÃO DUPLICADO) */}
       <header style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           
@@ -78,12 +79,10 @@ export default async function PaginaClinicaModerna({ params }: Props) {
             </div>
           </div>
 
-          <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '10px 24px', borderRadius: '999px', textDecoration: 'none' }}>
-            Agendar Agora
-          </a>
         </div>
       </header>
 
+      {/* HERO SECTION DA CLÍNICA */}
       <section style={{ background: 'linear-gradient(135deg, #022c22 0%, #065f46 100%)', color: '#ffffff', padding: '80px 20px 100px 20px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '50px', alignItems: 'center', position: 'relative', zIndex: 10 }}>
           
@@ -104,42 +103,23 @@ export default async function PaginaClinicaModerna({ params }: Props) {
             </div>
           </div>
 
-          <div style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', width: '100%', transform: 'translateY(-10px)' }}>
-            <img src={fotoPrincipal} alt="Fisioterapia" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
+          <div style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', width: '100%', height: '380px', backgroundColor: '#022c22', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
+            <img src={fotoFachadaHero} alt="Foto Capa" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '16px' }} />
           </div>
 
         </div>
       </section>
 
-      <section style={{ maxWidth: '1200px', margin: '-40px auto 80px auto', padding: '0 20px', position: 'relative', zIndex: 20 }}>
-        <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 900, color: corVerdeEscuro, letterSpacing: '-0.5px' }}>Tratamentos de Ponta</h2>
-          <div style={{ width: '60px', height: '4px', background: 'linear-gradient(90deg, #10b981, #f97316)', margin: '16px auto', borderRadius: '4px' }}></div>
-        </div>
+      {/* COMPONENTE INFOGOOGLE */}
+      <InfoGoogle d={d} fotos={fotosTodas} tema={temaClaroInfo} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-          {todosOsServicos.map((s, idx) => (
-            <div key={idx} style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.02)', boxShadow: '0 10px 30px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>{s.titulo}</h3>
-                <p style={{ fontSize: '14.5px', color: '#64748b', lineHeight: 1.6, marginBottom: '24px' }}>{s.desc}</p>
-              </div>
-              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ color: corVerdeOficial, fontWeight: 800, fontSize: '14px', textDecoration: 'none' }}>
-                Saber Mais &rsaquo;
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <InfoGoogle d={d} fotos={fotosTodas} prefixo="ku" tema={{ fundo: '#f8fafc', card: '#ffffff', borda: '#e2e8f0', texto: '#022c22', sub: '#64748b', destaque: '#10b981' }} />
-
+      {/* CARD FINAL - NOSSA SEDE (VERDE ESMERALDA FECHADO + FOTO11 DA FACHADA) */}
       <section style={{ padding: '40px 20px 80px 20px' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: '32px', padding: '40px', boxShadow: '0 20px 40px rgba(15, 23, 42, 0.2)', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '40px', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', background: 'linear-gradient(135deg, #022c22 0%, #064e3b 100%)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '32px', padding: '40px', boxShadow: '0 20px 40px rgba(2, 44, 34, 0.3)', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '40px', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
           
           <div style={{ width: '260px', flexShrink: 0, position: 'relative' }}>
-            <div style={{ width: '100%', height: 'auto', borderRadius: '20px', overflow: 'hidden', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
-              <img src={fotoFachadaReal} alt="Fachada" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
+            <div style={{ width: '100%', height: 'auto', borderRadius: '20px', overflow: 'hidden', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 20px rgba(0,0,0,0.3)', backgroundColor: '#022c22', padding: '4px' }}>
+              <img src={fotoSedeReal} alt="Nossa Sede" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain', borderRadius: '14px' }} />
             </div>
             <div style={{ position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)', background: '#f97316', color: '#fff', fontSize: '10px', fontWeight: 900, padding: '6px 16px', borderRadius: '999px', textTransform: 'uppercase', letterSpacing: '1px' }}>
               Nossa Sede
@@ -148,18 +128,18 @@ export default async function PaginaClinicaModerna({ params }: Props) {
 
           <div style={{ flex: '1 1 300px', textAlign: 'left' }}>
             <h3 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '12px', color: '#ffffff' }}>Visite-nos ou Chame Online</h3>
-            <p style={{ fontSize: '15px', color: '#94a3b8', marginBottom: '28px', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '15px', color: '#a7f3d0', marginBottom: '28px', lineHeight: 1.5 }}>
               Estamos prontos para atender você na nossa clínica ou no conforto do seu lar.
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: '#10b981', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none' }}>
+              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: '#f97316', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none' }}>
                 💬 Chamar no WhatsApp
               </a>
               <a href={mapsURL} target="_blank" rel="noopener noreferrer" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)' }}>
                 📍 Rota no Mapa
               </a>
             </div>
-            <p style={{ fontSize: '12px', color: '#64748b', marginTop: '20px' }}>{lead.endereco}</p>
+            <p style={{ fontSize: '12px', color: '#6ee7b7', marginTop: '20px' }}>📍 {d.enderecoCompleto || lead.endereco}</p>
           </div>
 
         </div>

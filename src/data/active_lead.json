@@ -1,5 +1,5 @@
 {
-  "enviado_em": "2026-11-05T18:01:24-03:00",
+  "enviado_em": "2026-11-07T08:11:44-03:00",
   "lead": {
     "id": "lead_1791578479620800700",
     "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
@@ -19,10 +19,8 @@
     "fotos": [
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto1.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto11.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto12.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto2.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto3.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto5.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto6.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto7.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto8.jpg",
@@ -31,22 +29,20 @@
     "fotos_ambiente": [
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto1.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto11.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto12.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto2.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto3.jpg",
-      "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto5.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto6.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto7.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto8.jpg",
       "/fotos/clinica-renovar-fisioterapia-pilates-e-estetica/foto9.jpg"
     ],
     "criado_em": "2026-10-09T17:41:19.6208007-03:00",
-    "atualizado_em": "2026-11-05T18:01:24.9998415-03:00"
+    "atualizado_em": "2026-11-07T08:11:44.5837397-03:00"
   },
   "nicho_pasta": "clinica",
   "slug": "clinica-renovar-fisioterapia-pilates-e-estetica",
-  "template": "moderno-urban",
-  "url_demo": "https://landing-g67.vercel.app/clinica/clinica-renovar-fisioterapia-pilates-e-estetica/moderno-urban",
-  "url_local": "http://localhost:3000/clinica/clinica-renovar-fisioterapia-pilates-e-estetica/moderno-urban",
+  "template": "minimalista-premium",
+  "url_demo": "https://landing-g67.vercel.app/clinica/clinica-renovar-fisioterapia-pilates-e-estetica/minimalista-premium",
+  "url_local": "http://localhost:3000/clinica/clinica-renovar-fisioterapia-pilates-e-estetica/minimalista-premium",
   "url_oficial": "https://meu-site.vercel.app/clinica-renovar-fisioterapia-pilates-e-estetica"
 }
