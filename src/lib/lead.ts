@@ -25,8 +25,16 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  // Apenas nichos ativos e sem caracteres especiais
-  const pastas = ['barbearia', 'clinica'];
+  // Incluídas todas as pastas de nichos presentes no projeto para evitar retorno nulo no build
+  const pastas = [
+    'barbearia', 
+    'clinica', 
+    'pizzaria', 
+    'restaurante', 
+    'salaoblz', 
+    'consultorio', 
+    'hamburgueria'
+  ];
 
   for (const pasta of pastas) {
     try {
@@ -65,6 +73,7 @@ export function fotoCapa(lead: LeadData): string | null {
 export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const telLimpo = lead?.telefone ? lead.telefone.replace(/\D/g, '') : '';
   const whatsapp = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
+  const totalAvaliacoesReal = lead?.totalAval ?? lead?.total_avaliacoes ?? 0;
 
   return {
     nome: lead?.nome || 'Estabelecimento',
@@ -74,7 +83,8 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
     whatsapp,
     instagram: lead?.instagram || '',
     avaliacao: lead?.avaliacao || 0,
-    totalAval: lead?.totalAval || 0,
+    totalAval: totalAvaliacoesReal,
+    total_avaliacoes: totalAvaliacoesReal,
     reviews: lead?.reviews || [],
     horarios: lead?.horarios || '',
     horariosSemana: lead?.horariosSemana || [],

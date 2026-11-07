@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Clock, Camera, Star, Phone, MapPin, ChevronRight, X, Navigation, Scissors, MessageCircle, Calendar, HeartPulse } from 'lucide-react';
+import { Clock, Camera, Star, MapPin, ChevronRight, X, Navigation, MessageCircle, Calendar, HeartPulse } from 'lucide-react';
 
 export interface TemaInfo {
   fundo: string; 
@@ -12,7 +12,6 @@ export interface TemaInfo {
   serif?: boolean;
 }
 
-// ÍCONE DO INSTAGRAM EM SVG NATIVO
 const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -21,12 +20,17 @@ const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   </svg>
 );
 
-function diaHoje(): string {
-  const dias = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-  return dias[new Date().getDay()];
-}
-
-export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]; tema: TemaInfo }) {
+export default function InfoGoogle({ 
+  d, 
+  fotos, 
+  tema, 
+  semServicos = false 
+}: { 
+  d: any; 
+  fotos: string[]; 
+  tema: TemaInfo;
+  semServicos?: boolean;
+}) {
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
 
@@ -53,8 +57,10 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
   }
 
   const st = safeD.statusAgora || safeD.status_agora || { aberto: true, texto: 'Aberto agora' };
-  const nomeEstabelecimento = safeD.nome || 'Gusmão barbershop';
-  const enderecoBusca = safeD.enderecoCompleto || safeD.endereco || 'R. Eurípedes de Paula, 213 - Jardim Elvira, Osasco - SP';
+  const nomeEstabelecimento = safeD.nome || 'Clínica Renovar';
+  
+  // Garantir o endereço limpo com o CEP formatado
+  const enderecoBusca = safeD.enderecoCompleto || safeD.endereco || 'R. Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775';
   
   const urlOficialMaps = safeD.mapa && safeD.mapa !== '#' 
     ? safeD.mapa 
@@ -62,25 +68,12 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
     
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ', ' + enderecoBusca)}&z=17&output=embed`;
   
-  const defaultReviews = [
-    { autor: 'Maria Fernanda', texto: 'Atendimento excelente! Profissionais muito atenciosos e ambiente super acolhedor.', nota: 5 },
-    { autor: 'Rodrigo Oliveira', texto: 'Profissionais top de linha! Pontualidade e atenção aos detalhes.', nota: 5 },
-    { autor: 'Carlos Eduardo', texto: 'Atendimento atencioso e diferenciado. Recomendo a todos da região.', nota: 5 }
-  ];
-
-  const rawReviews = Array.isArray(safeD.reviews) ? safeD.reviews : (Array.isArray(safeD.avaliacoes) ? safeD.avaliacoes : []);
-  const reviewsList = rawReviews.length > 0 ? rawReviews : defaultReviews;
-  const totalAval = safeD.totalAval || safeD.total_avaliacoes || 84;
-  const telNumero = safeD.tel || safeD.telefone || safeD.phone || '11986483600';
+  const reviewsList = Array.isArray(safeD.reviews) ? safeD.reviews : (Array.isArray(safeD.avaliacoes) ? safeD.avaliacoes : []);
   
-  // DETECÇÃO AUTOMÁTICA DE NICHO
-  const ehClinica = (safeD.nome || '').toLowerCase().includes('clinica') || 
-                    (safeD.nome || '').toLowerCase().includes('fisioterapia') ||
-                    (safeD.nome || '').toLowerCase().includes('estetica') ||
-                    (safeD.categoria || '').toLowerCase().includes('saude') ||
-                    (safeD.categoria || '').toLowerCase().includes('fisio');
+  // GARANTE O NÚMERO 15 QUANDO NÃO HOUVER REVIEWS DE TEXTO RASPADOS
+  const totalAval = Number(safeD.totalAval || safeD.total_avaliacoes || (reviewsList.length > 0 ? reviewsList.length : 15));
+  const telNumero = safeD.tel || safeD.telefone || safeD.phone || '88997110085';
 
-  // INSTAGRAM INTELIGENTE
   const rawInsta = safeD.instagram || safeD.insta || safeD.instaUrl || '';
   let instaLink = '';
   if (rawInsta) {
@@ -89,37 +82,26 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
     instaLink = `https://instagram.com/${nomeEstabelecimento.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "")}`;
   }
 
-  // DINÂMICA DE SERVIÇOS POR NICHO
   const servicosDoLead = Array.isArray(safeD.servicos) && safeD.servicos.length > 0 
-    ? safeD.servicos.map((s: any) => typeof s === 'string' ? { nome: s, desc: 'Atendimento especializado e personalizado.' } : s)
+    ? safeD.servicos.map((s: any) => typeof s === 'string' ? { nome: s, desc: 'Atendimento especializado e personalizado.' } : { nome: s.nome || s.titulo, desc: s.desc || s.descricao })
     : [];
 
-  const servicosBarbearia = [
-    { nome: 'Corte Social', desc: 'Estilo clássico executado com precisão e excelente acabamento.' },
-    { nome: 'Corte com Navalha', desc: 'Acabamento profissional de alta definição e contorno perfeito.' },
-    { nome: 'Cortes Infantis', desc: 'Atendimento especializado e paciente para os mais novos.' },
-    { nome: 'Shampoo & Condicionador', desc: 'Tratamento capilar com produtos específicos para cabelos curtos.' }
+  const servicosClinicaPadrao = [
+    { nome: 'Fisioterapia na Coluna Vertebral', desc: 'Tratamento focado na coluna, alívio contínuo da dor e recuperação do movimento.' },
+    { nome: 'Fisioterapia Traumato-Ortopédica', desc: 'Reabilitação pós-cirúrgica, fraturas, luxações e lesões articulares.' },
+    { nome: 'Atendimento Domiciliar', desc: 'Fisioterapia no conforto do seu lar com flexibilidade e total praticidade.' },
+    { nome: 'Reabilitação do Idoso', desc: 'Treino de equilíbrio, prevenção de quedas e autonomia para a terceira idade.' },
+    { nome: 'Pilates Terapêutico & Clínico', desc: 'Aparelhos completos para postura e flexibilidade com turmas reduzidas.' },
+    { nome: 'Quiropraxia', desc: 'Ajustes articulares focados em restaurar a função da coluna e aliviar dores.' },
+    { nome: 'Ventosaterapia', desc: 'Alívio de tensões musculares, melhora da circulação e relaxamento profundo.' },
+    { nome: 'Estética Avançada', desc: 'Procedimentos faciais e corporais focados no seu cuidado integral.' },
+    { nome: 'Palmilhas Posturais', desc: 'Avaliação biomecânica e confecção de palmilhas sob medida.' }
   ];
 
-  const servicosClinica = [
-    { nome: 'Fisioterapia Geral', desc: 'Reabilitação motora, alívio de dores e tratamento funcional.' },
-    { nome: 'Pilates Clínico', desc: 'Postura, flexibilidade e fortalecimento com acompanhamento profissional.' },
-    { nome: 'Estética Corporal', desc: 'Tratamentos especializados para rejuvenescimento e cuidados com a pele.' },
-    { nome: 'Quiropraxia', desc: 'Ajustes articulares e desalinhamentos da coluna para alívio imediato.' }
-  ];
+  const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : servicosClinicaPadrao;
 
-  const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : (ehClinica ? servicosClinica : servicosBarbearia);
-
-  // ESTILOS DINÂMICOS DE COR CONFORME A MARCA
-  const btnClasse = ehClinica 
-    ? "inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-100 text-xs font-bold transition-all shadow-md"
-    : "inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-bold transition-all shadow-md";
-
-  const iconCor = ehClinica ? "text-emerald-400" : "text-amber-500";
-  const destaqueCor = ehClinica ? "text-emerald-400" : "text-amber-400";
-  const btnCtaCor = ehClinica 
-    ? "w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:scale-[1.01]"
-    : "w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:scale-[1.01]";
+  const btnClasseVerde = "inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/50 bg-[#022c22] hover:bg-[#064e3b] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]";
+  const iconCor = "text-orange-500";
 
   return (
     <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className="w-full select-none relative scroll-smooth">
@@ -128,34 +110,34 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
       <section className="max-w-6xl mx-auto px-6 pt-6 pb-10">
         {st.texto && (
           <div className="text-center mb-6">
-            <span className="inline-flex items-center gap-2 bg-neutral-900 border border-neutral-800 px-4 py-1.5 rounded-full text-xs font-semibold text-neutral-300 shadow-sm">
-              <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-500' : 'bg-red-500'}`} />
+            <span className="inline-flex items-center gap-2 bg-[#022c22] border border-emerald-900/50 px-4 py-1.5 rounded-full text-xs font-semibold text-emerald-300 shadow-sm">
+              <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-400' : 'bg-red-500'}`} />
               {st.texto}
             </span>
           </div>
         )}
         
         <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={() => setHorariosAbertos(!horariosAbertos)} className={btnClasse}>
+          <button onClick={() => setHorariosAbertos(!horariosAbertos)} className={btnClasseVerde}>
             <Clock className={`w-4 h-4 ${iconCor}`} /> Horários
           </button>
-          <a href="#fotos" className={btnClasse}>
-            <Camera className={`w-4 h-4 ${iconCor}`} /> Fotos
+          <a href="#fotos" className={btnClasseVerde}>
+            <Camera className={`w-4 h-4 ${iconCor}`} /> Fotos ({safeFotos.length})
           </a>
-          <a href="#avaliacoes" className={btnClasse}>
-            <Star className={`w-4 h-4 ${iconCor} fill-current`} /> Avaliações
+          <a href="#avaliacoes" className={btnClasseVerde}>
+            <Star className={`w-4 h-4 ${iconCor} fill-current`} /> Avaliações ({totalAval})
           </a>
-          <a href={instaLink} target="_blank" rel="noreferrer" className={btnClasse}>
+          <a href={instaLink} target="_blank" rel="noreferrer" className={btnClasseVerde}>
             <InstagramIcon className={`w-4 h-4 ${iconCor}`} /> Instagram
           </a>
         </div>
 
         {horariosAbertos && (
-          <div className="max-w-md mx-auto mt-6 bg-neutral-900 border border-neutral-800 rounded-2xl p-5 text-neutral-200 shadow-xl">
-            <h3 className={`font-bold text-sm ${destaqueCor} mb-3 flex items-center gap-2`}><Clock className="w-4 h-4"/> Grade de Horários</h3>
+          <div className="max-w-md mx-auto mt-6 bg-[#022c22] border border-emerald-900/60 rounded-2xl p-5 text-neutral-100 shadow-xl">
+            <h3 className="font-bold text-sm text-emerald-400 mb-3 flex items-center gap-2"><Clock className="w-4 h-4"/> Grade de Horários</h3>
             <ul className="space-y-2">
-              {semana.map((l, idx) => (
-                <li key={idx} className="flex justify-between text-xs py-1 border-b border-neutral-800/50 last:border-0 text-neutral-400">
+              {semana.map((l: string, idx: number) => (
+                <li key={idx} className="flex justify-between text-xs py-1 border-b border-emerald-900/40 last:border-0 text-emerald-100/80">
                   <span>{l}</span>
                 </li>
               ))}
@@ -164,64 +146,66 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
         )}
       </section>
 
-      {/* 2. SERVIÇOS REAIS UNIFICADOS */}
-      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
-        <h2 className="text-xl font-black uppercase text-white mb-6 flex items-center gap-2">
-          {ehClinica ? <HeartPulse className={`w-5 h-5 ${iconCor}`} /> : <Scissors className={`w-5 h-5 ${iconCor}`} />} 
-          Serviços
-        </h2>
+      {/* 2. SERVIÇOS E ESPECIALIDADES */}
+      {!semServicos && (
+        <section className="max-w-6xl mx-auto px-6 py-10 border-t border-slate-200">
+          <h2 className="text-xl font-bold tracking-tight text-[#022c22] mb-6 flex items-center gap-2">
+            <HeartPulse className="w-5 h-5 text-orange-500" />
+            Nossas Especialidades
+          </h2>
 
-        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {servicosReais.map((s: any, idx: number) => (
-              <div 
-                key={idx} 
-                className="bg-neutral-950/60 border border-neutral-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/40 transition-colors group"
-              >
-                <div>
-                  <h3 className="text-white font-bold text-sm mb-2 group-hover:text-emerald-400 transition-colors">
-                    {s.nome}
-                  </h3>
-                  <p className="text-neutral-400 text-xs leading-relaxed">
-                    {s.desc}
-                  </p>
+          <div className="bg-slate-100/70 border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {servicosReais.map((s: any, idx: number) => (
+                <div 
+                  key={idx} 
+                  className="bg-[#022c22] border border-emerald-900/60 rounded-2xl p-5 flex flex-col justify-between hover:border-orange-500 transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01]"
+                >
+                  <div>
+                    <h3 className="text-white font-bold text-sm mb-2 group-hover:text-orange-400 transition-colors">
+                      {s.nome}
+                    </h3>
+                    <p className="text-emerald-100/80 text-xs leading-relaxed">
+                      {s.desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="pt-2">
-            <a 
-              href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um atendimento na ${nomeEstabelecimento}.`)}`} 
-              target="_blank" 
-              rel="noreferrer" 
-              className={btnCtaCor}
-            >
-              <Calendar className="w-4 h-4"/>
-              <span>Agendar Qualquer Serviço via WhatsApp</span>
-              <ChevronRight className="w-4 h-4"/>
-            </a>
+            <div className="pt-2">
+              <a 
+                href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar uma consulta na ${nomeEstabelecimento}.`)}`} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-orange-950/20 hover:scale-[1.005]"
+              >
+                <Calendar className="w-4 h-4"/>
+                <span>Agendar Consulta / Avaliação via WhatsApp</span>
+                <ChevronRight className="w-4 h-4"/>
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* 3. GALERIA DE FOTOS */}
+      {/* 3. GALERIA COMPLETA DE FOTOS */}
       {safeFotos.length > 0 && (
-        <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
-          <h2 className="text-xl font-black uppercase text-white mb-6">Galeria</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {safeFotos.map((f, i) => (
+        <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-slate-200">
+          <h2 className="text-xl font-bold tracking-tight text-[#022c22] mb-6">Galeria</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {safeFotos.map((f: string, i: number) => (
               <div 
                 key={i} 
                 onClick={() => setFotoModal(f)} 
-                className="h-48 rounded-2xl overflow-hidden cursor-pointer border border-neutral-800 group relative shadow-md"
+                className="aspect-square rounded-2xl overflow-hidden cursor-pointer border border-slate-200 hover:border-orange-500 group relative shadow-sm bg-white"
               >
                 <img 
                   src={f} 
                   alt={`Foto ${i}`} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 brightness-90 group-hover:brightness-105" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                 />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Camera className="w-6 h-6 text-white drop-shadow-md"/>
                 </div>
               </div>
@@ -241,33 +225,47 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
       )}
 
       {/* 4. AVALIAÇÕES DO GOOGLE */}
-      <section id="avaliacoes" className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900">
-        <h2 className="text-xl font-black uppercase text-white mb-6">Google ({totalAval})</h2>
+      <section id="avaliacoes" className="max-w-6xl mx-auto px-6 py-10 border-t border-slate-200">
+        <h2 className="text-xl font-bold tracking-tight text-[#022c22] mb-6">Avaliações no Google ({totalAval})</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {reviewsList.map((r: any, i: number) => (
-            <div key={i} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 shadow-md flex flex-col justify-between">
-              <div>
-                <div className="flex text-emerald-400 gap-1 mb-3">
-                  {[...Array(r.nota || 5)].map((_, idx) => (
-                    <Star key={idx} className={`w-4 h-4 fill-current ${ehClinica ? 'text-emerald-400' : 'text-amber-400'}`} />
-                  ))}
+          {reviewsList.length > 0 ? (
+            reviewsList.map((r: any, i: number) => (
+              <div 
+                key={i} 
+                className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex text-amber-400 gap-1 mb-3">
+                    {[...Array(r.nota || 5)].map((_, idx) => (
+                      <Star key={idx} className="w-4 h-4 fill-current text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-600 mb-4 italic leading-relaxed">“{r.texto || r.text}”</p>
                 </div>
-                <p className="text-xs text-neutral-300 mb-4 italic leading-relaxed">“{r.texto || r.text}”</p>
+                <strong className="text-xs text-[#022c22] border-t border-slate-100 pt-3 font-semibold">{r.autor || r.author}</strong>
               </div>
-              <strong className="text-xs text-white border-t border-neutral-800/60 pt-3">{r.autor || r.author}</strong>
+            ))
+          ) : (
+            <div className="col-span-full bg-white border border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-600 shadow-sm">
+              <div className="flex justify-center text-amber-400 gap-1 mb-2">
+                {[...Array(5)].map((_, idx) => (
+                  <Star key={idx} className="w-4 h-4 fill-current text-amber-400" />
+                ))}
+              </div>
+              <strong>Nota 5.0 baseada em {totalAval} avaliações no Google Maps.</strong>
             </div>
-          ))}
+          )}
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO COM MAPA NOTURNO */}
-      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-neutral-900 pb-24">
+      {/* 5. LOCALIZAÇÃO COM MAPA NOTURNO PREMIUM */}
+      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-slate-200 pb-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-xl font-black uppercase text-white">Onde Estamos</h2>
-            <p className="text-xs text-neutral-400 flex items-center gap-1.5 mt-1">
-              <MapPin className={`w-4 h-4 shrink-0 ${iconCor}`} />
-              {enderecoBusca}
+            <h2 className="text-xl font-bold tracking-tight text-[#022c22]">Onde Estamos</h2>
+            <p className="text-xs text-slate-600 flex items-center gap-1.5 mt-1" style={{ fontFamily: 'system-ui, sans-serif' }}>
+              <MapPin className="w-4 h-4 shrink-0 text-orange-500" />
+              <span>{enderecoBusca}</span>
             </p>
           </div>
           
@@ -275,13 +273,13 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
             href={urlOficialMaps} 
             target="_blank" 
             rel="noreferrer" 
-            className={ehClinica ? "inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-black text-xs font-black px-6 py-3 rounded-xl shadow-lg transition-transform hover:scale-105" : "inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-black px-6 py-3 rounded-xl shadow-lg transition-transform hover:scale-105"}
+            className={btnClasseVerde}
           >
-            <Navigation className="w-4 h-4 fill-black"/> Abrir no Google Maps Oficial
+            <Navigation className="w-4 h-4 text-orange-500 fill-orange-500"/> Abrir no Google Maps
           </a>
         </div>
 
-        <div className="rounded-2xl overflow-hidden border border-neutral-800 h-[400px] bg-neutral-900 shadow-2xl relative">
+        <div className="rounded-2xl overflow-hidden border border-slate-800 h-[380px] bg-neutral-900 shadow-xl relative">
           <iframe 
             src={mapEmbedUrl} 
             width="100%" 
@@ -295,9 +293,9 @@ export default function InfoGoogle({ d, fotos, tema }: { d: any; fotos: string[]
       </section>
 
       {/* DOCK MOBILE FIXO */}
-      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
-        <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><MessageCircle className="w-4 h-4"/> WhatsApp</a>
-        <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`flex-1 bg-neutral-800 ${iconCor} border border-neutral-700 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition`}><Navigation className="w-4 h-4"/> Como Chegar</a>
+      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-white/95 backdrop-blur-xl border border-slate-200 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+        <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><MessageCircle className="w-4 h-4"/> WhatsApp</a>
+        <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-[#022c22] text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"><Navigation className="w-4 h-4 text-orange-500"/> Como Chegar</a>
       </div>
 
     </div>
