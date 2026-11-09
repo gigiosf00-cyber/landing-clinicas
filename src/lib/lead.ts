@@ -25,7 +25,7 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  // Apenas as pastas reais existentes em src/data
+  // Pastas com ficheiros JSON ativos em src/data
   const pastas = [
     'barbearia', 
     'clinica', 
@@ -71,11 +71,14 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const telLimpo = lead?.telefone ? lead.telefone.replace(/\D/g, '') : '';
   const whatsapp = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
   const totalAvaliacoesReal = lead?.totalAval ?? lead?.total_avaliacoes ?? 0;
+  const nichoDetectado = lead?.nicho || lead?.categoria || '';
 
   return {
     nome: lead?.nome || 'Estabelecimento',
     endereco: lead?.endereco || '',
     enderecoCompleto: lead?.endereco || '',
+    cidade: lead?.cidade || '',
+    estado: lead?.estado || '',
     tel: telLimpo,
     whatsapp,
     instagram: lead?.instagram || '',
@@ -90,7 +93,8 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
     mapa: lead?.mapa || '#',
     mapaEmbed: lead?.mapaEmbed || '',
     streetView: lead?.streetView || '',
-    nicho: lead?.nicho || lead?.categoria || ''
+    nicho: nichoDetectado,
+    categoria: lead?.categoria || nichoDetectado
   };
 }
 
