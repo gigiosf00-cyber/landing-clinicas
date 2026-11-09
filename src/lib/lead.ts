@@ -25,12 +25,10 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  // Pastas com ficheiros JSON ativos em src/data
+  // Apenas as pastas com JSONs ativos em src/data
   const pastas = [
     'barbearia', 
-    'clinica', 
-    'consultorio', 
-    'hamburgueria'
+    'clinica'
   ];
 
   for (const pasta of pastas) {
@@ -120,8 +118,6 @@ export const servicosBarbearia = [
     texto: 'Tratamento revitalizante para cabelos e couro cabeludo.'
   }
 ];
-
-export const servicosConsultorio = servicosBarbearia;
 
 export function fotosPorCategoria(fotos: string[]) {
   if (!Array.isArray(fotos)) {
