@@ -1,151 +1,131 @@
 import { carregarLead, obterFotos, dadosBase, obterLogo } from '@/lib/lead';
 import InfoGoogle from '@/components/InfoGoogle';
+import { Scissors, MapPin, Star, AlertTriangle, ChevronRight } from 'lucide-react';
 
-interface Props {
-  params: Promise<{
-    cliente: string;
-  }>;
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default async function PaginaClinicaModerna({ params }: Props) {
+interface PageProps { params: Promise<{ cliente: string }> }
+
+export default async function BarbeariaModernoUrbanPage({ params }: PageProps) {
   const { cliente } = await params;
-  const lead: any = carregarLead(cliente);
+  const lead = carregarLead(cliente);
 
   if (!lead) {
     return (
-      <div style={{ background: 'linear-gradient(135deg, #022c22 0%, #064e3b 100%)', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
-        <h2>Nenhum cadastro ativo encontrado para "{cliente}".</h2>
-        <p style={{ marginTop: '10px', color: '#cbd5e1' }}>
-          Certifique-se de que o ficheiro <strong>{cliente}.json</strong> existe dentro da pasta <strong>src/data/clinica/</strong>.
-        </p>
+      <div className="min-h-screen bg-black flex items-center justify-center p-6 text-neutral-200 font-sans">
+        <div className="max-w-lg bg-neutral-900 border border-amber-500/30 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
+          <AlertTriangle className="w-12 h-12 text-amber-400 mx-auto" />
+          <h1 className="text-xl font-bold text-white">Lead não encontrado</h1>
+        </div>
       </div>
     );
   }
 
-  const nomeExibir = lead.nome || 'Clínica Renovar - Fisioterapia, Pilates e Estética';
-  const telLimpo = lead.telefone ? lead.telefone.replace(/\D/g, '') : '';
-  const whatsappURL = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(`Olá! Vi o site da ${nomeExibir} e gostaria de agendar uma consulta.`)}` : '#';
-  const mapsURL = lead.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.endereco || nomeExibir)}`;
+  const fotos = obterFotos(lead);
+  const logo = obterLogo(lead);
+  const d = dadosBase(lead, `Olá! Gostaria de agendar um horário na ${lead.nome}.`);
 
-  const corLaranjaOficial = '#f97316'; 
-  const corTextoVerde = '#064e3b'; 
-
-  const pastaImagens = '/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce';
-  const fotoLogotipo = obterLogo(lead) || ((lead.fotos && lead.fotos.length) ? '' : `${pastaImagens}/renovar8.jpg`);
-  const fotosTodas = obterFotos(lead);
-  
-  const d = dadosBase(lead, `Olá! Vi o site da ${lead.nome} e gostaria de agendar uma consulta.`);
-
-  // FACHADA REAL NA CAPA DO HERO E NA SEDE
-  const fotoFachadaReal = (lead.fotos && lead.fotos[0]) || `${pastaImagens}/foto1.jpg`; 
-
-  // TEMA CLARO E HARMONIOSO
-  const temaClaroInfo = {
-    fundo: '#f1f5f9',
-    card: '#ffffff',
-    borda: '#cbd5e1',
-    texto: '#022c22',
-    sub: '#475569',
-    destaque: '#10b981',
+  // TEMA DE PALETA DE CORES PARA BARBEARIA URBAN
+  const temaModerno = {
+    fundo: '#000000', 
+    card: '#18181b', 
+    borda: '#27272a', 
+    texto: '#ffffff', 
+    sub: '#a1a1aa', 
+    destaque: '#f59e0b', 
     serif: false
   };
 
+  const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Jardim Elvira - Osasco, SP';
+
   return (
-    <div style={{ backgroundColor: '#f1f5f9', color: '#0f172a', minHeight: '100vh', fontFamily: '"Inter", system-ui, sans-serif' }}>
-      
-      {/* BANNER SUPERIOR */}
-      <div style={{ background: 'linear-gradient(90deg, #022c22 0%, #064e3b 100%)', color: '#34d399', textAlign: 'center', padding: '10px 16px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.05em' }}>
-        ⚡ PROPOSTA DE DESIGN MODERNO PARA: {nomeExibir.toUpperCase()}
-      </div>
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-amber-500 selection:text-black">
 
-      {/* HEADER FIXO */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {fotoLogotipo && <img src={fotoLogotipo} alt={`Logo ${nomeExibir}`} style={{ maxHeight: '50px', width: 'auto', objectFit: 'contain' }} />}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <span style={{ fontSize: '15px', fontWeight: 900, color: corTextoVerde, letterSpacing: '0.3px' }}>
-                {nomeExibir}
-              </span>
-              <span style={{ fontSize: '10px', color: corLaranjaOficial, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.8px', marginTop: '2px' }}>
-                ATENDIMENTO DOMICILIAR • REABILITAÇÃO DO IDOSO • QUIROPRAXIA
-              </span>
-            </div>
+      {/* HEADER MINIMALISTA (SEM BOTÃO DUPLICADO) */}
+      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-neutral-800">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            {logo ? <img src={logo} alt="Logo" className="h-10 w-auto max-w-[140px] object-contain" /> : <Scissors className="w-6 h-6 text-amber-500" />}
+            <span className="text-lg font-black uppercase text-white tracking-wider">{lead.nome}</span>
           </div>
-
-          <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '10px 24px', borderRadius: '999px', textDecoration: 'none' }}>
-            Agendar Agora
-          </a>
         </div>
       </header>
 
-      {/* HERO SECTION DA CLÍNICA COM FOTO DA FACHADA */}
-      <section style={{ background: 'linear-gradient(135deg, #022c22 0%, #065f46 100%)', color: '#ffffff', padding: '80px 20px 100px 20px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '50px', alignItems: 'center', position: 'relative', zIndex: 10 }}>
+      {/* HERO SECTION MODERNO URBAN */}
+      <section className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="lg:col-span-7 space-y-6">
           
-          <div>
-            <span style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#6ee7b7', fontSize: '11px', fontWeight: 800, padding: '8px 18px', borderRadius: '999px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '20px', letterSpacing: '1px' }}>
-              ✦ Especialista em eliminar a dor e devolver seu bem-estar
-            </span>
-            <h1 style={{ fontSize: '46px', fontWeight: 900, lineHeight: 1.15, marginBottom: '24px', color: '#ffffff', letterSpacing: '-1px' }}>
-              Sua <span style={{ color: '#34d399' }}>Qualidade de Vida</span> levada a sério.
-            </h1>
-            <p style={{ fontSize: '17px', color: '#d1fae5', lineHeight: 1.6, marginBottom: '40px', opacity: 0.9 }}>
-              Na <strong>{nomeExibir}</strong>, unimos excelência clínica e atendimento humanizado para a sua plena recuperação.
-            </p>
-            <div>
-              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: 'linear-gradient(90deg, #ea580c 0%, #f97316 100%)', color: '#fff', fontWeight: 800, fontSize: '16px', padding: '18px 40px', borderRadius: '999px', textDecoration: 'none' }}>
-                Falar com Especialista
-              </a>
+          {/* BADGES DE AVALIAÇÃO E LOCALIZAÇÃO */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="inline-flex items-center gap-2 bg-zinc-900 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-amber-400 shadow-md">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <span>{d.avaliacao > 0 ? d.avaliacao.toFixed(1) : '4.5'} Google Maps</span>
+              <span className="text-zinc-600">•</span>
+              <span className="text-zinc-300">{d.totalAval || 84} avaliações</span>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 text-xs text-zinc-300 bg-zinc-900/80 px-3.5 py-1.5 rounded-full border border-zinc-800">
+              <MapPin className="w-3.5 h-3.5 text-amber-500" />
+              <span>{localSimples}</span>
             </div>
           </div>
 
-          <div style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', width: '100%', transform: 'translateY(-10px)' }}>
-            <img src={fotoFachadaReal} alt="Fachada da Clínica" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
-          </div>
+          <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white leading-none">
+            {lead.nome}
+          </h1>
 
+          <div className="flex flex-wrap gap-4 pt-2">
+            {d.tel && (
+              <a 
+                href={d.whatsapp} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black px-7 py-4 rounded-xl transition text-xs uppercase tracking-wider flex items-center gap-2 shadow-xl shadow-amber-500/20 hover:scale-105"
+              >
+                <span>AGENDAMENTO DIRETO NO WHATSAPP</span>
+                <ChevronRight className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div className="lg:col-span-5">
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes slow-pan-moderno {
+              0% { transform: scale(1); }
+              100% { transform: scale(1.15); }
+            }
+            .animate-slow-pan-mod {
+              animation: slow-pan-moderno 15s ease-in-out infinite alternate;
+            }
+          `}} />
+          <div className="relative rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl h-[380px] bg-zinc-900">
+            {fotos[0] ? (
+              <img src={fotos[0]} alt={lead.nome} className="w-full h-full object-cover animate-slow-pan-mod brightness-90 contrast-110" />
+            ) : (
+              <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-600">Sem Imagem</div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* COMPONENTE PRINCIPAL (RÁPIDOS, ESPECIALIDADES COM HOVER LARANJA, GALERIA, AVALIAÇÕES E MAPA) */}
-      <InfoGoogle d={d} fotos={fotosTodas} tema={temaClaroInfo} />
+      {/* COMPONENTE PRINCIPAL (SERVIÇOS UNIFICADOS, GALERIA, AVALIAÇÕES E MAPA NOTURNO) */}
+      <InfoGoogle d={d} fotos={fotos} tema={temaModerno} prefixo="barbearia" />
 
-      {/* CARD FINAL - NOSSA SEDE */}
-      <section style={{ padding: '40px 20px 80px 20px' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: '32px', padding: '40px', boxShadow: '0 20px 40px rgba(15, 23, 42, 0.2)', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '40px', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-          
-          <div style={{ width: '260px', flexShrink: 0, position: 'relative' }}>
-            <div style={{ width: '100%', height: 'auto', borderRadius: '20px', overflow: 'hidden', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
-              <img src={fotoFachadaReal} alt="Fachada" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
-            </div>
-            <div style={{ position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)', background: '#f97316', color: '#fff', fontSize: '10px', fontWeight: 900, padding: '6px 16px', borderRadius: '999px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Nossa Sede
-            </div>
+      {/* CALL TO ACTION RODAPÉ */}
+      <section className="max-w-6xl mx-auto px-6 py-12">
+        <div className="bg-gradient-to-r from-amber-600 to-amber-500 rounded-3xl p-10 text-center shadow-2xl relative overflow-hidden">
+          <div className="relative z-10">
+            <h2 className="text-3xl sm:text-4xl font-black text-zinc-950 uppercase tracking-tight mb-3">Pronto para o próximo nível?</h2>
+            <p className="text-zinc-950/80 text-sm font-medium">Agende agora mesmo. Atendimento rápido e sem complicação.</p>
+            <a href={d.whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-zinc-950 hover:bg-zinc-900 text-white font-black px-8 py-4 rounded-xl text-xs uppercase tracking-wider mt-6 transition shadow-2xl hover:scale-105">
+              <span>Agendar via WhatsApp</span>
+              <ChevronRight className="w-4 h-4 text-amber-400" />
+            </a>
           </div>
-
-          <div style={{ flex: '1 1 300px', textAlign: 'left' }}>
-            <h3 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '12px', color: '#ffffff' }}>Visite-nos ou Chame Online</h3>
-            <p style={{ fontSize: '15px', color: '#94a3b8', marginBottom: '28px', lineHeight: 1.5 }}>
-              Estamos prontos para atender você na nossa clínica ou no conforto do seu lar.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: '#10b981', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none' }}>
-                💬 Chamar no WhatsApp
-              </a>
-              <a href={mapsURL} target="_blank" rel="noopener noreferrer" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)' }}>
-                📍 Rota no Mapa
-              </a>
-            </div>
-            <p style={{ fontSize: '12px', color: '#64748b', marginTop: '20px' }}>{lead.endereco}</p>
-          </div>
-
         </div>
       </section>
-
-      <footer style={{ textAlign: 'center', padding: '20px', backgroundColor: '#020617', color: '#475569', fontSize: '12px', fontWeight: 600 }}>
-        <p>© {new Date().getFullYear()} {nomeExibir}. Todos os direitos reservados.</p>
-      </footer>
     </div>
   );
 }
