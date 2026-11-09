@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Clock, Camera, Star, MapPin, ChevronRight, X, Navigation, MessageCircle, Calendar, HeartPulse, Scissors, Utensils } from 'lucide-react';
 
 export interface TemaInfo {
@@ -76,17 +76,18 @@ export default function InfoGoogle({
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
 
-  const safeD = useMemo(() => d || {}, [d]);
-  const safeFotos = useMemo(() => Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []), [fotos, safeD.fotos]);
+  const safeD = d || {};
+  const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
 
-  const semana = useMemo(() => {
-    const rawSemana = safeD.horariosSemana || safeD.horarios_semana;
-    if (Array.isArray(rawSemana) && rawSemana.length > 0) return rawSemana;
-    if (typeof safeD.horarios === 'string' && safeD.horarios.trim().length > 0) {
-      const sep = safeD.horarios.includes('•') ? '•' : safeD.horarios.includes('\n') ? '\n' : ',';
-      return safeD.horarios.split(sep).map((s: string) => s.trim()).filter(Boolean);
-    }
-    return [
+  let semana: string[] = [];
+  const rawSemana = safeD.horariosSemana || safeD.horarios_semana;
+  if (Array.isArray(rawSemana) && rawSemana.length > 0) {
+    semana = rawSemana;
+  } else if (typeof safeD.horarios === 'string' && safeD.horarios.trim().length > 0) {
+    const sep = safeD.horarios.includes('•') ? '•' : safeD.horarios.includes('\n') ? '\n' : ',';
+    semana = safeD.horarios.split(sep).map((s: string) => s.trim()).filter(Boolean);
+  } else {
+    semana = [
       'segunda-feira: 08:00 – 19:00',
       'terça-feira: 08:00 – 19:00',
       'quarta-feira: 08:00 – 19:00',
@@ -95,7 +96,7 @@ export default function InfoGoogle({
       'sábado: 08:00 – 13:00',
       'domingo: Fechado'
     ];
-  }, [safeD]);
+  }
 
   const st = safeD.statusAgora || safeD.status_agora || { aberto: true, texto: 'Aberto agora' };
   const nomeEstabelecimento = safeD.nome || 'Estabelecimento';
@@ -115,94 +116,88 @@ export default function InfoGoogle({
   const telNumero = safeD.tel || safeD.telefone || safeD.phone || '';
 
   const rawInsta = safeD.instagram || safeD.insta || safeD.instaUrl || '';
-  const instaLink = useMemo(() => {
-    if (rawInsta) return rawInsta.startsWith('http') ? rawInsta : `https://instagram.com/${rawInsta.replace('@', '').trim()}`;
-    return `https://instagram.com/${nomeEstabelecimento.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "")}`;
-  }, [rawInsta, nomeEstabelecimento]);
+  let instaLink = '';
+  if (rawInsta) {
+    instaLink = rawInsta.startsWith('http') ? rawInsta : `https://instagram.com/${rawInsta.replace('@', '').trim()}`;
+  } else {
+    instaLink = `https://instagram.com/${nomeEstabelecimento.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "")}`;
+  }
 
-  const depoimentosParaExibir = useMemo(() => {
-    const reviewsReais = Array.isArray(safeD.reviews) && safeD.reviews.length > 0 
-      ? safeD.reviews 
-      : (Array.isArray(safeD.avaliacoes) && safeD.avaliacoes.length > 0 ? safeD.avaliacoes : []);
-    if (reviewsReais.length > 0) return reviewsReais;
-    return termoBuscaNicho.includes('barbearia') || termoBuscaNicho.includes('barber') ? REVIEWS_BARBEARIA : REVIEWS_CLINICA;
-  }, [safeD.reviews, safeD.avaliacoes, termoBuscaNicho]);
+  const reviewsReais = Array.isArray(safeD.reviews) && safeD.reviews.length > 0 
+    ? safeD.reviews 
+    : (Array.isArray(safeD.avaliacoes) && safeD.avaliacoes.length > 0 ? safeD.avaliacoes : []);
+  
+  const depoimentosParaExibir = reviewsReais.length > 0 
+    ? reviewsReais 
+    : (termoBuscaNicho.includes('barbearia') || termoBuscaNicho.includes('barber') ? REVIEWS_BARBEARIA : REVIEWS_CLINICA);
 
-  const configNicho = useMemo(() => {
-    if (termoBuscaNicho.includes('barbearia') || termoBuscaNicho.includes('barbeiro') || termoBuscaNicho.includes('barber')) {
-      return {
-        servicosPadrao: SERVICOS_BARBEARIA,
-        tituloSecao: 'Nossos Serviços',
-        textoBotaoAgendar: 'Agendar Horário via WhatsApp',
-        IconeHeader: Scissors,
-        estiloCores: {
-          bgCard: 'bg-[#18181b]',
-          bordaCard: 'border-zinc-800',
-          hoverBorda: 'hover:border-amber-500',
-          textoTituloGeral: 'text-amber-500',
-          textoTituloCard: 'text-zinc-100 group-hover:text-amber-400',
-          textoDescCard: 'text-zinc-400',
-          btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-800 bg-[#18181b] hover:bg-zinc-800 hover:border-amber-500 text-zinc-100 text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
-          btnWhatsapp: 'w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
-          corIcone: 'text-amber-500',
-          tagStatus: 'bg-[#18181b] border-zinc-800 text-amber-400',
-          gradeHorarioBg: 'bg-[#18181b] border-zinc-800',
-          gradeHorarioTexto: 'text-amber-400'
-        }
-      };
-    }
-    if (termoBuscaNicho.includes('hamburguer') || termoBuscaNicho.includes('burger') || termoBuscaNicho.includes('pizza') || termoBuscaNicho.includes('restaurante')) {
-      return {
-        servicosPadrao: SERVICOS_HAMBURGUERIA,
-        tituloSecao: 'Cardápio & Destaques',
-        textoBotaoAgendar: 'Fazer Pedido via WhatsApp',
-        IconeHeader: Utensils,
-        estiloCores: {
-          bgCard: 'bg-[#2a1208]',
-          bordaCard: 'border-amber-900/60',
-          hoverBorda: 'hover:border-orange-500',
-          textoTituloGeral: 'text-orange-500',
-          textoTituloCard: 'text-white group-hover:text-amber-400',
-          textoDescCard: 'text-amber-100/80',
-          btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-amber-900/50 bg-[#2a1208] hover:bg-[#431c0a] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
-          btnWhatsapp: 'w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
-          corIcone: 'text-orange-500',
-          tagStatus: 'bg-[#2a1208] border-amber-900/50 text-amber-400',
-          gradeHorarioBg: 'bg-[#2a1208] border-amber-900/60',
-          gradeHorarioTexto: 'text-amber-400'
-        }
-      };
-    }
-    return {
-      servicosPadrao: SERVICOS_CLINICA,
-      tituloSecao: 'Nossas Especialidades',
-      textoBotaoAgendar: 'Agendar Consulta / Avaliação via WhatsApp',
-      IconeHeader: HeartPulse,
-      estiloCores: {
-        bgCard: 'bg-[#022c22]',
-        bordaCard: 'border-emerald-900/60',
-        hoverBorda: 'hover:border-orange-500',
-        textoTituloGeral: 'text-[#022c22]',
-        textoTituloCard: 'text-white group-hover:text-orange-400',
-        textoDescCard: 'text-emerald-100/80',
-        btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/50 bg-[#022c22] hover:bg-[#064e3b] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
-        btnWhatsapp: 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
-        corIcone: 'text-orange-500',
-        tagStatus: 'bg-[#022c22] border-emerald-900/50 text-emerald-300',
-        gradeHorarioBg: 'bg-[#022c22] border-emerald-900/60',
-        gradeHorarioTexto: 'text-emerald-400'
-      }
+  let servicosPadraoNicho = SERVICOS_CLINICA;
+  let tituloSecao = 'Nossas Especialidades';
+  let textoBotaoAgendar = 'Agendar Consulta / Avaliação via WhatsApp';
+  let IconeHeader = HeartPulse;
+
+  let estiloCores = {
+    bgCard: 'bg-[#022c22]',
+    bordaCard: 'border-emerald-900/60',
+    hoverBorda: 'hover:border-orange-500',
+    textoTituloGeral: 'text-[#022c22]',
+    textoTituloCard: 'text-white group-hover:text-orange-400',
+    textoDescCard: 'text-emerald-100/80',
+    btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/50 bg-[#022c22] hover:bg-[#064e3b] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
+    btnWhatsapp: 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
+    corIcone: 'text-orange-500',
+    tagStatus: 'bg-[#022c22] border-emerald-900/50 text-emerald-300',
+    gradeHorarioBg: 'bg-[#022c22] border-emerald-900/60',
+    gradeHorarioTexto: 'text-emerald-400'
+  };
+
+  if (termoBuscaNicho.includes('barbearia') || termoBuscaNicho.includes('barbeiro') || termoBuscaNicho.includes('barber')) {
+    servicosPadraoNicho = SERVICOS_BARBEARIA;
+    tituloSecao = 'Nossos Serviços';
+    textoBotaoAgendar = 'Agendar Horário via WhatsApp';
+    IconeHeader = Scissors;
+
+    estiloCores = {
+      bgCard: 'bg-[#18181b]',
+      bordaCard: 'border-zinc-800',
+      hoverBorda: 'hover:border-amber-500',
+      textoTituloGeral: 'text-amber-500',
+      textoTituloCard: 'text-zinc-100 group-hover:text-amber-400',
+      textoDescCard: 'text-zinc-400',
+      btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-800 bg-[#18181b] hover:bg-zinc-800 hover:border-amber-500 text-zinc-100 text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
+      btnWhatsapp: 'w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
+      corIcone: 'text-amber-500',
+      tagStatus: 'bg-[#18181b] border-zinc-800 text-amber-400',
+      gradeHorarioBg: 'bg-[#18181b] border-zinc-800',
+      gradeHorarioTexto: 'text-amber-400'
     };
-  }, [termoBuscaNicho]);
+  } else if (termoBuscaNicho.includes('hamburguer') || termoBuscaNicho.includes('burger') || termoBuscaNicho.includes('pizza') || termoBuscaNicho.includes('restaurante')) {
+    servicosPadraoNicho = SERVICOS_HAMBURGUERIA;
+    tituloSecao = 'Cardápio & Destaques';
+    textoBotaoAgendar = 'Fazer Pedido via WhatsApp';
+    IconeHeader = Utensils;
 
-  const servicosReais = useMemo(() => {
-    if (Array.isArray(safeD.servicos) && safeD.servicos.length > 0) {
-      return safeD.servicos.map((s: any) => typeof s === 'string' ? { nome: s, desc: 'Atendimento especializado e de alta qualidade.' } : { nome: s.nome || s.titulo, desc: s.desc || s.descricao });
-    }
-    return configNicho.servicosPadrao;
-  }, [safeD.servicos, configNicho.servicosPadrao]);
+    estiloCores = {
+      bgCard: 'bg-[#2a1208]',
+      bordaCard: 'border-amber-900/60',
+      hoverBorda: 'hover:border-orange-500',
+      textoTituloGeral: 'text-orange-500',
+      textoTituloCard: 'text-white group-hover:text-amber-400',
+      textoDescCard: 'text-amber-100/80',
+      btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-amber-900/50 bg-[#2a1208] hover:bg-[#431c0a] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
+      btnWhatsapp: 'w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
+      corIcone: 'text-orange-500',
+      tagStatus: 'bg-[#2a1208] border-amber-900/50 text-amber-400',
+      gradeHorarioBg: 'bg-[#2a1208] border-amber-900/60',
+      gradeHorarioTexto: 'text-amber-400'
+    };
+  }
 
-  const { estiloCores, IconeHeader, tituloSecao, textoBotaoAgendar } = configNicho;
+  const servicosDoLead = Array.isArray(safeD.servicos) && safeD.servicos.length > 0 
+    ? safeD.servicos.map((s: any) => typeof s === 'string' ? { nome: s, desc: 'Atendimento especializado e de alta qualidade.' } : { nome: s.nome || s.titulo, desc: s.desc || s.descricao })
+    : [];
+
+  const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : servicosPadraoNicho;
 
   return (
     <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className="w-full select-none relative scroll-smooth">

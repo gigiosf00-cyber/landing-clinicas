@@ -25,18 +25,12 @@ export interface LeadData {
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  // Incluídas absolutamente TODAS as rotas mapeadas em src/app para não falhar o build
+  // Apenas as pastas reais existentes em src/data
   const pastas = [
     'barbearia', 
     'clinica', 
     'consultorio', 
-    'hamburgueria', 
-    'lanchonete', 
-    'ofic-elétrica', 
-    'ofina-mecanica', 
-    'pizzaria', 
-    'restaurante', 
-    'salaoblz'
+    'hamburgueria'
   ];
 
   for (const pasta of pastas) {
@@ -95,7 +89,8 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
     resumo: lead?.resumo || '',
     mapa: lead?.mapa || '#',
     mapaEmbed: lead?.mapaEmbed || '',
-    streetView: lead?.streetView || ''
+    streetView: lead?.streetView || '',
+    nicho: lead?.nicho || lead?.categoria || ''
   };
 }
 
