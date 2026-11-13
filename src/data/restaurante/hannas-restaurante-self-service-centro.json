@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-11T21:34:30-03:00",
+  "lead": {
+    "id": "lead_1791577470185669700",
+    "nome": "Hanna's Restaurante | Self Service | Centro",
+    "endereco": "Hanna's Restaurante | Self Service | Centro - R. Major Facundo, 736 - Centro, Fortaleza - CE, 60025-100",
+    "telefone": "(85) 3454-2122",
+    "nicho": "",
+    "cidade": "Fortaleza - CE",
+    "estado": "",
+    "categoria": "Buffet restaurant",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "criado_em": "2026-10-09T17:24:30.1856697-03:00",
+    "atualizado_em": "2026-11-11T21:34:30.3702348-03:00"
+  },
+  "nicho_pasta": "restaurante",
+  "slug": "hannas-restaurante-self-service-centro",
+  "template": "moderno-urban",
+  "url_demo": "https://www.gef67.com.br/restaurante/hannas-restaurante-self-service-centro/moderno-urban",
+  "url_local": "http://localhost:3000/restaurante/hannas-restaurante-self-service-centro/moderno-urban",
+  "url_oficial": "https://meu-site.vercel.app/hannas-restaurante-self-service-centro"
+}

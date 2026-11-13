@@ -17,30 +17,49 @@ export interface LeadData {
   mapa?: string;
   mapaEmbed?: string;
   streetView?: string;
-  nicho?: string;            // Opcional
-  cidade?: string;           // Opcional
-  estado?: string;           // Opcional
-  categoria?: string;        // Opcional
-  total_avaliacoes?: number; // Opcional
+  nicho?: string;
+  cidade?: string;
+  estado?: string;
+  categoria?: string;
+  total_avaliacoes?: number;
 }
 
 export function carregarLead(cliente: string): LeadData | null {
-  // Apenas as pastas com JSONs ativos em src/data
-  const pastas = [
-    'barbearia', 
-    'clinica'
-  ];
+  const dataDir = path.join(process.cwd(), 'src', 'data');
 
-  for (const pasta of pastas) {
-    try {
-      const filePath = path.join(process.cwd(), 'src', 'data', pasta, `${cliente}.json`);
-      if (fs.existsSync(filePath)) {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        const parsed = JSON.parse(fileContent);
-        return parsed.lead || parsed;
+  try {
+    if (fs.existsSync(dataDir)) {
+      // Lê dinamicamente todas as subpastas em src/data (barbearia, clinica, salaoblz, etc.)
+      const pastas = fs.readdirSync(dataDir).filter(item => {
+        return fs.statSync(path.join(dataDir, item)).isDirectory();
+      });
+
+      for (const pasta of pastas) {
+        const pastaPath = path.join(dataDir, pasta);
+
+        // 1. Tenta a correspondência exata do arquivo JSON
+        const filePath = path.join(pastaPath, `${cliente}.json`);
+        if (fs.existsSync(filePath)) {
+          const fileContent = fs.readFileSync(filePath, 'utf-8');
+          const parsed = JSON.parse(fileContent);
+          return parsed.lead || parsed;
+        }
+
+        // 2. Fallback Inteligente: Garante abertura do site se o arquivo gravado for mais longo ou mais curto que a URL
+        const arquivos = fs.readdirSync(pastaPath).filter(f => f.endsWith('.json') && f !== 'active_lead.json');
+        for (const arq of arquivos) {
+          const nomeSemExt = arq.replace('.json', '');
+          if (nomeSemExt.startsWith(cliente) || cliente.startsWith(nomeSemExt)) {
+            const fileContent = fs.readFileSync(path.join(pastaPath, arq), 'utf-8');
+            const parsed = JSON.parse(fileContent);
+            return parsed.lead || parsed;
+          }
+        }
       }
-    } catch {
-      // Tenta a próxima pasta caso falhe nesta
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`Erro ao carregar lead [${cliente}]:`, error);
     }
   }
 
@@ -67,12 +86,16 @@ export function fotoCapa(lead: LeadData): string | null {
 
 export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const telLimpo = lead?.telefone ? lead.telefone.replace(/\D/g, '') : '';
-  const whatsapp = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
+  
+  // Formatação de DDI: injeta o prefixo 55 apenas para números com 10 ou 11 dígitos
+  const telComDDI = (telLimpo.length === 10 || telLimpo.length === 11) ? `55${telLimpo}` : telLimpo;
+  const whatsapp = telLimpo ? `https://wa.me/${telComDDI}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
+  
   const totalAvaliacoesReal = lead?.totalAval ?? lead?.total_avaliacoes ?? 0;
   const nichoDetectado = lead?.nicho || lead?.categoria || '';
 
   return {
-    nome: lead?.nome || 'Estabelecimento',
+    nome: lead?.nome || 'Estabelecimento', // Preserva o nome completo oficial extraído do Maps
     endereco: lead?.endereco || '',
     enderecoCompleto: lead?.endereco || '',
     cidade: lead?.cidade || '',
@@ -129,7 +152,7 @@ export function fotosPorCategoria(fotos: string[]) {
 
   return [
     { id: 'tudo', label: 'Tudo', fotos },
-    { id: 'trabalhos', label: 'Trabalhos', fotos: cat(/^(trabalho|corte|penteado|servico|gusmao)/) },
+    { id: 'trabalhos', label: 'Galeria', fotos: cat(/(trabalho|corte|penteado|servico|clinica|procedimento|ambiente|foto)/) },
   ];
 }
 
@@ -140,6 +163,7 @@ export function diaHoje(): string {
 
 export function linhaDoDia(horariosSemana: string[], hoje: string): string {
   if (!Array.isArray(horariosSemana)) return '';
-  const linha = horariosSemana.find(h => h.toLowerCase().startsWith(hoje));
+  const hojeLimpo = hoje.toLowerCase().replace('-feira', '');
+  const linha = horariosSemana.find(h => h.toLowerCase().includes(hojeLimpo));
   return linha || '';
 }

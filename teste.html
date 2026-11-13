@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>Teste Prospecção</title></head>
+<body style="font-family: Arial; padding: 40px;">
+  <button onclick="disparar()" style="padding: 20px; font-size: 20px; cursor: pointer;">Disparar Prospecção Agora</button>
+  <pre id="resultado" style="margin-top: 20px; font-size: 16px; background: #f4f4f4; padding: 15px;"></pre>
+  <script>
+    async function disparar() {
+      const resDiv = document.getElementById('resultado');
+      resDiv.innerText = "A enviar requisição para o Go (porta 8083)...";
+      try {
+        const res = await fetch('http://localhost:8083/api/prospectar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: "teste_01",
+            nome: "Clinica Exemplo Curitiba",
+            telefone: "5541920102238",
+            foto_capa: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d",
+            subdominio: "clinicaexemplo"
+          })
+        });
+        const data = await res.json();
+        resDiv.innerText = "Sucesso!\n" + JSON.stringify(data, null, 2);
+      } catch (err) {
+        resDiv.innerText = "Erro de conexão: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

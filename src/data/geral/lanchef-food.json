@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-12T19:18:06-03:00",
+  "lead": {
+    "id": "lead_1791577470185669700",
+    "nome": "Lanchef food",
+    "endereco": "Lanchef food - R. IV, 139 - Quintino Cunha, Fortaleza - CE, 60351-580",
+    "telefone": "(85) 98564-6445",
+    "nicho": "",
+    "cidade": "Fortaleza - CE",
+    "estado": "",
+    "categoria": "Restaurant",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "09317318000337",
+    "razao_social": "FORTALI DISTRIBUIDORA DE ALIMENTOS LTDA.",
+    "situacao_cadastral": "ATIVA",
+    "abertura_data": "2025-12-10",
+    "criado_em": "2026-10-09T17:24:30.1856697-03:00",
+    "atualizado_em": "2026-11-12T19:18:06.7314472-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "lanchef-food",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/geral/lanchef-food/minimalista-premium",
+  "url_local": "http://localhost:3000/geral/lanchef-food/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/lanchef-food"
+}
