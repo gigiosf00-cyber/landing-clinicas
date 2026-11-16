@@ -1,118 +1,154 @@
 import { carregarLead, obterFotos, dadosBase, obterLogo } from '@/lib/lead';
 import InfoGoogle from '@/components/InfoGoogle';
-import { Scissors, Star, AlertTriangle, ChevronRight, MapPin } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+interface Props {
+  params: Promise<{
+    cliente: string;
+  }>;
+}
 
-interface PageProps { params: Promise<{ cliente: string }> }
-
-export default async function BarbeariaVintagePage({ params }: PageProps) {
+export default async function PaginaClinicaVintage({ params }: Props) {
   const { cliente } = await params;
-  const lead = carregarLead(cliente);
+  const lead: any = carregarLead(cliente);
 
   if (!lead) {
     return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-6 text-neutral-200 font-sans">
-        <div className="max-w-lg bg-neutral-900 border border-amber-600/30 rounded-2xl p-8 text-center space-y-4">
-          <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto" />
-          <h1 className="text-xl font-bold text-white">Lead não encontrado</h1>
-        </div>
+      <div style={{ background: '#1b3b2b', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
+        <h2>Nenhum cadastro ativo encontrado para "{cliente}".</h2>
+        <p style={{ marginTop: '10px', color: '#a7f3d0' }}>
+          Certifique-se de que o ficheiro <strong>{cliente}.json</strong> existe dentro da pasta <strong>src/data/clinica/</strong>.
+        </p>
       </div>
     );
   }
 
-  const fotos = obterFotos(lead);
-  const logo = obterLogo(lead);
-  const d = dadosBase(lead, `Olá! Gostaria de agendar um horário na ${lead.nome}.`);
+  const nomeExibir = lead.nome || 'Clínica Renovar - Fisioterapia, Pilates e Estética';
+  const telLimpo = lead.telefone ? lead.telefone.replace(/\D/g, '') : '';
+  const whatsappURL = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(`Olá! Vi o site da ${nomeExibir} e gostaria de agendar uma consulta.`)}` : '#';
+  const mapsURL = lead.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.endereco || nomeExibir)}`;
 
-  const temaVintage = {
-    fundo: '#0d0a07', card: '#17120e', borda: '#2e2015', texto: '#fef3c7', sub: '#a89a8a', destaque: '#d97706', serif: true
+  const pastaImagens = '/fotos/clinica-renovar-fisioterapia-pilates-e-estética-iguatu-ce';
+  const fotoLogotipo = obterLogo(lead) || ((lead.fotos && lead.fotos.length) ? '' : `${pastaImagens}/renovar8.jpg`);
+  const fotosTodas = obterFotos(lead);
+  
+  const d = dadosBase(lead, `Olá! Vi o site da ${lead.nome} e gostaria de agendar uma consulta.`);
+
+  // 1. FACHADA PRINCIPAL (CAPA): Procura renovar1.jpg ou foto1.jpg
+  const fotoFachadaHero = (lead.fotos && lead.fotos.find((f: string) => f.includes('renovar1.jpg') || f.includes('foto1.jpg'))) 
+    || (lead.fotos && lead.fotos[0]) 
+    || `${pastaImagens}/renovar1.jpg`; 
+
+  // 2. NOSSA SEDE / INSTALAÇÕES (RODAPÉ): Procura especificamente renovar11.jpg ou foto11.jpg
+  const fotoSedeRodape = (lead.fotos && lead.fotos.find((f: string) => f.includes('renovar11.jpg') || f.includes('foto11.jpg'))) 
+    || (lead.fotos && lead.fotos[10]) 
+    || fotoFachadaHero;
+
+  const temaVintageInfo = {
+    fundo: '#f4f1ea',
+    card: '#ffffff',
+    borda: '#dcd6cd',
+    texto: '#1b3b2b',
+    sub: '#5a6b5c',
+    destaque: '#c85a32',
+    serif: true
   };
 
-  const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Jardim Elvira - Osasco, SP';
-
   return (
-    <div className="min-h-screen bg-[#0d0a07] text-[#fef3c7] font-serif selection:bg-amber-600 selection:text-black">
-
-      <div className="bg-gradient-to-r from-amber-900 via-amber-700 to-amber-900 text-amber-100 text-[11px] font-bold uppercase tracking-widest text-center py-2 px-4 shadow-md font-sans">
-        ◆ TRADIÇÃO & QUALIDADE GARANTIDA — {lead.nome} ◆
+    <div style={{ backgroundColor: '#f4f1ea', color: '#1b3b2b', minHeight: '100vh', fontFamily: '"Georgia", "Times New Roman", serif', overflowX: 'hidden' }}>
+      
+      {/* BANNER SUPERIOR */}
+      <div style={{ background: '#132a1f', color: '#e2d9cc', textAlign: 'center', padding: '10px 16px', fontSize: '10px', smFontSize: '11px', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+        ✧ Proposta Clássica: {nomeExibir} ✧
       </div>
 
-      {/* HEADER MINIMALISTA (SEM BOTÃO REPETIDO DE AGENDAR) */}
-      <header className="sticky top-0 z-50 bg-[#0d0a07]/90 backdrop-blur-md border-b border-amber-900/30 font-sans">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            {logo ? <img src={logo} alt="Logo" className="h-10 w-auto max-w-[140px] object-contain" /> : <Scissors className="w-6 h-6 text-amber-500" />}
-            <span className="text-lg font-black uppercase text-amber-100 tracking-wider">{lead.nome}</span>
+      {/* HEADER VINTAGE FIXO */}
+      <header style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: '#f4f1ea', borderBottom: '1px solid #dcd6cd', boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '14px 16px', smPadding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', smGap: '16px' }}>
+            {fotoLogotipo && <img src={fotoLogotipo} alt={`Logo ${nomeExibir}`} style={{ maxHeight: '40px', smMaxHeight: '48px', width: 'auto', objectFit: 'contain' }} />}
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <span style={{ fontSize: '14px', smFontSize: '16px', fontWeight: 'bold', color: '#1b3b2b', letterSpacing: '0.5px', lineHeight: 1.2 }}>
+                {nomeExibir}
+              </span>
+              <span style={{ fontSize: '9px', smFontSize: '10px', color: '#c85a32', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px', fontWeight: 600 }}>
+                ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA
+              </span>
+            </div>
           </div>
+
         </div>
       </header>
 
-      {/* HERO SECTION VINTAGE */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes kb-vintage-zoom {
-          0% { transform: scale(1); }
-          100% { transform: scale(1.10); }
-        }
-        .animate-vintage-zoom {
-          animation: kb-vintage-zoom 15s ease-in-out infinite alternate;
-        }
-      `}} />
-      <section className="relative min-h-[480px] flex items-center justify-center text-center p-8 max-w-6xl mx-auto overflow-hidden rounded-3xl my-6 border border-amber-900/40 shadow-2xl bg-[#140e0a]">
-        {fotos[0] && (
-          <div className="absolute inset-0 overflow-hidden">
-            <img src={fotos[0]} alt={lead.nome} className="w-full h-full object-cover brightness-[0.40] sepia-[0.2] animate-vintage-zoom" />
-          </div>
-        )}
-        
-        <div className="relative z-10 space-y-6 max-w-3xl py-12">
+      {/* HERO VINTAGE COM FOTO DA FACHADA */}
+      <section style={{ background: '#1b3b2b', color: '#f4f1ea', padding: '50px 16px 70px 16px', smPadding: '70px 20px 90px 20px', position: 'relative' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px', smGap: '50px', alignItems: 'center' }}>
           
-          <h1 className="text-4xl sm:text-7xl font-black text-amber-100 uppercase tracking-tight leading-none drop-shadow-md">
-            {lead.nome}
-          </h1>
-
-          {/* BADGE COM NOTA 4.5 E CIDADE (SUBSTITUINDO O ENDEREÇO LONGO) */}
-          <div className="flex flex-wrap items-center justify-center gap-3 font-sans">
-            <div className="inline-flex items-center gap-2 bg-[#1c140d]/90 border border-amber-600/40 px-4 py-2 rounded-full text-xs font-bold text-amber-400 backdrop-blur-sm shadow-lg">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span>{d.avaliacao > 0 ? d.avaliacao.toFixed(1) : '4.5'} Google Maps</span>
-              <span className="text-amber-200/50">•</span>
-              <span className="text-amber-200/90">{d.totalAval || 84} avaliações</span>
-            </div>
-            
-            <div className="inline-flex items-center gap-1.5 text-xs text-amber-200/80 bg-black/40 px-3.5 py-2 rounded-full border border-amber-900/30">
-              <MapPin className="w-3.5 h-3.5 text-amber-500" />
-              <span>{localSimples}</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4 justify-center pt-2 font-sans">
-            {d.tel && (
-              <a href={d.whatsapp} target="_blank" rel="noreferrer" className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black font-black px-8 py-4 rounded-xl transition text-xs uppercase tracking-wider flex items-center gap-2 shadow-xl shadow-amber-950/80 hover:scale-105">
-                <span>AGENDAMENTO DIRETO NO WHATSAPP</span>
-                <ChevronRight className="w-4 h-4" />
+          <div>
+            <span style={{ color: '#dcd6cd', fontSize: '10px', smFontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '14px', smMarginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '8px', maxWidth: 'max-content' }}>
+              Especialista em eliminar a dor e devolver seu bem-estar
+            </span>
+            <h1 style={{ fontSize: '32px', smFontSize: '44px', fontWeight: 'normal', lineHeight: 1.2, marginBottom: '20px', smMarginBottom: '24px', color: '#ffffff' }}>
+              Mais Movimento, <br />
+              <span style={{ fontStyle: 'italic', color: '#e2d9cc' }}>Mais Qualidade de Vida.</span>
+            </h1>
+            <p style={{ fontSize: '15px', smFontSize: '16px', color: '#cbd5e1', lineHeight: 1.7, marginBottom: '28px', smMarginBottom: '36px', opacity: 0.9, fontFamily: 'sans-serif' }}>
+              Na <strong>{nomeExibir}</strong>, unimos excelência terapêutica e cuidado humanizado para garantir a sua plena recuperação, onde quer que você precise.
+            </p>
+            <div>
+              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', backgroundColor: '#c85a32', color: '#ffffff', fontWeight: 'bold', fontSize: '13px', smFontSize: '14px', padding: '14px 28px', smPadding: '16px 36px', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'center' }}>
+                Falar com um Especialista
               </a>
-            )}
+            </div>
+          </div>
+
+          <div style={{ border: '4px solid #f4f1ea', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', overflow: 'hidden', width: '100%' }}>
+            <img src={fotoFachadaHero} alt="Fachada da Clínica" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
           </div>
 
         </div>
       </section>
 
-      {/* InfoGoogle com Serviços Reais unificados */}
-      <InfoGoogle d={d} fotos={fotos} tema={temaVintage} prefixo="vint" />
+      {/* COMPONENTE INFOGOOGLE */}
+      <InfoGoogle d={d} fotos={fotosTodas} tema={temaVintageInfo} />
 
-      {/* CTA Rodapé */}
-      <section className="max-w-6xl mx-auto px-6 py-12 font-sans">
-        <div className="bg-gradient-to-r from-amber-700 to-amber-800 rounded-3xl p-10 text-center shadow-2xl hover:scale-[1.01] transition-transform duration-300 border border-amber-500/20">
-          <h2 className="text-3xl sm:text-4xl font-black text-amber-100 uppercase tracking-tight mb-2 font-serif">PRONTO PARA RENOVAR O VISUAL?</h2>
-          <p className="text-amber-200/80 text-sm font-medium">Tradição que cuida de você. Agende agora.</p>
-          <a href={d.whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-amber-100 font-black px-8 py-4 rounded-xl text-xs uppercase tracking-wider mt-6 transition shadow-2xl hover:-translate-y-1">
-            <span>Agendar via WhatsApp</span>
-            <ChevronRight className="w-4 h-4 text-amber-400" />
-          </a>
+      {/* CARD FINAL - NOSSA SEDE / INSTALAÇÕES */}
+      <section style={{ padding: '40px 16px 60px 16px', smPadding: '60px 20px 80px 20px', backgroundColor: '#e2d9cc' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', background: '#f4f1ea', border: '1px solid #dcd6cd', padding: '24px', smPadding: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '30px', smGap: '40px', alignItems: 'center', justifyContent: 'center' }}>
+          
+          <div style={{ width: '240px', smWidth: '280px', flexShrink: 0, position: 'relative', margin: '0 auto' }}>
+            <div style={{ width: '100%', height: 'auto', border: '1px solid #dcd6cd', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
+              <img src={fotoSedeRodape} alt="Nossas Instalações" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '10px', background: '#c85a32', color: '#fff', fontSize: '10px', fontWeight: 'bold', padding: '4px 12px', textTransform: 'uppercase', letterSpacing: '1px', display: 'inline-block' }}>
+              Nossas Instalações
+            </div>
+          </div>
+
+          <div style={{ flex: '1 1 280px', textAlign: 'center', smTextAlign: 'left' }}>
+            <h3 style={{ fontSize: '22px', smFontSize: '26px', fontWeight: 'normal', marginBottom: '10px', color: '#1b3b2b' }}>Endereço & Contato</h3>
+            <p style={{ fontSize: '13px', smFontSize: '14px', color: '#5a6b5c', marginBottom: '20px', smMarginBottom: '24px', lineHeight: 1.6, fontFamily: 'sans-serif' }}>
+              Sinta-se à vontade para nos contactar via WhatsApp ou visitar o nosso espaço.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', smJustifyContent: 'flex-start' }}>
+              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: '#1b3b2b', color: '#fff', fontWeight: 'bold', fontSize: '12px', padding: '12px 20px', smPadding: '14px 24px', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Chamar WhatsApp
+              </a>
+              <a href={mapsURL} target="_blank" rel="noopener noreferrer" style={{ background: 'transparent', color: '#1b3b2b', fontWeight: 'bold', fontSize: '12px', padding: '12px 20px', smPadding: '14px 24px', textDecoration: 'none', border: '1px solid #1b3b2b', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Ver no Mapa
+              </a>
+            </div>
+            <p style={{ fontSize: '11px', smFontSize: '12px', color: '#5a6b5c', marginTop: '16px', smMarginTop: '20px', fontStyle: 'italic' }}>
+              📍 R. Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775
+            </p>
+          </div>
+
         </div>
       </section>
+
+      <footer style={{ textAlign: 'center', padding: '24px', backgroundColor: '#1b3b2b', color: '#dcd6cd', fontSize: '12px' }}>
+        <p>© {new Date().getFullYear()} {nomeExibir}. Todos os direitos reservados.</p>
+      </footer>
     </div>
   );
 }

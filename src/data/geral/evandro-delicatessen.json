@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-13T16:28:15-03:00",
+  "lead": {
+    "id": "lead_1791577470185669700",
+    "nome": "Evandro Delicatessen",
+    "endereco": "Evandro Delicatessen - R. Carlos Vasconcelos, 2169 - Aldeota, Fortaleza - CE, 60115-171",
+    "telefone": "(85) 3224-6599",
+    "nicho": "",
+    "cidade": "Fortaleza - CE",
+    "estado": "",
+    "categoria": "Bakery",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "criado_em": "2026-10-09T17:24:30.1856697-03:00",
+    "atualizado_em": "2026-11-13T16:28:15.4780828-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "evandro-delicatessen",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/geral/evandro-delicatessen/minimalista-premium",
+  "url_local": "http://localhost:3000/geral/evandro-delicatessen/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/evandro-delicatessen"
+}

@@ -39,25 +39,25 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-amber-500 selection:text-black overflow-x-hidden">
 
       {/* BANNER PROMOCIONAL SUPERIOR */}
-      <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-black text-[11px] font-black uppercase tracking-widest text-center py-2 px-4 shadow-md">
+      <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-black text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-center py-2 px-4 shadow-md">
         ✦ PROPOSTA DIGITAL EXCLUSIVA PARA {lead.nome} ✦
       </div>
 
-      {/* HEADER FIXO MINIMALISTA (SEM BOTÃO DUPLICADO) */}
+      {/* HEADER FIXO MINIMALISTA */}
       <header className="sticky top-0 z-40 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800/80">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             {logo ? (
-              <img src={logo} alt="Logo" className="h-10 w-auto max-w-[140px] object-contain" />
+              <img src={logo} alt="Logo" className="h-8 sm:h-10 w-auto max-w-[120px] sm:max-w-[140px] object-contain" />
             ) : (
               <div className="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl">
                 <Scissors className="w-5 h-5 text-amber-500" />
               </div>
             )}
-            <span className="text-base sm:text-lg font-black uppercase text-white tracking-wider truncate max-w-[200px] sm:max-w-none">
+            <span className="text-sm sm:text-lg font-black uppercase text-white tracking-wider truncate max-w-[180px] sm:max-w-none">
               {lead.nome}
             </span>
           </div>
@@ -74,15 +74,15 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
         temTelefone={Boolean(d.tel)}
       />
 
-      {/* COMPONENTE PRINCIPAL (SERVIÇOS UNIFICADOS, GALERIA, AVALIAÇÕES E MAPA NOTURNO) */}
+      {/* COMPONENTE PRINCIPAL (SERVIÇOS, GALERIA, AVALIAÇÕES E MAPA) */}
       <InfoGoogle d={d} fotos={fotos} tema={temaMinimalista} prefixo="min" />
 
       {/* CHAMADA FINAL PARA AÇÃO (CTA) */}
       {d.tel && (
-        <section className="max-w-6xl mx-auto px-6 py-12">
-          <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 rounded-3xl p-6 sm:p-12 text-center shadow-2xl relative overflow-hidden">
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-4xl font-black text-black uppercase tracking-tight mb-3">
+              <h2 className="text-2xl sm:text-4xl font-black text-black uppercase tracking-tight mb-3 leading-tight">
                 Pronto para renovar o visual?
               </h2>
               <p className="text-black/80 text-xs sm:text-sm font-semibold max-w-md mx-auto">
@@ -92,10 +92,10 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
                 href={d.whatsapp} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-white font-black px-8 py-4 rounded-full text-xs sm:text-sm mt-6 transition shadow-2xl transform hover:scale-105"
+                className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-white font-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm mt-6 transition shadow-2xl transform hover:scale-105"
               >
                 <span>Agendar via WhatsApp</span>
-                <ChevronRight className="w-5 h-5 text-amber-400" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
               </a>
             </div>
           </div>

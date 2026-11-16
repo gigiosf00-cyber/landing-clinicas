@@ -51,50 +51,50 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Planalto - Iguatu, CE';
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-emerald-500 selection:text-black">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-emerald-500 selection:text-black overflow-x-hidden">
 
       {/* BANNER SUPERIOR DE PROPOSTA */}
-      <div className="bg-emerald-950 border-b border-emerald-800/40 text-emerald-400 text-[11px] font-bold uppercase tracking-widest text-center py-2 px-4">
+      <div className="bg-emerald-950 border-b border-emerald-800/40 text-emerald-400 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-center py-2 px-4">
         🏥 PROPOSTA DIGITAL EXCLUSIVA PARA {lead.nome} 🏥
       </div>
 
       {/* HEADER FIXO DE CLÍNICA */}
       <header className="sticky top-0 z-40 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-900">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             {logo ? (
-              <img src={logo} alt="Logo" className="h-10 w-auto max-w-[140px] object-contain" />
+              <img src={logo} alt="Logo" className="h-8 sm:h-10 w-auto max-w-[120px] sm:max-w-[140px] object-contain" />
             ) : (
               <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
                 <HeartPulse className="w-5 h-5 text-emerald-400" />
               </div>
             )}
-            <span className="text-base sm:text-lg font-black uppercase text-white tracking-wider truncate max-w-[200px] sm:max-w-none">
+            <span className="text-sm sm:text-lg font-black uppercase text-white tracking-wider truncate max-w-[180px] sm:max-w-none">
               {lead.nome}
             </span>
           </div>
         </div>
       </header>
 
-      {/* HERO SECTION DA CLÍNICA (FOTO DA COLUNA - INTEIRA SEM CORTE) */}
-      <section className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div className="lg:col-span-7 space-y-6">
+      {/* HERO SECTION DA CLÍNICA */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+        <div className="lg:col-span-7 space-y-4 sm:space-y-6">
           
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="inline-flex items-center gap-2 bg-neutral-900 border border-neutral-800 px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-400 shadow-sm">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-neutral-900 border border-neutral-800 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold text-emerald-400 shadow-sm">
+              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
               <span>{d.avaliacao > 0 ? d.avaliacao.toFixed(1) : '5.0'} Google Maps</span>
               <span className="text-neutral-700">•</span>
               <span className="text-neutral-400">{d.totalAval || 15} avaliações</span>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 text-xs text-neutral-300 bg-neutral-900 px-3.5 py-1.5 rounded-full border border-neutral-800">
+            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-neutral-300 bg-neutral-900 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border border-neutral-800">
               <MapPin className="w-3.5 h-3.5 text-orange-500" />
               <span>{localSimples}</span>
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white leading-tight">
+          <h1 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-white leading-tight">
             Mais Movimento, Mais Qualidade de Vida.
           </h1>
 
@@ -108,7 +108,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
                 href={d.whatsapp} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-7 py-4 rounded-xl transition text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-emerald-950/50 hover:scale-[1.02]"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl transition text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-emerald-950/50 hover:scale-[1.02]"
               >
                 <span>AGENDAR AVALIAÇÃO NO WHATSAPP</span>
                 <ChevronRight className="w-4 h-4" />
@@ -117,9 +117,9 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
           </div>
         </div>
 
-        {/* CARD HERO DA COLUNA VERTEBRAL (AJUSTE OBJECT-CONTAIN) */}
+        {/* CARD HERO DA COLUNA VERTEBRAL */}
         <div className="lg:col-span-5">
-          <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl h-[380px] bg-neutral-900 flex items-center justify-center p-3">
+          <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl h-[300px] sm:h-[380px] bg-neutral-900 flex items-center justify-center p-3">
             <img 
               src={fotoColunaHero} 
               alt={`Especialidade ${lead.nome}`} 
@@ -132,13 +132,13 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
       {/* COMPONENTE PRINCIPAL */}
       <InfoGoogle d={d} fotos={fotos} tema={temaClinica} prefixo="clin" />
 
-      {/* BLOCO FINAL - VISITE-NOS OU CHAME ONLINE (FOTO11 DA FACHADA DA SEDE) */}
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative overflow-hidden">
+      {/* BLOCO FINAL - VISITE-NOS OU CHAME ONLINE */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center relative overflow-hidden">
           
-          {/* COLUNA ESQUERDA: FOTO11 DA SEDE COM BADGE LARANJA */}
+          {/* COLUNA ESQUERDA: FOTO11 DA SEDE */}
           <div className="md:col-span-5 relative">
-            <div className="rounded-2xl overflow-hidden border border-neutral-800 shadow-lg h-60 sm:h-64 bg-neutral-950 flex items-center justify-center p-2">
+            <div className="rounded-2xl overflow-hidden border border-neutral-800 shadow-lg h-56 sm:h-64 bg-neutral-950 flex items-center justify-center p-2">
               <img 
                 src={fotoFachadaSede} 
                 alt={`Sede ${lead.nome}`} 
@@ -151,7 +151,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
           </div>
 
           {/* COLUNA DIREITA: TEXTO E BOTÕES */}
-          <div className="md:col-span-7 space-y-4 text-center md:text-left pt-2 md:pt-0">
+          <div className="md:col-span-7 space-y-4 text-center md:text-left pt-3 md:pt-0">
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Visite-nos ou Chame Online
             </h2>
@@ -165,7 +165,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
                 href={d.whatsapp} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-950/50 hover:scale-[1.02]"
+                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-5 sm:px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-950/50 hover:scale-[1.02]"
               >
                 <MessageCircle className="w-4 h-4 fill-white text-emerald-600" />
                 <span>Chamar no WhatsApp</span>
@@ -175,7 +175,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
                 href={d.mapa && d.mapa !== '#' ? d.mapa : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.nome)}`} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="inline-flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-bold px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider border border-neutral-700 transition"
+                className="inline-flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-bold px-5 sm:px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider border border-neutral-700 transition"
               >
                 <Navigation className="w-4 h-4 text-orange-500" />
                 <span>Rota no Mapa</span>
