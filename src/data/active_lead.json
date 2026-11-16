@@ -1,14 +1,14 @@
 {
-  "enviado_em": "2026-11-16T11:12:42-03:00",
+  "enviado_em": "2026-11-16T11:19:36-03:00",
   "lead": {
-    "id": "lead_1791579919780608600",
-    "nome": "With Pet Shop Tour",
-    "endereco": "With Pet Shop Tour - Av. Tiradentes, 1240 - Shangri-lá, Londrina - PR, 86070-545",
-    "telefone": "(43) 3024-2424",
+    "id": "lead_1791578479620800700",
+    "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
+    "endereco": "Clínica Renovar - Fisioterapia, Pilates e Estética - R. Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775",
+    "telefone": "5541999170365",
     "nicho": "",
-    "cidade": "Londrina - PR",
+    "cidade": "Iguatu - CE",
     "estado": "",
-    "categoria": "Reptile store",
+    "categoria": "Physical therapy clinic",
     "status": "SITE CRIADO",
     "tem_site": false,
     "website": "",
@@ -16,23 +16,13 @@
     "razao_social": "",
     "situacao_cadastral": "",
     "abertura_data": "",
-    "fotos": [
-      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80\u0026w=1000",
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80\u0026w=1000",
-      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80\u0026w=1000"
-    ],
-    "fotos_ambiente": [
-      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80\u0026w=1000",
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80\u0026w=1000",
-      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80\u0026w=1000"
-    ],
-    "criado_em": "2026-10-09T18:05:19.7806086-03:00",
-    "atualizado_em": "2026-11-16T11:12:42.7040994-03:00"
+    "criado_em": "2026-10-09T17:41:19.6208007-03:00",
+    "atualizado_em": "2026-11-16T11:19:36.5513281-03:00"
   },
-  "nicho_pasta": "geral",
-  "slug": "with-pet-shop-tour",
+  "nicho_pasta": "clinica",
+  "slug": "clinica-renovar",
   "template": "minimalista-premium",
-  "url_demo": "https://www.gef67.com.br/geral/with-pet-shop-tour/minimalista-premium",
-  "url_local": "http://localhost:3000/geral/with-pet-shop-tour/minimalista-premium",
-  "url_oficial": "https://meu-site.vercel.app/with-pet-shop-tour"
+  "url_demo": "https://www.gef67.com.br/clinica/clinica-renovar/minimalista-premium",
+  "url_local": "http://localhost:3000/clinica/clinica-renovar/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/clinica-renovar"
 }
