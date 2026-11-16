@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-16T18:40:36-03:00",
+  "lead": {
+    "id": "lead_1791579919780608600",
+    "nome": "Multi Patas Pet Shop - Banho e tosa, Rações e Acessórios",
+    "endereco": "On-Line - R. Lázaro Zamenhof, 508 - San Fernando, Londrina - PR, 86040-350",
+    "telefone": "(43) 3329-5674",
+    "nicho": "",
+    "cidade": "Londrina - PR",
+    "estado": "",
+    "categoria": "Pet store",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "criado_em": "2026-10-09T18:05:19.7806086-03:00",
+    "atualizado_em": "2026-11-16T18:40:36.3634145-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "multi-patas-pet-shop",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/geral/multi-patas-pet-shop/minimalista-premium",
+  "url_local": "http://localhost:3000/geral/multi-patas-pet-shop/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/multi-patas-pet-shop"
+}
