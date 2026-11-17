@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-17T11:45:27-03:00",
+  "lead": {
+    "id": "lead_1791579919780608600",
+    "nome": "Empório dos Animais Pet Shop - Av. Maringá",
+    "endereco": "Empório dos Animais Pet Shop - Av. Maringá - Av. Maringá, 764 - Vitoria, Londrina - PR, 86060-000",
+    "telefone": "(43) 3338-1011",
+    "nicho": "",
+    "cidade": "Londrina - PR",
+    "estado": "",
+    "categoria": "Reptile store",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "02709180000100",
+    "razao_social": "EMPORIO DOS ANIMAIS LTDA",
+    "situacao_cadastral": "ATIVA",
+    "abertura_data": "1998-08-21",
+    "criado_em": "2026-10-09T18:05:19.7806086-03:00",
+    "atualizado_em": "2026-11-17T11:45:27.8001315-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "emporio-dos-animais-pet-shop",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/geral/emporio-dos-animais-pet-shop/minimalista-premium",
+  "url_local": "http://localhost:3000/geral/emporio-dos-animais-pet-shop/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/emporio-dos-animais-pet-shop"
+}
