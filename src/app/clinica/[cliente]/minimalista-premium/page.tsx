@@ -29,15 +29,15 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
 
   const pastaImagens = `/fotos/${cliente}`;
 
-  // 1. CAPA HERO: Foto da Fachada/Logotipo da Clínica (foto11.jpg)
-  const fotoFachadaHero = (fotos && fotos.find((f: string) => f.includes('foto11'))) 
-    || (fotos && fotos[0]) 
-    || `${pastaImagens}/foto11.jpg`;
+  // 1. CAPA HERO: Procura foto11 (se existir), senão usa a 1ª foto disponível, senão fallback para foto1.jpg
+  const fotoFachadaHero = (fotos && fotos.length > 0)
+    ? (fotos.find((f: string) => f.includes('foto11')) || fotos[0])
+    : `${pastaImagens}/foto1.jpg`;
 
-  // 2. NOSSA SEDE (RODAPÉ): Foto Interna / Geral (foto1.jpg)
-  const fotoInternaSede = (fotos && fotos.find((f: string) => f.includes('foto1.jpg'))) 
-    || (fotos && fotos[fotos.length - 1]) 
-    || `${pastaImagens}/foto1.jpg`;
+  // 2. NOSSA SEDE (RODAPÉ): Procura foto1.jpg, senão usa a última foto disponível, senão fallback para foto1.jpg
+  const fotoInternaSede = (fotos && fotos.length > 0)
+    ? (fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[fotos.length - 1])
+    : `${pastaImagens}/foto1.jpg`;
 
   const temaClinica = {
     fundo: '#0a0a0a', 
@@ -49,7 +49,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
     serif: false
   };
 
-  const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Planalto - Iguatu, CE';
+  const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Atendimento Presencial e Domiciliar';
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-emerald-500 selection:text-black overflow-x-hidden">
@@ -118,7 +118,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
           </div>
         </div>
 
-        {/* CARD HERO DA FACHADA (foto11.jpg) */}
+        {/* CARD HERO DA FACHADA */}
         <div className="lg:col-span-5">
           <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl h-[300px] sm:h-[380px] bg-neutral-900 flex items-center justify-center p-3">
             <img 
@@ -137,7 +137,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center relative overflow-hidden">
           
-          {/* COLUNA ESQUERDA: FOTO1 DA SEDE */}
+          {/* COLUNA ESQUERDA: FOTO DA SEDE */}
           <div className="md:col-span-5 relative">
             <div className="rounded-2xl overflow-hidden border border-neutral-800 shadow-lg h-56 sm:h-64 bg-neutral-950 flex items-center justify-center p-2">
               <img 
@@ -185,7 +185,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
 
             {/* ENDEREÇO EM TEXTO DISCRETO */}
             <p className="text-[11px] text-neutral-400 pt-3 border-t border-neutral-800/80">
-              {lead.nome} — {d.enderecoCompleto || 'Rua Antônio Mendonça, 479a - Planalto, Iguatu - CE, 63500-775'}
+              {lead.nome} — {d.enderecoCompleto || localSimples}
             </p>
           </div>
 
