@@ -26,22 +26,22 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const fotos = obterFotos(lead);
   const logo = obterLogo(lead);
   
-  // Extrai apenas "Clínica Renovar" para usar no texto do corpo
+  // Extrai apenas o nome limpo "Clínica Renovar" para o corpo do texto
   const nomeCurto = lead.nome.split(/[-|:,]/)[0].trim();
 
   const d = dadosBase(lead, `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`);
 
   const pastaImagens = `/fotos/${cliente}`;
 
-  // 1. CAPA HERO: Fachada (foto11) ou 1.ª foto
-  const fotoFachadaHero = (fotos && fotos.length > 0)
-    ? (fotos.find((f: string) => f.includes('foto11')) || fotos[0])
+  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral (foto1.jpg)
+  const fotoColunaHero = (fotos && fotos.length > 0)
+    ? (fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[0])
     : `${pastaImagens}/foto1.jpg`;
 
-  // 2. NOSSA SEDE: Foto interna (foto1)
-  const fotoInternaSede = (fotos && fotos.length > 0)
-    ? (fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[fotos.length - 1])
-    : `${pastaImagens}/foto1.jpg`;
+  // 2. NOSSA SEDE (RODAPÉ): Fachada com Porta de Vidro (foto11.jpg)
+  const fotoFachadaSede = (fotos && fotos.length > 0)
+    ? (fotos.find((f: string) => f.includes('foto11')) || fotos[fotos.length - 1])
+    : `${pastaImagens}/foto11.jpg`;
 
   const temaClinica = {
     fundo: '#0a0a0a', 
@@ -63,7 +63,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         🏥 PROPOSTA DIGITAL EXCLUSIVA PARA {lead.nome} 🏥
       </div>
 
-      {/* HEADER FIXO DA CLÍNICA (MANTÉM O NOME COMPLETO NO TOPO) */}
+      {/* HEADER FIXO DE CLÍNICA */}
       <header className="sticky top-0 z-40 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -103,7 +103,6 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
             Mais Movimento, Mais Qualidade de Vida.
           </h1>
 
-          {/* USA APENAS "Clínica Renovar" NO PARÁGRAFO */}
           <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-xl">
             Na <strong className="text-white">{nomeCurto}</strong>, oferecemos atendimento presencial e domiciliar especializado para sua plena recuperação e bem-estar.
           </p>
@@ -123,11 +122,11 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
           </div>
         </div>
 
-        {/* CARD HERO DA FACHADA */}
+        {/* CARD HERO DA COLUNA VERTEBRAL (foto1.jpg) */}
         <div className="lg:col-span-5">
           <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl h-[300px] sm:h-[380px] bg-neutral-900 flex items-center justify-center p-3">
             <img 
-              src={fotoFachadaHero} 
+              src={fotoColunaHero} 
               alt={`Especialidade ${nomeCurto}`} 
               className="w-full h-full object-contain rounded-2xl brightness-95 hover:scale-105 transition-transform duration-700" 
             />
@@ -135,17 +134,18 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         </div>
       </section>
 
-      {/* COMPONENTE PRINCIPAL (CARROSSEL E AVALIAÇÕES) */}
+      {/* COMPONENTE PRINCIPAL (CARROSSEL DE FOTOS E REVIEWS) */}
       <InfoGoogle d={d} fotos={fotos} tema={temaClinica} prefixo="clin" />
 
       {/* BLOCO FINAL - VISITE-NOS OU CHAME ONLINE */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center relative overflow-hidden">
           
+          {/* COLUNA ESQUERDA: FACHADA COM PORTA DE VIDRO (foto11.jpg) */}
           <div className="md:col-span-5 relative">
             <div className="rounded-2xl overflow-hidden border border-neutral-800 shadow-lg h-56 sm:h-64 bg-neutral-950 flex items-center justify-center p-2">
               <img 
-                src={fotoInternaSede} 
+                src={fotoFachadaSede} 
                 alt={`Sede ${nomeCurto}`} 
                 className="w-full h-full object-contain rounded-xl" 
               />
@@ -155,6 +155,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
             </div>
           </div>
 
+          {/* COLUNA DIREITA: TEXTO E BOTÕES */}
           <div className="md:col-span-7 space-y-4 text-center md:text-left pt-3 md:pt-0">
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Visite-nos ou Chame Online
@@ -163,6 +164,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
               Estamos prontos para atender você na nossa clínica ou no conforto do seu lar.
             </p>
 
+            {/* BOTÕES DE AÇÃO DUPLA */}
             <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
               <a 
                 href={d.whatsapp} 
@@ -185,6 +187,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
               </a>
             </div>
 
+            {/* ENDEREÇO EM TEXTO DISCRETO */}
             <p className="text-[11px] text-neutral-400 pt-3 border-t border-neutral-800/80">
               {nomeCurto} — {d.enderecoCompleto || localSimples}
             </p>
@@ -193,7 +196,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         </div>
       </section>
 
-      {/* BOTÃO FLUTUANTE DIREITO */}
+      {/* BOTÃO FLUTUANTE DIREITO (DESKTOP) */}
       {d.tel && (
         <div className="hidden sm:block fixed bottom-6 right-6 z-50">
           <a
