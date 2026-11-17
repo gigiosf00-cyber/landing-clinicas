@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-17T13:51:32-03:00",
+  "lead": {
+    "id": "lead_1791579919780608600",
+    "nome": "Curti Dog - Veterinário e Centro de Estética Animal (Unidade 1)",
+    "endereco": "Curti Dog - Veterinário e Centro de Estética Animal (Unidade 1) - R. Fernando de Noronha, 887 - Centro, Londrina - PR, 86060-410",
+    "telefone": "(43) 98459-1516",
+    "nicho": "",
+    "cidade": "Londrina - PR",
+    "estado": "",
+    "categoria": "Pet store",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "57262881000136",
+    "razao_social": "CURTI DOG BOUTIQUE PET LTDA",
+    "situacao_cadastral": "ATIVA",
+    "abertura_data": "2024-09-12",
+    "criado_em": "2026-10-09T18:05:19.7806086-03:00",
+    "atualizado_em": "2026-11-17T13:51:32.1481567-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "curti-dog",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/geral/curti-dog/minimalista-premium",
+  "url_local": "http://localhost:3000/geral/curti-dog/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/curti-dog"
+}

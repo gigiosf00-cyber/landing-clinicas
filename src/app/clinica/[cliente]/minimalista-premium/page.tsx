@@ -27,16 +27,17 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const logo = obterLogo(lead);
   const d = dadosBase(lead, `Olá! Vi o site da ${lead.nome} e gostaria de agendar uma consulta.`);
 
-  const pastaImagens = '/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce';
+  const pastaImagens = `/fotos/${cliente}`;
 
-  // 1. CAPA HERO: Foto da Coluna Vertebral (foto1.jpg)
-  const fotoColunaHero = (fotos && fotos.find((f: string) => f.includes('foto1.jpg'))) 
+  // 1. CAPA HERO: Foto da Fachada/Logotipo da Clínica (foto11.jpg)
+  const fotoFachadaHero = (fotos && fotos.find((f: string) => f.includes('foto11'))) 
     || (fotos && fotos[0]) 
-    || `${pastaImagens}/foto1.jpg`;
-
-  // 2. NOSSA SEDE (RODAPÉ): Foto da Fachada com Porta de Vidro (foto11.jpg)
-  const fotoFachadaSede = (fotos && fotos.find((f: string) => f.includes('foto11'))) 
     || `${pastaImagens}/foto11.jpg`;
+
+  // 2. NOSSA SEDE (RODAPÉ): Foto Interna / Geral (foto1.jpg)
+  const fotoInternaSede = (fotos && fotos.find((f: string) => f.includes('foto1.jpg'))) 
+    || (fotos && fotos[fotos.length - 1]) 
+    || `${pastaImagens}/foto1.jpg`;
 
   const temaClinica = {
     fundo: '#0a0a0a', 
@@ -117,11 +118,11 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
           </div>
         </div>
 
-        {/* CARD HERO DA COLUNA VERTEBRAL */}
+        {/* CARD HERO DA FACHADA (foto11.jpg) */}
         <div className="lg:col-span-5">
           <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl h-[300px] sm:h-[380px] bg-neutral-900 flex items-center justify-center p-3">
             <img 
-              src={fotoColunaHero} 
+              src={fotoFachadaHero} 
               alt={`Especialidade ${lead.nome}`} 
               className="w-full h-full object-contain rounded-2xl brightness-95 hover:scale-105 transition-transform duration-700" 
             />
@@ -129,18 +130,18 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         </div>
       </section>
 
-      {/* COMPONENTE PRINCIPAL */}
+      {/* COMPONENTE PRINCIPAL (CARROSSEL DE FOTOS E REVIEWS) */}
       <InfoGoogle d={d} fotos={fotos} tema={temaClinica} prefixo="clin" />
 
       {/* BLOCO FINAL - VISITE-NOS OU CHAME ONLINE */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center relative overflow-hidden">
           
-          {/* COLUNA ESQUERDA: FOTO11 DA SEDE */}
+          {/* COLUNA ESQUERDA: FOTO1 DA SEDE */}
           <div className="md:col-span-5 relative">
             <div className="rounded-2xl overflow-hidden border border-neutral-800 shadow-lg h-56 sm:h-64 bg-neutral-950 flex items-center justify-center p-2">
               <img 
-                src={fotoFachadaSede} 
+                src={fotoInternaSede} 
                 alt={`Sede ${lead.nome}`} 
                 className="w-full h-full object-contain rounded-xl" 
               />
