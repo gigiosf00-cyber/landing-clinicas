@@ -23,25 +23,32 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
     );
   }
 
-  const fotos = obterFotos(lead);
+  const fotosObtidas = obterFotos(lead);
   const logo = obterLogo(lead);
-  
+  const pastaImagens = `/fotos/${cliente}`;
+
+  // FALLBACK ROBUSTO DE SEGURANÇA PARA A VERCEL (GEF67.COM.BR)
+  const fotos = (fotosObtidas && fotosObtidas.length > 0) ? fotosObtidas : [
+    `${pastaImagens}/foto1.jpg`,
+    `${pastaImagens}/foto2.jpg`,
+    `${pastaImagens}/foto3.jpg`,
+    `${pastaImagens}/foto6.jpg`,
+    `${pastaImagens}/foto7.jpg`,
+    `${pastaImagens}/foto8.jpg`,
+    `${pastaImagens}/foto9.jpg`,
+    `${pastaImagens}/foto11.jpg`
+  ];
+
+  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral (foto1.jpg)
+  const fotoColunaHero = fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[0];
+
+  // 2. NOSSA SEDE (RODAPÉ): Fachada com Porta de Vidro (foto11.jpg)
+  const fotoFachadaSede = fotos.find((f: string) => f.includes('foto11')) || fotos[fotos.length - 1];
+
   // Extrai apenas o nome limpo "Clínica Renovar" para o corpo do texto
   const nomeCurto = lead.nome.split(/[-|:,]/)[0].trim();
 
   const d = dadosBase(lead, `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`);
-
-  const pastaImagens = `/fotos/${cliente}`;
-
-  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral (foto1.jpg)
-  const fotoColunaHero = (fotos && fotos.length > 0)
-    ? (fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[0])
-    : `${pastaImagens}/foto1.jpg`;
-
-  // 2. NOSSA SEDE (RODAPÉ): Fachada com Porta de Vidro (foto11.jpg)
-  const fotoFachadaSede = (fotos && fotos.length > 0)
-    ? (fotos.find((f: string) => f.includes('foto11')) || fotos[fotos.length - 1])
-    : `${pastaImagens}/foto11.jpg`;
 
   const temaClinica = {
     fundo: '#0a0a0a', 
