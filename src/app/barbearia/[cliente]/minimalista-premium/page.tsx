@@ -24,9 +24,23 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
     );
   }
 
-  const fotos = obterFotos(lead);
+  const fotosObtidas = obterFotos(lead);
   const logo = obterLogo(lead);
-  const d = dadosBase(lead, `Olá! Gostaria de agendar um horário na ${lead.nome}.`);
+  const pastaImagens = `/fotos/${cliente}`;
+
+  // FALLBACK ROBUSTO DE SEGURANÇA PARA PRODUÇÃO (VERCEL)
+  const fotos = (fotosObtidas && fotosObtidas.length > 0) ? fotosObtidas : [
+    `${pastaImagens}/foto1.jpg`,
+    `${pastaImagens}/foto2.jpg`,
+    `${pastaImagens}/foto3.jpg`,
+    `${pastaImagens}/foto4.jpg`,
+    `${pastaImagens}/foto5.jpg`,
+    `${pastaImagens}/foto6.jpg`
+  ];
+
+  const fotoHero = fotos[0] || `${pastaImagens}/foto1.jpg`;
+  const nomeCurto = lead.nome.split(/[-|:,]/)[0].trim();
+  const d = dadosBase(lead, `Olá! Gostaria de agendar um horário na ${nomeCurto}.`);
 
   const temaMinimalista = {
     fundo: 'transparent', 
@@ -69,7 +83,7 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
         nome={lead.nome}
         endereco={lead.endereco}
         avaliacao={d.avaliacao}
-        foto={fotos[0]}
+        foto={fotoHero}
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
       />

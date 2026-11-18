@@ -1,49 +1,54 @@
 import { carregarLead, obterFotos, dadosBase, obterLogo } from '@/lib/lead';
 import InfoGoogle from '@/components/InfoGoogle';
+import { HeartPulse, AlertTriangle, ChevronRight, Navigation, MessageCircle } from 'lucide-react';
 
-interface Props {
-  params: Promise<{
-    cliente: string;
-  }>;
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default async function PaginaClinicaModerna({ params }: Props) {
+interface PageProps { params: Promise<{ cliente: string }> }
+
+export default async function PaginaClinicaModerna({ params }: PageProps) {
   const { cliente } = await params;
-  const lead: any = carregarLead(cliente);
+  const lead = carregarLead(cliente);
 
   if (!lead) {
     return (
-      <div style={{ background: 'linear-gradient(135deg, #022c22 0%, #064e3b 100%)', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
-        <h2>Nenhum cadastro ativo encontrado para "{cliente}".</h2>
-        <p style={{ marginTop: '10px', color: '#cbd5e1' }}>
-          Certifique-se de que o ficheiro <strong>{cliente}.json</strong> existe dentro da pasta <strong>src/data/clinica/</strong>.
-        </p>
+      <div className="min-h-screen bg-emerald-950 flex items-center justify-center p-6 text-white text-center font-sans">
+        <div className="max-w-lg bg-emerald-900/50 border border-emerald-700/50 rounded-2xl p-8 space-y-4 shadow-2xl">
+          <AlertTriangle className="w-12 h-12 text-emerald-400 mx-auto" />
+          <h2 className="text-xl font-bold">Nenhum cadastro ativo encontrado para "{cliente}".</h2>
+          <p className="text-xs text-emerald-200">
+            Certifique-se de que o ficheiro <strong>{cliente}.json</strong> existe dentro da pasta <strong>src/data/clinica/</strong>.
+          </p>
+        </div>
       </div>
     );
   }
 
-  const nomeExibir = lead.nome || 'Clínica Renovar - Fisioterapia, Pilates e Estética';
-  const telLimpo = lead.telefone ? lead.telefone.replace(/\D/g, '') : '';
-  const whatsappURL = telLimpo ? `https://wa.me/55${telLimpo}?text=${encodeURIComponent(`Olá! Vi o site da ${nomeExibir} e gostaria de agendar uma consulta.`)}` : '#';
-  const mapsURL = lead.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.endereco || nomeExibir)}`;
+  const fotosObtidas = obterFotos(lead);
+  const logo = obterLogo(lead);
+  const pastaImagens = `/fotos/${cliente}`;
 
-  const corLaranjaOficial = '#f97316'; 
-  const corTextoVerde = '#064e3b'; 
+  // FALLBACK ROBUSTO DE SEGURANÇA PARA A VERCEL (GEF67.COM.BR)
+  const fotos = (fotosObtidas && fotosObtidas.length > 0) ? fotosObtidas : [
+    `${pastaImagens}/foto1.jpg`,
+    `${pastaImagens}/foto2.jpg`,
+    `${pastaImagens}/foto3.jpg`,
+    `${pastaImagens}/foto6.jpg`,
+    `${pastaImagens}/foto7.jpg`,
+    `${pastaImagens}/foto8.jpg`,
+    `${pastaImagens}/foto9.jpg`,
+    `${pastaImagens}/foto11.jpg`
+  ];
 
-  const pastaImagens = '/fotos/clinica-renovar-fisioterapia-pilates-e-estetica-iguatu-ce';
-  const fotoLogotipo = obterLogo(lead) || ((lead.fotos && lead.fotos.length) ? '' : `${pastaImagens}/renovar8.jpg`);
-  const fotosTodas = obterFotos(lead);
-  
-  const d = dadosBase(lead, `Olá! Vi o site da ${lead.nome} e gostaria de agendar uma consulta.`);
+  // 1. CAPA HERO: Foto da coluna (foto1.jpg)
+  const fotoFachadaHero = fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[0];
 
-  // HERO CAPA: Pega a foto da coluna (foto1.jpg)
-  const fotoFachadaHero = (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg'))) 
-    || (fotosTodas && fotosTodas[0]) 
-    || `${pastaImagens}/foto1.jpg`;
+  // 2. NOSSA SEDE: Foto da fachada com porta de vidro (foto11.jpg)
+  const fotoSedeReal = fotos.find((f: string) => f.includes('foto11')) || fotos[fotos.length - 1];
 
-  // NOSSA SEDE (RODAPÉ): Força a busca pela foto11.jpg (fachada real com a porta de vidro)
-  const fotoSedeReal = (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11'))) 
-    || `${pastaImagens}/foto11.jpg`; 
+  const nomeCurto = lead.nome.split(/[-|:,]/)[0].trim();
+  const d = dadosBase(lead, `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`);
 
   const temaClaroInfo = {
     fundo: '#f1f5f9',
@@ -55,98 +60,118 @@ export default async function PaginaClinicaModerna({ params }: Props) {
     serif: false
   };
 
+  const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Atendimento Presencial e Domiciliar';
+
   return (
-    <div style={{ backgroundColor: '#f1f5f9', color: '#0f172a', minHeight: '100vh', fontFamily: '"Inter", system-ui, sans-serif', overflowX: 'hidden' }}>
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans overflow-x-hidden">
       
       {/* BANNER SUPERIOR */}
-      <div style={{ background: 'linear-gradient(90deg, #022c22 0%, #064e3b 100%)', color: '#34d399', textAlign: 'center', padding: '10px 16px', fontSize: '10px', smFontSize: '12px', fontWeight: 800, letterSpacing: '0.05em' }}>
-        ⚡ PROPOSTA DE DESIGN MODERNO PARA: {nomeExibir.toUpperCase()}
+      <div className="bg-gradient-to-r from-emerald-950 to-emerald-900 text-emerald-400 text-[10px] sm:text-xs font-black uppercase tracking-widest text-center py-2.5 px-4">
+        ⚡ PROPOSTA DE DESIGN MODERNO PARA: {lead.nome.toUpperCase()}
       </div>
 
       {/* HEADER FIXO */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {fotoLogotipo && <img src={fotoLogotipo} alt={`Logo ${nomeExibir}`} style={{ maxHeight: '40px', smMaxHeight: '50px', width: 'auto', objectFit: 'contain' }} />}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <span style={{ fontSize: '13px', smFontSize: '15px', fontWeight: 900, color: corTextoVerde, letterSpacing: '0.3px', lineHeight: 1.2 }}>
-                {nomeExibir}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            {logo ? (
+              <img src={logo} alt={`Logo ${nomeCurto}`} className="h-10 sm:h-12 w-auto object-contain" />
+            ) : (
+              <div className="p-2 bg-emerald-100 rounded-xl">
+                <HeartPulse className="w-5 h-5 text-emerald-800" />
+              </div>
+            )}
+            <div className="flex flex-col">
+              <span className="text-xs sm:text-base font-black text-emerald-950 tracking-tight leading-tight">
+                {lead.nome}
               </span>
-              <span style={{ fontSize: '9px', smFontSize: '10px', color: corLaranjaOficial, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.8px', marginTop: '2px' }}>
+              <span className="text-[9px] sm:text-[10px] text-orange-600 font-extrabold uppercase tracking-wider mt-0.5">
                 ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA
               </span>
             </div>
           </div>
-
         </div>
       </header>
 
       {/* HERO SECTION DA CLÍNICA */}
-      <section style={{ background: 'linear-gradient(135deg, #022c22 0%, #065f46 100%)', color: '#ffffff', padding: '50px 16px 70px 16px', smPadding: '80px 20px 100px 20px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px', smGap: '50px', alignItems: 'center', position: 'relative', zIndex: 10 }}>
+      <section className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 text-white py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12 items-center relative z-10">
           
-          <div>
-            <span style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#6ee7b7', fontSize: '10px', smFontSize: '11px', fontWeight: 800, padding: '6px 14px', smPadding: '8px 18px', borderRadius: '999px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '1px' }}>
+          <div className="md:col-span-7 space-y-4 sm:space-y-6">
+            <span className="bg-white/10 border border-white/20 text-emerald-300 text-[10px] sm:text-xs font-bold px-3.5 sm:px-4 py-1.5 rounded-full uppercase tracking-wider inline-block">
               ✦ Especialista em eliminar a dor e devolver seu bem-estar
             </span>
-            <h1 style={{ fontSize: '32px', smFontSize: '46px', fontWeight: 900, lineHeight: 1.15, marginBottom: '18px', smMarginBottom: '24px', color: '#ffffff', letterSpacing: '-1px' }}>
-              Sua <span style={{ color: '#34d399' }}>Qualidade de Vida</span> levada a sério.
+            <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight text-white">
+              Sua <span className="text-emerald-400">Qualidade de Vida</span> levada a sério.
             </h1>
-            <p style={{ fontSize: '15px', smFontSize: '17px', color: '#d1fae5', lineHeight: 1.6, marginBottom: '28px', smMarginBottom: '40px', opacity: 0.9 }}>
-              Na <strong>{nomeExibir}</strong>, unimos excelência clínica e atendimento humanizado para a sua plena recuperação.
+            <p className="text-emerald-100 text-sm sm:text-base leading-relaxed opacity-90 max-w-xl">
+              Na <strong className="text-white">{nomeCurto}</strong>, unimos excelência clínica e atendimento humanizado para a sua plena recuperação.
             </p>
-            <div>
-              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: 'linear-gradient(90deg, #ea580c 0%, #f97316 100%)', color: '#fff', fontWeight: 800, fontSize: '15px', smFontSize: '16px', padding: '16px 32px', smPadding: '18px 40px', borderRadius: '999px', textDecoration: 'none', textAlign: 'center' }}>
-                Falar com Especialista
-              </a>
-            </div>
+            {d.tel && (
+              <div className="pt-2">
+                <a 
+                  href={d.whatsapp} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-sm sm:text-base px-8 py-4 rounded-full shadow-lg shadow-orange-950/40 transition hover:scale-[1.02]"
+                >
+                  <span>Falar com Especialista</span>
+                  <ChevronRight className="w-5 h-5" />
+                </a>
+              </div>
+            )}
           </div>
 
-          <div style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', width: '100%', height: '300px', smHeight: '380px', backgroundColor: '#022c22', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
-            <img src={fotoFachadaHero} alt="Foto Capa" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '16px' }} />
+          <div className="md:col-span-5">
+            <div className="rounded-3xl shadow-2xl overflow-hidden h-[300px] sm:h-[380px] bg-emerald-950 border border-emerald-800/50 p-2 flex items-center justify-center">
+              <img src={fotoFachadaHero} alt={`Especialidade ${nomeCurto}`} className="w-full h-full object-contain rounded-2xl" />
+            </div>
           </div>
 
         </div>
       </section>
 
       {/* COMPONENTE INFOGOOGLE */}
-      <InfoGoogle d={d} fotos={fotosTodas} tema={temaClaroInfo} />
+      <InfoGoogle d={d} fotos={fotos} tema={temaClaroInfo} prefixo="clin-urb" />
 
       {/* CARD FINAL - NOSSA SEDE */}
-      <section style={{ padding: '30px 16px 60px 16px', smPadding: '40px 20px 80px 20px' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', background: 'linear-gradient(135deg, #022c22 0%, #064e3b 100%)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '24px', smBorderRadius: '32px', padding: '24px', smPadding: '40px', boxShadow: '0 20px 40px rgba(2, 44, 34, 0.3)', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '30px', smGap: '40px', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+        <div className="bg-gradient-to-br from-emerald-950 to-emerald-900 border border-emerald-500/20 rounded-3xl p-6 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-8 items-center text-white">
           
-          <div style={{ width: '220px', smWidth: '260px', flexShrink: 0, position: 'relative', margin: '0 auto' }}>
-            <div style={{ width: '100%', height: 'auto', borderRadius: '20px', overflow: 'hidden', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 20px rgba(0,0,0,0.3)', backgroundColor: '#022c22', padding: '4px' }}>
-              <img src={fotoSedeReal} alt="Nossa Sede" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain', borderRadius: '14px' }} />
+          <div className="md:col-span-5 relative mx-auto w-full max-w-[280px]">
+            <div className="rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl bg-emerald-950 p-1 h-56 sm:h-64 flex items-center justify-center">
+              <img src={fotoSedeReal} alt={`Sede ${nomeCurto}`} className="w-full h-full object-contain rounded-xl" />
             </div>
-            <div style={{ position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)', background: '#f97316', color: '#fff', fontSize: '10px', fontWeight: 900, padding: '6px 16px', borderRadius: '999px', textTransform: 'uppercase', letterSpacing: '1px', whiteSpace: 'nowrap' }}>
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-wider shadow-md whitespace-nowrap">
               Nossa Sede
             </div>
           </div>
 
-          <div style={{ flex: '1 1 280px', textAlign: 'center', smTextAlign: 'left' }}>
-            <h3 style={{ fontSize: '24px', smFontSize: '28px', fontWeight: 900, marginBottom: '10px', color: '#ffffff' }}>Visite-nos ou Chame Online</h3>
-            <p style={{ fontSize: '14px', smFontSize: '15px', color: '#a7f3d0', marginBottom: '24px', lineHeight: 1.5 }}>
+          <div className="md:col-span-7 text-center md:text-left space-y-4">
+            <h3 className="text-2xl sm:text-3xl font-black text-white">Visite-nos ou Chame Online</h3>
+            <p className="text-emerald-200 text-sm leading-relaxed">
               Estamos prontos para atender você na nossa clínica ou no conforto do seu lar.
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', smJustifyContent: 'flex-start' }}>
-              <a href={whatsappURL} target="_blank" rel="noopener noreferrer" style={{ background: '#f97316', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none' }}>
-                💬 Chamar no WhatsApp
+            <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+              <a href={d.whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-extrabold text-xs uppercase px-5 py-3.5 rounded-xl transition shadow-md">
+                <MessageCircle className="w-4 h-4 fill-white text-orange-500" />
+                <span>Chamar no WhatsApp</span>
               </a>
-              <a href={mapsURL} target="_blank" rel="noopener noreferrer" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: 800, fontSize: '13px', padding: '14px 20px', borderRadius: '12px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)' }}>
-                📍 Rota no Mapa
+              <a href={d.mapa && d.mapa !== '#' ? d.mapa : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase px-5 py-3.5 rounded-xl border border-white/20 transition">
+                <Navigation className="w-4 h-4 text-orange-400" />
+                <span>Rota no Mapa</span>
               </a>
             </div>
-            <p style={{ fontSize: '11px', smFontSize: '12px', color: '#6ee7b7', marginTop: '20px' }}>📍 {d.enderecoCompleto || lead.endereco}</p>
+            <p className="text-xs text-emerald-400 pt-3 border-t border-emerald-800/80">
+              📍 {d.enderecoCompleto || localSimples}
+            </p>
           </div>
 
         </div>
       </section>
 
-      <footer style={{ textAlign: 'center', padding: '20px', backgroundColor: '#020617', color: '#475569', fontSize: '12px', fontWeight: 600 }}>
-        <p>© {new Date().getFullYear()} {nomeExibir}. Todos os direitos reservados.</p>
+      <footer className="text-center py-6 bg-slate-950 text-slate-500 text-xs font-semibold border-t border-slate-900">
+        <p>© {new Date().getFullYear()} {nomeCurto}. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
