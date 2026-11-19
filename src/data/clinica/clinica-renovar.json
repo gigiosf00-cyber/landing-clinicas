@@ -1,5 +1,5 @@
 {
-  "enviado_em": "2026-11-19T15:39:33-03:00",
+  "enviado_em": "2026-11-19T15:42:02-03:00",
   "lead": {
     "id": "lead_1791578479620800700",
     "nome": "Clínica Renovar - Fisioterapia, Pilates e Estética",
@@ -37,12 +37,12 @@
       "/fotos/clinica-renovar/foto11.jpg"
     ],
     "criado_em": "2026-10-09T17:41:19.6208007-03:00",
-    "atualizado_em": "2026-11-19T15:39:33.875322-03:00"
+    "atualizado_em": "2026-11-19T15:42:02.3017604-03:00"
   },
   "nicho_pasta": "clinica",
   "slug": "clinica-renovar",
-  "template": "moderno-urban",
-  "url_demo": "https://www.gef67.com.br/clinica/clinica-renovar/moderno-urban",
-  "url_local": "http://localhost:3000/clinica/clinica-renovar/moderno-urban",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/clinica/clinica-renovar/minimalista-premium",
+  "url_local": "http://localhost:3000/clinica/clinica-renovar/minimalista-premium",
   "url_oficial": "https://meu-site.vercel.app/clinica-renovar"
 }
