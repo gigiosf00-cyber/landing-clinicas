@@ -84,7 +84,7 @@ export default function InfoGoogle({
   };
 
   const fotosInstalacoes = safeFotos.filter(eFotoInstalacao);
-  const fotosServicos = safeFotos.filter((f) => !eFotoInstalacao(f));
+  const fotosServicos = safeFotos.filter((f: string) => !eFotoInstalacao(f));
 
   const listaInstalacoesExibir = fotosInstalacoes.length > 0 ? fotosInstalacoes : safeFotos;
   const listaServicosExibir = fotosServicos.length > 0 ? fotosServicos : safeFotos;
