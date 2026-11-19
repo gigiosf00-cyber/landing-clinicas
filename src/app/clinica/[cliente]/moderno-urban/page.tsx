@@ -65,7 +65,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
         </div>
       </header>
 
-      {/* LAYOUT 2 COLUNAS CLÍNICA URBAN */}
+      {/* HERO SECTION 2 COLUNAS */}
       <section className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="space-y-6">
           <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-900/50 text-emerald-300 border border-emerald-800/60 uppercase tracking-wider">
@@ -91,16 +91,16 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
           )}
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-emerald-900/60 shadow-2xl aspect-[4/3] sm:aspect-square bg-emerald-950">
+        {/* FOTO COMPLETA SEM CORTES COM MOVIMENTO SUAVE */}
+        <div className="relative overflow-hidden rounded-3xl border border-emerald-900/60 shadow-2xl aspect-[4/3] sm:aspect-square bg-emerald-950 p-3 flex items-center justify-center">
           <style dangerouslySetInnerHTML={{ __html: `
-            @keyframes space-zoom-pan {
-              0% { transform: scale(1.04) translate(0%, 0%); }
-              50% { transform: scale(1.20) translate(-1.5%, -1%); }
-              100% { transform: scale(1.04) translate(0%, 0%); }
+            @keyframes subtle-float {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.03); }
+              100% { transform: scale(1); }
             }
-            .animate-space-zoom {
-              animation: space-zoom-pan 14s ease-in-out infinite;
-              transform-origin: center center;
+            .animate-subtle-zoom {
+              animation: subtle-float 8s ease-in-out infinite;
               will-change: transform;
             }
           `}} />
@@ -108,7 +108,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
             <img
               src={fotoFachadaHero}
               alt={d.nome}
-              className="w-full h-full object-cover brightness-[0.92] contrast-[1.05] animate-space-zoom"
+              className="w-full h-full object-contain rounded-2xl animate-subtle-zoom"
             />
           )}
         </div>
