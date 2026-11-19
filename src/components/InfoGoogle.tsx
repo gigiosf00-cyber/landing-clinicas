@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Clock, Camera, Star, MapPin, ChevronRight, X, Navigation, MessageCircle, Calendar, HeartPulse, Scissors, Utensils } from 'lucide-react';
+import { Clock, Camera, Star, MapPin, ChevronRight, X, Navigation, MessageCircle, Calendar, HeartPulse, Scissors, Utensils, Building2, Sparkles } from 'lucide-react';
 
 export interface TemaInfo {
   fundo: string; 
@@ -23,13 +23,13 @@ const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 const REVIEWS_BARBEARIA = [
   { autor: 'Marcelo Silva', nota: 5, texto: 'Excelente atendimento! O corte ficou perfeito e a barba na toalha quente é sensacional.' },
   { autor: 'Rodrigo Oliveira', nota: 5, texto: 'Ambiente muito agradável, profissionais de altíssima qualidade e boa música.' },
-  { autor: 'Fernando Costa', nota: 4, texto: 'Muito bom o atendimento e o corte. Às vezes tem uma pequena espera nos horários de pico, mas vale muito a pena!' }
+  { autor: 'Fernando Costa', nota: 4, texto: 'Muito bom o atendimento e o corte. Vale muito a pena!' }
 ];
 
 const REVIEWS_CLINICA = [
   { autor: 'Camila Alencar', nota: 5, texto: 'Profissionais extremamente atenciosos e capacitados. A fisioterapia aliviou minhas dores.' },
   { autor: 'Juliana Mendes', nota: 5, texto: 'Clínica muito limpa, organizada e com equipamentos modernos.' },
-  { autor: 'Eduardo Santos', nota: 4, texto: 'Ótimo atendimento e ambiente acolhedor. Recomendo para quem busca tratamento de qualidade.' }
+  { autor: 'Eduardo Santos', nota: 4, texto: 'Ótimo atendimento e ambiente acolhedor. Recomendo!' }
 ];
 
 const SERVICOS_BARBEARIA = [
@@ -47,10 +47,7 @@ const SERVICOS_CLINICA = [
   { nome: 'Atendimento Domiciliar', desc: 'Fisioterapia no conforto do seu lar com flexibilidade e total praticidade.' },
   { nome: 'Reabilitação do Idoso', desc: 'Treino de equilíbrio, prevenção de quedas e autonomia para a terceira idade.' },
   { nome: 'Pilates Terapêutico & Clínico', desc: 'Aparelhos completos para postura e flexibilidade com turmas reduzidas.' },
-  { nome: 'Quiropraxia', desc: 'Ajustes articulares focados em restaurar a função da coluna e aliviar dores.' },
-  { nome: 'Ventosaterapia', desc: 'Alívio de tensões musculares, melhora da circulação e relaxamento profundo.' },
-  { nome: 'Estética Avançada', desc: 'Procedimentos faciais e corporais focados no seu cuidado integral.' },
-  { nome: 'Palmilhas Posturais', desc: 'Avaliação biomecânica e confecção de palmilhas sob medida.' }
+  { nome: 'Quiropraxia', desc: 'Ajustes articulares focados em restaurar a função da coluna e aliviar dores.' }
 ];
 
 const SERVICOS_HAMBURGUERIA = [
@@ -75,9 +72,25 @@ export default function InfoGoogle({
 }) {
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
+  const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'instalacoes' | 'servicos'>('instalacoes');
 
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
+
+  // SEPARAÇÃO INTELIGENTE DE FOTOS (INSTALAÇÕES VS SERVIÇOS/ESPAÇO)
+  const eFotoInstalacao = (url: string) => {
+    const arq = (url?.split('/').pop() || '').toLowerCase();
+    return /(foto11|sede|fachada|ambiente|recepcao|consultorio|local|espaco)/.test(arq);
+  };
+
+  const fotosInstalacoes = safeFotos.filter(eFotoInstalacao);
+  const fotosServicos = safeFotos.filter((f) => !eFotoInstalacao(f));
+
+  // Fallbacks caso a filtragem encontre array vazio
+  const listaInstalacoesExibir = fotosInstalacoes.length > 0 ? fotosInstalacoes : safeFotos;
+  const listaServicosExibir = fotosServicos.length > 0 ? fotosServicos : safeFotos;
+
+  const fotosExibidasGaleria = categoriaFotoAtiva === 'instalacoes' ? listaInstalacoesExibir : listaServicosExibir;
 
   let semana: string[] = [];
   const rawSemana = safeD.horariosSemana || safeD.horarios_semana;
@@ -107,12 +120,12 @@ export default function InfoGoogle({
   
   const urlOficialMaps = safeD.mapa && safeD.mapa !== '#' 
     ? safeD.mapa 
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ', ' + enderecoBusca)}`;
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}`;
     
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ', ' + enderecoBusca)}&z=17&output=embed`;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}&z=17&output=embed`;
   
-  const notaAval = Number(safeD.avaliacao || safeD.rating || safeD.nota || 4.5);
-  const totalAval = Number(safeD.user_ratings_total || safeD.totalAval || safeD.total_avaliacoes || 84);
+  const notaAval = Number(safeD.avaliacao || safeD.rating || safeD.nota || 4.8);
+  const totalAval = Number(safeD.user_ratings_total || safeD.totalAval || safeD.total_avaliacoes || 45);
   const telNumero = safeD.tel || safeD.telefone || safeD.phone || '';
 
   const rawInsta = safeD.instagram || safeD.insta || safeD.instaUrl || '';
@@ -140,7 +153,7 @@ export default function InfoGoogle({
     bgCard: 'bg-[#022c22]',
     bordaCard: 'border-emerald-900/60',
     hoverBorda: 'hover:border-orange-500',
-    textoTituloGeral: 'text-[#022c22]',
+    textoTituloGeral: 'text-emerald-400',
     textoTituloCard: 'text-white group-hover:text-orange-400',
     textoDescCard: 'text-emerald-100/80',
     btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/50 bg-[#022c22] hover:bg-[#064e3b] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
@@ -269,32 +282,73 @@ export default function InfoGoogle({
               ))}
             </div>
 
-            <div className="pt-2">
-              <a 
-                href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um horário na ${nomeEstabelecimento}.`)}`} 
-                target="_blank" 
-                rel="noreferrer" 
-                className={estiloCores.btnWhatsapp}
-              >
-                <Calendar className="w-4 h-4"/>
-                <span>{textoBotaoAgendar}</span>
-                <ChevronRight className="w-4 h-4"/>
-              </a>
-            </div>
+            {telNumero && (
+              <div className="pt-2">
+                <a 
+                  href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um horário na ${nomeEstabelecimento}.`)}`} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className={estiloCores.btnWhatsapp}
+                >
+                  <Calendar className="w-4 h-4"/>
+                  <span>{textoBotaoAgendar}</span>
+                  <ChevronRight className="w-4 h-4"/>
+                </a>
+              </div>
+            )}
           </div>
         </section>
       )}
 
-      {/* 3. GALERIA COMPLETA DE FOTOS */}
+      {/* 3. GALERIA COM NAVEGAÇÃO DE ABAS ESPECÍFICAS (INSTALAÇÕES VS SERVIÇOS) */}
       {safeFotos.length > 0 && (
         <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800">
-          <h2 className={`text-xl font-bold tracking-tight mb-6 ${estiloCores.textoTituloGeral}`}>Galeria</h2>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className={`text-xl sm:text-2xl font-bold tracking-tight ${estiloCores.textoTituloGeral}`}>
+                Galeria de Fotos
+              </h2>
+              <p className="text-xs text-zinc-400 mt-1">
+                Explore o nosso espaço físico e acompanhe o nosso trabalho.
+              </p>
+            </div>
+
+            {/* BOTÕES DE NAVEGAÇÃO ENTRE CATEGORIAS */}
+            <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 p-1.5 rounded-full w-fit">
+              <button
+                onClick={() => setCategoriaFotoAtiva('instalacoes')}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                  categoriaFotoAtiva === 'instalacoes'
+                    ? 'bg-amber-500 text-zinc-950 shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>Instalações & Sede</span>
+              </button>
+
+              <button
+                onClick={() => setCategoriaFotoAtiva('servicos')}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                  categoriaFotoAtiva === 'servicos'
+                    ? 'bg-amber-500 text-zinc-950 shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Serviços & Atendimento</span>
+              </button>
+            </div>
+          </div>
+
+          {/* GRELHA DE FOTOS DA CATEGORIA SELECIONADA */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {safeFotos.map((f: string, i: number) => (
+            {fotosExibidasGaleria.map((f: string, i: number) => (
               <div 
                 key={i} 
                 onClick={() => setFotoModal(f)} 
-                className="aspect-square rounded-2xl overflow-hidden cursor-pointer border border-zinc-800 hover:border-amber-500 group relative shadow-sm bg-zinc-900"
+                className="aspect-square rounded-2xl overflow-hidden cursor-pointer border border-zinc-800 hover:border-amber-500 group relative shadow-md bg-zinc-900"
               >
                 <img 
                   src={f} 
@@ -313,7 +367,7 @@ export default function InfoGoogle({
       {/* MODAL LIGHTBOX FOTOS */}
       {fotoModal && (
         <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-pointer">
-          <img src={fotoModal} alt="Foto Ampliada" className="max-w-full max-h-[85vh] rounded-2xl border border-neutral-800 shadow-2xl" />
+          <img src={fotoModal} alt="Foto Ampliada" className="max-w-full max-h-[85vh] rounded-2xl border border-neutral-800 shadow-2xl object-contain" />
           <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 transition">
             <X className="w-6 h-6"/>
           </button>
@@ -362,7 +416,7 @@ export default function InfoGoogle({
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO COM MAPA NOTURNO */}
+      {/* 5. LOCALIZAÇÃO COM MAPA */}
       <section className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800 pb-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
@@ -392,14 +446,16 @@ export default function InfoGoogle({
       </section>
 
       {/* DOCK MOBILE FIXO */}
-      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
-        <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
-          <MessageCircle className="w-4 h-4"/> WhatsApp
-        </a>
-        <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-zinc-950 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
-          <Navigation className={`w-4 h-4 ${estiloCores.corIcone}`}/> Como Chegar
-        </a>
-      </div>
+      {telNumero && (
+        <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+          <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
+            <MessageCircle className="w-4 h-4"/> WhatsApp
+          </a>
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-zinc-950 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
+            <Navigation className={`w-4 h-4 ${estiloCores.corIcone}`}/> Como Chegar
+          </a>
+        </div>
+      )}
 
     </div>
   );
