@@ -77,16 +77,15 @@ export default function InfoGoogle({
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
 
-  // SEPARAÇÃO INTELIGENTE DE FOTOS (INSTALAÇÕES VS SERVIÇOS/ESPAÇO)
+  // SEPARAÇÃO DE FOTOS: foto2, foto3, foto11 e palavras-chave de estrutura entram em Instalações & Sede
   const eFotoInstalacao = (url: string) => {
     const arq = (url?.split('/').pop() || '').toLowerCase();
-    return /(foto11|sede|fachada|ambiente|recepcao|consultorio|local|espaco)/.test(arq);
+    return /(foto2|foto3|foto11|renovar2|renovar3|renovar11|sede|fachada|ambiente|recepcao|consultorio|atendimento|equipe|sala|local|espaco)/.test(arq);
   };
 
   const fotosInstalacoes = safeFotos.filter(eFotoInstalacao);
   const fotosServicos = safeFotos.filter((f) => !eFotoInstalacao(f));
 
-  // Fallbacks caso a filtragem encontre array vazio
   const listaInstalacoesExibir = fotosInstalacoes.length > 0 ? fotosInstalacoes : safeFotos;
   const listaServicosExibir = fotosServicos.length > 0 ? fotosServicos : safeFotos;
 
@@ -300,7 +299,7 @@ export default function InfoGoogle({
         </section>
       )}
 
-      {/* 3. GALERIA COM NAVEGAÇÃO DE ABAS ESPECÍFICAS (INSTALAÇÕES VS SERVIÇOS) */}
+      {/* 3. GALERIA COM ABAS (INSTALAÇÕES VS SERVIÇOS) */}
       {safeFotos.length > 0 && (
         <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800">
           
@@ -314,7 +313,6 @@ export default function InfoGoogle({
               </p>
             </div>
 
-            {/* BOTÕES DE NAVEGAÇÃO ENTRE CATEGORIAS */}
             <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 p-1.5 rounded-full w-fit">
               <button
                 onClick={() => setCategoriaFotoAtiva('instalacoes')}
@@ -342,7 +340,6 @@ export default function InfoGoogle({
             </div>
           </div>
 
-          {/* GRELHA DE FOTOS DA CATEGORIA SELECIONADA */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {fotosExibidasGaleria.map((f: string, i: number) => (
               <div 

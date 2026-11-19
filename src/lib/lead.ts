@@ -90,7 +90,6 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const totalAvaliacoesReal = lead?.totalAval ?? lead?.total_avaliacoes ?? 0;
   const nichoDetectado = lead?.nicho || lead?.categoria || '';
 
-  // 📍 CORREÇÃO GLOBAL DE MAPA: Concatena Nome + Endereço + Cidade + Estado para evitar buscas genéricas baseadas no IP local
   const termoBusca = [lead?.nome, lead?.endereco, lead?.cidade, lead?.estado]
     .filter(Boolean)
     .join(' ');
@@ -158,9 +157,11 @@ export function fotosPorCategoria(fotos: string[]) {
   
   const nomeArq = (u: string) => (u?.split('/').pop() || '').toLowerCase();
   
-  // Regra de separação de imagens
-  const instalacoes = fotos.filter((u) => /(foto11|sede|fachada|ambiente|recepcao|consultorio|local|espaco)/.test(nomeArq(u)));
-  const servicos = fotos.filter((u) => !/(foto11|sede|fachada|ambiente|recepcao|consultorio|local|espaco)/.test(nomeArq(u)));
+  // Regra ampliada: inclui foto2, foto3, foto11 e variações do nome do estabelecimento/espaço
+  const eInstalacao = (u: string) => /(foto2|foto3|foto11|renovar2|renovar3|renovar11|sede|fachada|ambiente|recepcao|consultorio|atendimento|equipe|sala|local|espaco)/.test(nomeArq(u));
+
+  const instalacoes = fotos.filter(eInstalacao);
+  const servicos = fotos.filter((u) => !eInstalacao(u));
 
   return [
     { id: 'instalacoes', label: '🏢 Instalações & Sede', fotos: instalacoes.length > 0 ? instalacoes : fotos },
