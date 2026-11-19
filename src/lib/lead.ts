@@ -157,8 +157,11 @@ export function fotosPorCategoria(fotos: string[]) {
   
   const nomeArq = (u: string) => (u?.split('/').pop() || '').toLowerCase();
   
-  // Regra ampliada: inclui foto2, foto3, foto11 e variações do nome do estabelecimento/espaço
-  const eInstalacao = (u: string) => /(foto2|foto3|foto11|renovar2|renovar3|renovar11|sede|fachada|ambiente|recepcao|consultorio|atendimento|equipe|sala|local|espaco)/.test(nomeArq(u));
+  // Inclui foto1, foto2, foto3, foto8, foto11 e variações de ambiente na aba Instalações & Sede
+  const eInstalacao = (u: string) => {
+    const arq = nomeArq(u);
+    return /(?:^|[^0-9])(foto1|foto2|foto3|foto8|foto11)(?:[^0-9]|$)|(renovar1|renovar2|renovar3|renovar8|renovar11|sede|fachada|ambiente|recepcao|consultorio|atendimento|equipe|sala|local|espaco)/.test(arq);
+  };
 
   const instalacoes = fotos.filter(eInstalacao);
   const servicos = fotos.filter((u) => !eInstalacao(u));
