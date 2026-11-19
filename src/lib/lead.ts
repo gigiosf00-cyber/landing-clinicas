@@ -29,7 +29,6 @@ export function carregarLead(cliente: string): LeadData | null {
 
   try {
     if (fs.existsSync(dataDir)) {
-      // Lê dinamicamente todas as subpastas em src/data (barbearia, clinica, salaoblz, etc.)
       const pastas = fs.readdirSync(dataDir).filter(item => {
         return fs.statSync(path.join(dataDir, item)).isDirectory();
       });
@@ -37,7 +36,6 @@ export function carregarLead(cliente: string): LeadData | null {
       for (const pasta of pastas) {
         const pastaPath = path.join(dataDir, pasta);
 
-        // 1. Tenta a correspondência exata do arquivo JSON
         const filePath = path.join(pastaPath, `${cliente}.json`);
         if (fs.existsSync(filePath)) {
           const fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -45,7 +43,6 @@ export function carregarLead(cliente: string): LeadData | null {
           return parsed.lead || parsed;
         }
 
-        // 2. Fallback Inteligente: Garante abertura do site se o arquivo gravado for mais longo ou mais curto que a URL
         const arquivos = fs.readdirSync(pastaPath).filter(f => f.endsWith('.json') && f !== 'active_lead.json');
         for (const arq of arquivos) {
           const nomeSemExt = arq.replace('.json', '');
@@ -87,7 +84,6 @@ export function fotoCapa(lead: LeadData): string | null {
 export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const telLimpo = lead?.telefone ? lead.telefone.replace(/\D/g, '') : '';
   
-  // Formatação de DDI: injeta o prefixo 55 apenas para números com 10 ou 11 dígitos
   const telComDDI = (telLimpo.length === 10 || telLimpo.length === 11) ? `55${telLimpo}` : telLimpo;
   const whatsapp = telLimpo ? `https://wa.me/${telComDDI}?text=${encodeURIComponent(mensagemWhatsapp)}` : '#';
   
@@ -108,7 +104,7 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
     : mapaFallback;
 
   return {
-    nome: lead?.nome || 'Estabelecimento', // Preserva o nome completo oficial extraído do Maps
+    nome: lead?.nome || 'Estabelecimento',
     endereco: lead?.endereco || '',
     enderecoCompleto: lead?.endereco || '',
     cidade: lead?.cidade || '',
@@ -161,11 +157,14 @@ export function fotosPorCategoria(fotos: string[]) {
   }
   
   const nomeArq = (u: string) => (u?.split('/').pop() || '').toLowerCase();
-  const cat = (re: RegExp) => fotos.filter((u) => re.test(nomeArq(u)));
+  
+  // Regra de separação de imagens
+  const instalacoes = fotos.filter((u) => /(foto11|sede|fachada|ambiente|recepcao|consultorio|local|espaco)/.test(nomeArq(u)));
+  const servicos = fotos.filter((u) => !/(foto11|sede|fachada|ambiente|recepcao|consultorio|local|espaco)/.test(nomeArq(u)));
 
   return [
-    { id: 'tudo', label: 'Tudo', fotos },
-    { id: 'trabalhos', label: 'Galeria', fotos: cat(/(trabalho|corte|penteado|servico|clinica|procedimento|ambiente|foto)/) },
+    { id: 'instalacoes', label: '🏢 Instalações & Sede', fotos: instalacoes.length > 0 ? instalacoes : fotos },
+    { id: 'servicos', label: '✨ Serviços & Atendimento', fotos: servicos.length > 0 ? servicos : fotos },
   ];
 }
 
