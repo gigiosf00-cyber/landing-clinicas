@@ -94,6 +94,19 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
   const totalAvaliacoesReal = lead?.totalAval ?? lead?.total_avaliacoes ?? 0;
   const nichoDetectado = lead?.nicho || lead?.categoria || '';
 
+  // 📍 CORREÇÃO GLOBAL DE MAPA: Concatena Nome + Endereço + Cidade + Estado para evitar buscas genéricas baseadas no IP local
+  const termoBusca = [lead?.nome, lead?.endereco, lead?.cidade, lead?.estado]
+    .filter(Boolean)
+    .join(' ');
+  
+  const mapaFallback = termoBusca 
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(termoBusca)}`
+    : '#';
+
+  const mapaFinal = (lead?.mapa && lead.mapa.length > 5 && lead.mapa !== '#') 
+    ? lead.mapa 
+    : mapaFallback;
+
   return {
     nome: lead?.nome || 'Estabelecimento', // Preserva o nome completo oficial extraído do Maps
     endereco: lead?.endereco || '',
@@ -111,7 +124,7 @@ export function dadosBase(lead: LeadData, mensagemWhatsapp: string) {
     horariosSemana: lead?.horariosSemana || [],
     statusAgora: lead?.statusAgora || { aberto: null, texto: '' },
     resumo: lead?.resumo || '',
-    mapa: lead?.mapa || '#',
+    mapa: mapaFinal,
     mapaEmbed: lead?.mapaEmbed || '',
     streetView: lead?.streetView || '',
     nicho: nichoDetectado,
