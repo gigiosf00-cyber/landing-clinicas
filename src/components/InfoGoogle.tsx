@@ -77,7 +77,7 @@ export default function InfoGoogle({
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
 
-  // SEPARAÇÃO DE FOTOS: foto1, foto2, foto3, foto8, foto11 e palavras-chave de estrutura entram em Instalações & Sede
+  // SEPARAÇÃO DE FOTOS: foto1, foto2, foto3, foto8, foto11 e palavras-chave estruturais entram em Instalações & Sede
   const eFotoInstalacao = (url: string) => {
     const arq = (url?.split('/').pop() || '').toLowerCase();
     return /(?:^|[^0-9])(foto1|foto2|foto3|foto8|foto11)(?:[^0-9]|$)|(renovar1|renovar2|renovar3|renovar8|renovar11|sede|fachada|ambiente|recepcao|consultorio|atendimento|equipe|sala|local|espaco)/.test(arq);

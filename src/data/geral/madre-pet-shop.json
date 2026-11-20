@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-20T20:28:28-03:00",
+  "lead": {
+    "id": "lead_1791579919780608600",
+    "nome": "Madre PET SHOP",
+    "endereco": "Madre PET SHOP - Av. Me. Leônia Milito, 867 - e 889 - Palhano 2, Londrina - PR, 86050-270",
+    "telefone": "(43) 3336-1378",
+    "nicho": "",
+    "cidade": "Londrina - PR",
+    "estado": "",
+    "categoria": "Pet store",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "criado_em": "2026-10-09T18:05:19.7806086-03:00",
+    "atualizado_em": "2026-11-20T20:28:28.0617289-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "madre-pet-shop",
+  "template": "moderno-urban",
+  "url_demo": "https://www.gef67.com.br/geral/madre-pet-shop/moderno-urban",
+  "url_local": "http://localhost:3000/geral/madre-pet-shop/moderno-urban",
+  "url_oficial": "https://meu-site.vercel.app/madre-pet-shop"
+}
