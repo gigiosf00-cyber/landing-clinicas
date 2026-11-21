@@ -28,9 +28,15 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
     || (fotosTodas && fotosTodas[0]) 
     || '';
 
-  // Foto Sede Real (foto11.jpg / renovar11.jpg com a fachada de vidro)
+  // Foto Sede Real (foto11.jpg com a fachada de vidro)
   const fotoSedeReal = (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11') || f.includes('renovar11'))) 
     || fotoFachadaHero;
+
+  // Filtra categorias brutas em inglês vindas do Google Maps
+  const eIngles = (str: string) => /physical|therapy|clinic|barber|shop/i.test(str || '');
+  const nichoFormatado = (d.nicho && !eIngles(d.nicho)) 
+    ? d.nicho.toUpperCase() 
+    : 'ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA';
 
   const temaModernoUrbanClinica = {
     fundo: 'bg-[#011c15]',
@@ -57,7 +63,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
           <div>
             <h1 className="text-base sm:text-lg font-black text-white tracking-tight">{d.nome}</h1>
             <p className="text-xs text-orange-400 font-bold uppercase tracking-wider">
-              {d.nicho || 'ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA'}
+              {nichoFormatado}
             </p>
           </div>
           {d.tel && (

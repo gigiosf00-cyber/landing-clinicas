@@ -72,20 +72,27 @@ export default function InfoGoogle({
 }) {
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
-  const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'instalacoes' | 'servicos'>('instalacoes');
+  
+  // 1. ABA DE SERVIÇOS SELECIONADA POR PADRÃO
+  const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'servicos' | 'instalacoes'>('servicos');
 
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
 
   const safePrefixo = (prefixo || safeD.nicho || safeD.categoria || '').toLowerCase();
 
+  // 2. ADAPTAÇÃO DINÂMICA DOS RÓTULOS POR NICHO
+  const eBarbearia = safePrefixo.includes('barbearia') || safePrefixo.includes('barber');
+  const eClinica = safePrefixo.includes('clinica') || safePrefixo.includes('fisioterapia') || safePrefixo.includes('medica');
+
+  const labelServicos = eBarbearia ? 'Serviços & Cortes' : 'Serviços & Atendimento';
+  const labelEspaco = eBarbearia ? 'Nosso Espaço' : eClinica ? 'Instalações & Clínica' : 'Nosso Espaço';
+
   // FILTRAGEM INTELIGENTE POR NICHO:
-  // Barbearia: foto1, foto8, foto11 e estrutura vão para Instalações
-  // Clínica: foto11 (fachada real), foto2 e foto3 (atendimento/sala) entram em Instalações (foto1 e foto4 gráficos vão para Serviços)
   const eFotoInstalacao = (url: string) => {
     const arq = (url?.split('/').pop() || '').toLowerCase();
     
-    if (safePrefixo.includes('barbearia') || safePrefixo.includes('barber')) {
+    if (eBarbearia) {
       return /(?:^|[^0-9])(foto1|foto8|foto11)(?:[^0-9]|$)|(sede|fachada|ambiente|sala|local|espaco)/.test(arq);
     }
 
@@ -98,7 +105,7 @@ export default function InfoGoogle({
   const listaInstalacoesExibir = fotosInstalacoes.length > 0 ? fotosInstalacoes : safeFotos;
   const listaServicosExibir = fotosServicos.length > 0 ? fotosServicos : safeFotos;
 
-  const fotosExibidasGaleria = categoriaFotoAtiva === 'instalacoes' ? listaInstalacoesExibir : listaServicosExibir;
+  const fotosExibidasGaleria = categoriaFotoAtiva === 'servicos' ? listaServicosExibir : listaInstalacoesExibir;
 
   let semana: string[] = [];
   const rawSemana = safeD.horariosSemana || safeD.horarios_semana;
@@ -308,7 +315,7 @@ export default function InfoGoogle({
         </section>
       )}
 
-      {/* 3. GALERIA COM ABAS (INSTALAÇÕES VS SERVIÇOS) */}
+      {/* 3. GALERIA COM ABAS (SERVIÇOS EM 1º LUGAR, INSTALAÇÕES EM 2º) */}
       {safeFotos.length > 0 && (
         <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800">
           
@@ -318,23 +325,12 @@ export default function InfoGoogle({
                 Galeria de Fotos
               </h2>
               <p className="text-xs text-zinc-400 mt-1">
-                Explore o nosso espaço físico e acompanhe o nosso trabalho.
+                Explore os nossos trabalhos e conheça a nossa estrutura.
               </p>
             </div>
 
             <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 p-1.5 rounded-full w-fit">
-              <button
-                onClick={() => setCategoriaFotoAtiva('instalacoes')}
-                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva === 'instalacoes'
-                    ? 'bg-amber-500 text-zinc-950 shadow-md'
-                    : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5" />
-                <span>Instalações & Sede</span>
-              </button>
-
+              {/* 1º BOTÃO: SERVIÇOS & ATENDIMENTO / CORTES (ATIVO POR PADRÃO) */}
               <button
                 onClick={() => setCategoriaFotoAtiva('servicos')}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
@@ -344,7 +340,20 @@ export default function InfoGoogle({
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Serviços & Atendimento</span>
+                <span>{labelServicos}</span>
+              </button>
+
+              {/* 2º BOTÃO: INSTALAÇÕES & SEDE / ESPAÇO */}
+              <button
+                onClick={() => setCategoriaFotoAtiva('instalacoes')}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                  categoriaFotoAtiva === 'instalacoes'
+                    ? 'bg-amber-500 text-zinc-950 shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>{labelEspaco}</span>
               </button>
             </div>
           </div>

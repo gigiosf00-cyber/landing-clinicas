@@ -28,9 +28,15 @@ export default async function PaginaClinicaVintage({ params }: PageProps) {
     || (fotosTodas && fotosTodas[0]) 
     || '';
 
-  // Foto Sede Real (foto11.jpg / renovar11.jpg com a fachada de vidro)
+  // Foto Sede Real (foto11.jpg com a fachada de vidro)
   const fotoSedeReal = (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11') || f.includes('renovar11'))) 
     || fotoFachadaHero;
+
+  // Filtra categorias brutas em inglês vindas do Google Maps
+  const eIngles = (str: string) => /physical|therapy|clinic|barber|shop/i.test(str || '');
+  const nichoFormatado = (d.nicho && !eIngles(d.nicho)) 
+    ? d.nicho.toUpperCase() 
+    : 'ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA';
 
   const temaVintageRetro = {
     fundo: 'bg-[#f4f1ea]',
@@ -57,7 +63,7 @@ export default async function PaginaClinicaVintage({ params }: PageProps) {
           <div>
             <h1 className="text-base sm:text-lg font-bold text-[#1b3b2b] tracking-tight">{d.nome}</h1>
             <p className="text-xs text-[#c85a32] font-semibold uppercase tracking-wider font-sans">
-              {d.nicho || 'ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA'}
+              {nichoFormatado}
             </p>
           </div>
           {d.tel && (
@@ -126,7 +132,7 @@ export default async function PaginaClinicaVintage({ params }: PageProps) {
       {/* GALERIA E DADOS GOOGLE COM MAPA */}
       <InfoGoogle d={d} fotos={fotosTodas} tema={temaVintageRetro} prefixo="vintage" />
 
-      {/* CARD FINAL - NOSSA SEDE / INSTALAÇÕES */}
+      {/* CARD FINAL - NOSSA SEDE */}
       <section className="bg-[#e2d9cc] py-10 sm:py-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto bg-[#f4f1ea] border border-[#dcd6cd] p-6 sm:p-10 shadow-lg grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           
@@ -145,11 +151,11 @@ export default async function PaginaClinicaVintage({ params }: PageProps) {
               Sinta-se à vontade para nos contactar via WhatsApp ou visitar o nosso espaço.
             </p>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2 font-sans">
-              <a href={d.whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#1b3b2b] hover:bg-[#132a1f] text-white font-bold text-xs uppercase px-5 sm:px-6 py-3.5 tracking-wider transition">
+              <a href={d.whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-[#1b3b2b] hover:bg-[#132a1f] text-white font-bold text-xs uppercase px-5 sm:px-6 py-3.5 tracking-wider transition">
                 <MessageCircle className="w-4 h-4 fill-white text-[#1b3b2b]" />
                 <span>Chamar WhatsApp</span>
               </a>
-              <a href={d.mapa && d.mapa !== '#' ? d.mapa : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-transparent hover:bg-[#1b3b2b]/10 text-[#1b3b2b] font-bold text-xs uppercase px-5 sm:px-6 py-3.5 border border-[#1b3b2b] tracking-wider transition">
+              <a href={d.mapa && d.mapa !== '#' ? d.mapa : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto)}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-transparent hover:bg-[#1b3b2b]/10 text-[#1b3b2b] font-bold text-xs uppercase px-5 py-3.5 border border-[#1b3b2b] tracking-wider transition">
                 <Navigation className="w-4 h-4 text-[#c85a32]" />
                 <span>Ver no Mapa</span>
               </a>
