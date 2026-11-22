@@ -45,6 +45,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
   const localizacaoTexto = cidade ? `${cidade} - ${uf}` : `IGUATU - ${uf}`;
 
   const corAtiva = lead.corMarca || lead.cor_marca || '#10b981';
+  const corDestaque = '#ea580c';
   const corTextoBotao = '#ffffff';
 
   // TEMA URBAN COM BASE ESMERALDA TÉCNICA
@@ -78,6 +79,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
     <main
       style={{
         '--cor-marca': corAtiva,
+        '--cor-destaque': corDestaque,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
       className="min-h-screen bg-[#02140e] text-white selection:bg-orange-500 selection:text-white"
@@ -93,6 +95,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
         fotoHero={fotoFachadaHero}
+        fitMode="contain"
         tema={temaModernoUrbanClinica}
         variacao="urban"
       />

@@ -36,7 +36,9 @@ export default function NossaSedeCard({
   const bordaClass = isVintage ? 'border-[#e0d3c1]' : (tema?.borda || 'border-zinc-800');
   const tituloClass = isVintage ? 'text-[#1c1917]' : 'text-white';
   const textoClass = isVintage ? 'text-[#44382e]' : 'text-zinc-300';
-  const destaqueBotao = tema?.destaque || 'bg-[#ea580c]';
+
+  const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
+  const corMarcaDinamica = 'var(--cor-marca, #059669)';
 
   return (
     <section className="max-w-6xl mx-auto px-6 py-10">
@@ -46,7 +48,10 @@ export default function NossaSedeCard({
             <div className={`w-full aspect-[4/3] rounded-2xl overflow-hidden border ${bordaClass}`}>
               <img src={fotoSede} alt={labelSede} className="w-full h-full object-cover" />
             </div>
-            <span className={`mt-3 inline-block px-4 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider text-white ${destaqueBotao}`}>
+            <span
+              style={{ backgroundColor: corDestaqueDinamica }}
+              className="mt-3 inline-block px-4 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider text-white shadow-sm"
+            >
               {labelSede}
             </span>
           </div>
@@ -65,7 +70,8 @@ export default function NossaSedeCard({
               href={whatsappUrl}
               target="_blank"
               rel="noreferrer"
-              className={`inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider text-white transition hover:brightness-110 ${destaqueBotao}`}
+              style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition hover:brightness-110 shadow-md"
             >
               <MessageCircle className="w-4 h-4" /> Chamar no WhatsApp
             </a>
@@ -76,13 +82,13 @@ export default function NossaSedeCard({
               rel="noreferrer"
               className={`inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider border ${bordaClass} ${tituloClass} transition hover:opacity-85`}
             >
-              <Navigation className="w-4 h-4" /> Rota no Mapa
+              <Navigation className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Rota no Mapa
             </a>
           </div>
 
           {enderecoCompleto && (
             <p className={`text-xs flex items-center gap-1.5 pt-1 ${textoClass}`}>
-              <MapPin className="w-4 h-4 shrink-0 text-[#ea580c]" />
+              <MapPin className="w-4 h-4 shrink-0" style={{ color: corMarcaDinamica }} />
               <span>{enderecoCompleto}</span>
             </p>
           )}

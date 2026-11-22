@@ -483,7 +483,7 @@ export default function InfoGoogle({
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO */}
+      {/* 5. LOCALIZAÇÃO (MAPA NOTURNO PERMANENTE) */}
       <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>

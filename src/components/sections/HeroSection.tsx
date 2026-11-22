@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Star, Calendar, ChevronRight, CheckCircle2, ShieldCheck, MapPin } from 'lucide-react';
+import { Calendar, ChevronRight, CheckCircle2, ShieldCheck, MapPin } from 'lucide-react';
 
 export interface TemaHero {
   fundo: string;
@@ -53,9 +53,6 @@ export default function HeroSection({
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barber') ||
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barbearia');
 
-  // Regra de layout por modelo:
-  // Minimalista e Urban: foto na lateral ('side') por padrão.
-  // Vintage: foto ampla empilhada na base ('full') para barbearias.
   const modoLayout =
     layoutFoto !== 'auto'
       ? layoutFoto
@@ -83,14 +80,10 @@ export default function HeroSection({
 
   const seloSecundario = eBarbearia ? 'Hora Marcada' : 'Presencial & Domiciliar';
 
-  // Imagem limpa e nítida sem filtros acinzentados
-  const classeImagem =
-    fitMode === 'contain'
-      ? 'w-full h-full object-contain rounded-xl'
-      : `w-full h-full object-cover ${posicaoFoto} rounded-xl brightness-[0.98] contrast-[1.02]`;
+  const filtroImagemEscura = fitMode === 'contain' ? 'brightness-[0.91] contrast-[1.02]' : 'brightness-[0.98] contrast-[1.02]';
 
   // ---------------------------------------------------------
-  // 1. MODELO VINTAGE / RETRO (MANTIDO COM FOTO NA BASE)
+  // 1. MODELO VINTAGE / RETRO
   // ---------------------------------------------------------
   if (variacao === 'vintage') {
     const bordaVintage = eBarbearia ? 'border-zinc-300' : 'border-[#e0d3c1]';
@@ -165,39 +158,12 @@ export default function HeroSection({
             {fotoHero && (
               <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
                 <div className="w-full rounded-2xl border-2 border-zinc-700 bg-zinc-800 overflow-hidden shadow-xl p-1.5">
-                  <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[320px]' : 'h-[300px] sm:h-[370px]'} overflow-hidden bg-zinc-900 rounded-xl border border-zinc-600/70`}>
-                    <img src={fotoHero} alt={nome} className={classeImagem} />
-                    {modoLayout === 'full' && (
-                      <>
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/35 to-transparent" />
-                        <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8 text-white max-w-2xl space-y-2">
-                          <p className="text-2xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-white drop-shadow">
-                            {nomeCurto ? nomeCurto.toUpperCase() : nome.toUpperCase()}
-                          </p>
-                          {enderecoExibido && (
-                            <p className="text-xs sm:text-sm font-sans text-zinc-200 flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: corMarcaDinamica }} />
-                              <span>{enderecoExibido}</span>
-                            </p>
-                          )}
-                          {temTelefone && (
-                            <div className="pt-2">
-                              <a
-                                href={whatsappUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
-                                className="inline-flex items-center justify-center gap-2 font-sans font-extrabold px-5 py-3 rounded-lg text-xs uppercase tracking-wider shadow-lg transition-all hover:brightness-110"
-                              >
-                                <Calendar className="w-4 h-4" />
-                                <span>{textoBotao}</span>
-                                <ChevronRight className="w-4 h-4" />
-                              </a>
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    )}
+                  <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[320px]' : 'h-[300px] sm:h-[370px]'} overflow-hidden rounded-xl border border-zinc-600/70 bg-white`}>
+                    <img
+                      src={fotoHero}
+                      alt={nome}
+                      className={fitMode === 'contain' ? 'w-full h-full object-contain rounded-xl p-1' : `w-full h-full object-cover ${posicaoFoto} rounded-xl`}
+                    />
                   </div>
                 </div>
               </div>
@@ -209,7 +175,7 @@ export default function HeroSection({
   }
 
   // ---------------------------------------------------------
-  // 2. MODELO MODERNO / URBAN (NA LATERAL EM 2 COLUNAS)
+  // 2. MODELO MODERNO / URBAN
   // ---------------------------------------------------------
   if (variacao === 'urban') {
     const fundoUrban = eBarbearia ? 'bg-[#0b0c0e]' : 'bg-[#02140e]';
@@ -219,17 +185,6 @@ export default function HeroSection({
 
     return (
       <div className={`relative w-full ${fundoUrban} text-white overflow-hidden`}>
-        {eBarbearia && (
-          <div
-            className="absolute inset-0 pointer-events-none opacity-[0.06]"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, #e2c275 1px, transparent 1px), linear-gradient(to bottom, #e2c275 1px, transparent 1px)',
-              backgroundSize: '36px 36px'
-            }}
-          />
-        )}
-
         <div className={`w-full ${bannerUrban} border-b py-1 px-4 text-center relative z-10`}>
           <p className="text-[10px] font-mono uppercase tracking-[0.22em] flex items-center justify-center gap-2" style={{ color: corMarcaDinamica }}>
             <span className="h-1.5 w-1.5 rounded-full animate-ping" style={{ backgroundColor: corDestaqueDinamica }} />
@@ -305,12 +260,12 @@ export default function HeroSection({
             {fotoHero && (
               <div className="lg:col-span-6 w-full">
                 <div className={`w-full rounded-2xl border ${cardFotoUrban} overflow-hidden shadow-2xl p-1.5`}>
-                  <div className="relative w-full h-[260px] sm:h-[310px] overflow-hidden bg-[#0b0c0e] rounded-xl">
-                    <img src={fotoHero} alt={nome} className={classeImagem} />
-                    <div className="absolute bottom-3 right-3 bg-[#0b0c0e]/90 backdrop-blur-md border border-zinc-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      <span>AVALIAÇÃO GOOGLE</span>
-                    </div>
+                  <div className="relative w-full h-[260px] sm:h-[310px] overflow-hidden rounded-xl bg-[#031c14] border border-emerald-900/60">
+                    <img
+                      src={fotoHero}
+                      alt={nome}
+                      className={fitMode === 'contain' ? `w-full h-full object-contain rounded-xl p-1 ${filtroImagemEscura}` : `w-full h-full object-cover ${posicaoFoto} rounded-xl`}
+                    />
                   </div>
                 </div>
               </div>
@@ -322,7 +277,7 @@ export default function HeroSection({
   }
 
   // ---------------------------------------------------------
-  // 3. MODELO MINIMALISTA PREMIUM (NA LATERAL EM 2 COLUNAS)
+  // 3. MODELO MINIMALISTA PREMIUM
   // ---------------------------------------------------------
   return (
     <div className="relative w-full bg-[#09090b] text-white overflow-hidden border-b border-zinc-800/80">
@@ -392,12 +347,12 @@ export default function HeroSection({
           {fotoHero && (
             <div className="lg:col-span-6 w-full">
               <div className="w-full rounded-2xl border border-zinc-700/80 bg-[#18181b] overflow-hidden shadow-2xl p-1.5">
-                <div className="relative w-full h-[260px] sm:h-[310px] overflow-hidden bg-[#09090b] rounded-xl border border-zinc-800">
-                  <img src={fotoHero} alt={nome} className={classeImagem} />
-                  <div className="absolute bottom-3 right-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 px-2.5 py-1 rounded-lg text-[10px] font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span>AVALIAÇÃO GOOGLE</span>
-                  </div>
+                <div className="relative w-full h-[260px] sm:h-[310px] overflow-hidden rounded-xl bg-[#121215] border border-zinc-800">
+                  <img
+                    src={fotoHero}
+                    alt={nome}
+                    className={fitMode === 'contain' ? `w-full h-full object-contain rounded-xl p-1 ${filtroImagemEscura}` : `w-full h-full object-cover ${posicaoFoto} rounded-xl`}
+                  />
                 </div>
               </div>
             </div>

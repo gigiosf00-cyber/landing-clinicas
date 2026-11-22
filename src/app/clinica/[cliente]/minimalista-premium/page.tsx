@@ -9,16 +9,25 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 interface PageProps {
-  params: Promise<{ cliente: string }>;
+  params: Promise<{ cliente: string; template?: string }>;
 }
 
 export default async function PaginaClinicaMinimalista({ params }: PageProps) {
-  const { cliente } = await params;
+  const { cliente, template } = await params;
   const lead: any = carregarLead(cliente);
 
   if (!lead) {
     notFound();
   }
+
+  // Identifica a variação do template a partir da URL (/moderno-urban, /vintage-retro, /minimalista-premium)
+  const tempLower = (template || '').toLowerCase();
+  const variacaoHero: 'minimalista' | 'urban' | 'vintage' =
+    tempLower.includes('urban') || tempLower.includes('moderno')
+      ? 'urban'
+      : tempLower.includes('vintage') || tempLower.includes('retro')
+      ? 'vintage'
+      : 'minimalista';
 
   const nomeCurto = lead.nome ? lead.nome.split(/[-|:,]/)[0].trim() : 'Clínica';
   const msgWhatsApp = `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`;
@@ -46,14 +55,16 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const corDestaque = '#ea580c'; // Laranja Vibrante (Botões e Badges)
   const corTextoBotao = '#ffffff';
 
+  const isVintage = variacaoHero === 'vintage';
+
   const temaClinica = {
-    fundo: 'bg-[#0a0a0a]',
-    card: 'bg-[#171717]',
-    borda: 'border-neutral-800',
-    texto: 'text-neutral-100',
+    fundo: isVintage ? 'bg-[#f5efe6]' : 'bg-[#0a0a0a]',
+    card: isVintage ? 'bg-[#ffffff]' : 'bg-[#171717]',
+    borda: isVintage ? 'border-[#e0d3c1]' : 'border-neutral-800',
+    texto: isVintage ? 'text-[#1c1917]' : 'text-neutral-100',
     sub: 'text-emerald-400',
     destaque: 'bg-emerald-600',
-    serif: false,
+    serif: isVintage,
   };
 
   const tagCabecalho = `FISIOTERAPIA • PILATES • ESTÉTICA • ${localizacaoTexto}`;
@@ -76,9 +87,11 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         '--cor-destaque': corDestaque,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
-      className="min-h-screen bg-[#0a0a0a] text-neutral-100 selection:bg-emerald-500 selection:text-black"
+      className={`min-h-screen selection:bg-emerald-500 selection:text-black ${
+        isVintage ? 'bg-[#f5efe6] text-[#1c1917]' : 'bg-[#0a0a0a] text-neutral-100'
+      }`}
     >
-      {/* 1. HERO SECTION COM IMAGEM SEM CORTE E BOTÃO LARANJA */}
+      {/* 1. HERO SECTION COM VARIAÇÃO DINÂMICA */}
       <HeroSection
         nome={d.nome}
         nomeCurto={nomeCurto}
@@ -92,6 +105,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         fotoHero={fotoColunaHero}
         fitMode="contain"
         tema={temaClinica}
+        variacao={variacaoHero}
       />
 
       {/* 2. COMPONENTE PRINCIPAL INFOGOOGLE UNIFICADO */}
@@ -117,7 +131,9 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         tema={temaClinica}
       />
 
-      <footer className="text-center py-8 bg-black text-neutral-500 text-xs font-medium border-t border-neutral-900">
+      <footer className={`text-center py-8 text-xs font-medium border-t ${
+        isVintage ? 'bg-[#eae3d5] text-stone-600 border-[#e0d3c1]' : 'bg-black text-neutral-500 border-neutral-900'
+      }`}>
         <p>© {new Date().getFullYear()} {d.nome}. Todos os direitos reservados.</p>
       </footer>
     </main>
