@@ -49,12 +49,12 @@ export default function HeroSection({
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barber') ||
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barbearia');
 
-  const corMarcaPadrao = eBarbearia ? '#d4af37' : '#059669';
+  const corMarcaPadrao = eBarbearia ? '#e2c275' : '#059669';
   const corDestaquePadrao = eBarbearia ? '#d97706' : '#ea580c';
 
   const corMarcaDinamica = `var(--cor-marca, ${corMarcaPadrao})`;
   const corDestaqueDinamica = `var(--cor-destaque, ${corDestaquePadrao})`;
-  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
+  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #09090b)';
 
   const partesTag = (tagSubtitulo || '').split('•').map(item => item.trim());
   const ultItem = partesTag.length > 1 ? partesTag[partesTag.length - 1] : '';
@@ -65,14 +65,14 @@ export default function HeroSection({
 
   const tagComplementoFinal =
     complementoSubtitulo ||
-    (eBarbearia ? 'ESTILO TRADICIONAL & CORTE MASCULINO' : 'FISIOTERAPIA & SAÚDE INTEGRAL');
+    (eBarbearia ? 'STREET CUTS • FADE & BARBA NA NAVALHA' : 'FISIOTERAPIA & SAÚDE INTEGRAL');
 
   const seloSecundario = eBarbearia ? 'Hora Marcada' : 'Presencial & Domiciliar';
 
   const classeImagem =
     fitMode === 'contain'
-      ? 'w-full h-full object-contain rounded-xl brightness-[0.98] contrast-[1.02]'
-      : `w-full h-full object-cover ${posicaoFoto} rounded-xl brightness-[0.98] contrast-[1.02]`;
+      ? 'w-full h-full object-contain rounded-xl brightness-[0.98] contrast-[1.03]'
+      : `w-full h-full object-cover ${posicaoFoto} rounded-xl brightness-[0.98] contrast-[1.03]`;
 
   // ---------------------------------------------------------
   // 1. MODELO VINTAGE / RETRO
@@ -176,32 +176,43 @@ export default function HeroSection({
   }
 
   // ---------------------------------------------------------
-  // 2. MODELO MODERNO / URBAN
+  // 2. MODELO MODERNO / URBAN (ASFALTO GRAFITE + AÇO + DOURADO)
   // ---------------------------------------------------------
   if (variacao === 'urban') {
-    const fundoUrban = eBarbearia ? 'bg-[#120f0a]' : 'bg-[#02140e]';
-    const bannerUrban = eBarbearia ? 'bg-[#0a0805] border-amber-900/70' : 'bg-[#010b08] border-emerald-900/80';
-    const headerUrban = eBarbearia ? 'bg-[#120f0a]/90 border-amber-900/60' : 'bg-[#02140e]/90 border-emerald-900/60';
-    const cardFotoUrban = eBarbearia ? 'border-amber-500/40 bg-[#1a150e]' : 'border-emerald-500/50 bg-[#041a13]';
+    const fundoUrban = eBarbearia ? 'bg-[#0b0c0e]' : 'bg-[#02140e]';
+    const bannerUrban = eBarbearia ? 'bg-[#060708] border-zinc-800/90' : 'bg-[#010b08] border-emerald-900/80';
+    const headerUrban = eBarbearia ? 'bg-[#0b0c0e]/95 border-zinc-800/80' : 'bg-[#02140e]/90 border-emerald-900/60';
+    const cardFotoUrban = eBarbearia ? 'border-amber-500/30 bg-[#14171b]' : 'border-emerald-500/50 bg-[#041a13]';
 
     return (
-      <div className={`relative w-full ${fundoUrban} text-white overflow-hidden border-b border-zinc-800/80`}>
-        <div className={`w-full ${bannerUrban} border-b py-1 px-4 text-center`}>
-          <p className="text-[10px] font-mono uppercase tracking-[0.2em] flex items-center justify-center gap-2" style={{ color: corMarcaDinamica }}>
-            <span className="h-1.5 w-1.5 rounded-full animate-ping" style={{ backgroundColor: corMarcaDinamica }} />
-            <span>PROPOSTA EXCLUSIVA // {nome ? nome.toUpperCase() : ''}</span>
+      <div className={`relative w-full ${fundoUrban} text-white overflow-hidden`}>
+        {eBarbearia && (
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.06]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, #e2c275 1px, transparent 1px), linear-gradient(to bottom, #e2c275 1px, transparent 1px)',
+              backgroundSize: '36px 36px'
+            }}
+          />
+        )}
+
+        <div className={`w-full ${bannerUrban} border-b py-1 px-4 text-center relative z-10`}>
+          <p className="text-[10px] font-mono uppercase tracking-[0.22em] flex items-center justify-center gap-2" style={{ color: corMarcaDinamica }}>
+            <span className="h-1.5 w-1.5 rounded-full animate-ping" style={{ backgroundColor: corDestaqueDinamica }} />
+            <span>URBAN EDITION // {nome ? nome.toUpperCase() : ''}</span>
           </p>
         </div>
 
         <header className={`sticky top-0 z-40 ${headerUrban} backdrop-blur-md border-b`}>
-          <div className="max-w-6xl mx-auto px-6 py-2 flex justify-between items-center gap-4">
+          <div className="max-w-6xl mx-auto px-6 py-2.5 flex justify-between items-center gap-4">
             <div>
               <h1 className="text-sm sm:text-base font-black tracking-tight text-white">{nome}</h1>
               <p className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mt-0.5" style={{ color: corMarcaDinamica }}>
                 {servicosTexto}
               </p>
               {localizacaoTexto && (
-                <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest mt-0.5 flex items-center gap-1" style={{ color: corDestaqueDinamica }}>
+                <p className="text-[10px] sm:text-xs font-mono font-black uppercase tracking-widest mt-0.5 flex items-center gap-1" style={{ color: corDestaqueDinamica }}>
                   <MapPin className="w-3 h-3" /> {localizacaoTexto}
                 </p>
               )}
@@ -212,14 +223,14 @@ export default function HeroSection({
         <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 space-y-4 relative z-10">
           <div className="space-y-2.5">
             <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md border font-mono text-[11px] font-bold uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border font-mono text-[11px] font-bold uppercase tracking-wider shadow-sm"
               style={{
-                borderColor: `${corMarcaPadrao}66`,
-                backgroundColor: `${corMarcaPadrao}14`,
+                borderColor: `${corMarcaPadrao}55`,
+                backgroundColor: '#14171b',
                 color: corMarcaDinamica
               }}
             >
-              <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: corMarcaDinamica }} />
+              <span className="h-1.5 w-1.5 rounded-sm rotate-45" style={{ backgroundColor: corDestaqueDinamica }} />
               {tagComplementoFinal}
             </span>
 
@@ -227,7 +238,7 @@ export default function HeroSection({
               {tituloPrincipal}
             </h2>
 
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-200/85 max-w-3xl">
+            <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 max-w-3xl">
               Na <strong className="text-white font-bold">{nomeCurto}</strong>, {descricao}
             </p>
 
@@ -238,14 +249,14 @@ export default function HeroSection({
                   target="_blank"
                   rel="noreferrer"
                   style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
-                  className="inline-flex items-center justify-center gap-2.5 font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:scale-[1.01] hover:brightness-110"
+                  className="inline-flex items-center justify-center gap-2.5 font-mono font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:scale-[1.01] hover:brightness-110"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>{textoBotao}</span>
                   <ChevronRight className="w-4 h-4" />
                 </a>
 
-                <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-300">
+                <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> Atendimento Imediato
                   </span>
@@ -260,9 +271,9 @@ export default function HeroSection({
           {fotoHero && (
             <div className="w-full pt-1">
               <div className={`w-full rounded-2xl border ${cardFotoUrban} overflow-hidden shadow-2xl p-1.5`}>
-                <div className="relative w-full h-[240px] sm:h-[290px] overflow-hidden bg-black/50 rounded-xl">
+                <div className="relative w-full h-[240px] sm:h-[290px] overflow-hidden bg-[#0b0c0e] rounded-xl">
                   <img src={fotoHero} alt={nome} className={classeImagem} />
-                  <div className="absolute bottom-3 right-3 bg-black/85 backdrop-blur-md border border-zinc-700 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
+                  <div className="absolute bottom-3 right-3 bg-[#0b0c0e]/90 backdrop-blur-md border border-zinc-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
                     <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                     <span>AVALIAÇÃO GOOGLE</span>
                   </div>

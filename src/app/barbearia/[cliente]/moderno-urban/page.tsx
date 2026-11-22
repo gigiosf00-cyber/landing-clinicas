@@ -12,7 +12,7 @@ interface PageProps {
   params: Promise<{ cliente: string }>;
 }
 
-export default async function PaginaBarbeariaModerna({ params }: PageProps) {
+export default async function BarbeariaModernoUrbanPage({ params }: PageProps) {
   const { cliente } = await params;
   const lead: any = carregarLead(cliente);
 
@@ -21,89 +21,91 @@ export default async function PaginaBarbeariaModerna({ params }: PageProps) {
   }
 
   const nomeCurto = lead.nome ? lead.nome.split(/[-|:,]/)[0].trim() : 'Barbearia';
-  const d = dadosBase(lead, `Olá! Vi o site da ${nomeCurto} e gostaria de agendar um horário.`);
+  const msgWhatsApp = `Olá! Vi o site da ${nomeCurto} e gostaria de agendar um horário.`;
+  const d = dadosBase(lead, msgWhatsApp);
   const fotosTodas = obterFotos(lead);
 
-  // Foto Fachada/Hero (foto1.jpg ou fotoCapa)
-  const fotoFachadaHero =
+  const fotoHeroBase =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg'))) ||
     fotoCapa(lead) ||
     (fotosTodas && fotosTodas[0]) ||
     '';
 
-  // Foto da Sede Real (foto8.jpg ou foto11.jpg com o ambiente do salão)
-  const fotoSedeReal =
-    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto8'))) ||
+  const fotoHeroSelecionada =
+    (fotosTodas && fotosTodas.find((f: string) => f.toLowerCase().includes('foto2'))) ||
+    fotoHeroBase;
+
+  const fotoSede =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11'))) ||
-    fotoFachadaHero;
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto8'))) ||
+    fotoHeroBase;
 
-  const cidade = (lead.cidade || '').replace(/\s*-\s*[A-Z]{2}$/i, '').trim().toUpperCase();
-  const uf = (lead.uf || lead.estado || '').toUpperCase();
-  const localizacaoTexto = cidade && uf ? `${cidade} - ${uf}` : cidade || uf;
+  const cidade = (lead.cidade || 'Osasco')
+    .replace(/\s*-\s*[A-Z]{2}$/i, '')
+    .trim()
+    .toUpperCase();
+  const uf = (lead.uf || lead.estado || 'SP').toUpperCase();
+  const localizacaoTexto = `${cidade} - ${uf}`;
 
-  const corAtiva = lead.corMarca || lead.cor_marca || '#f59e0b';
+  const corAtiva = lead.corMarca || lead.cor_marca || '#e2c275';
+  const corDestaqueAtiva = lead.corDestaque || lead.cor_destaque || '#d97706';
   const corTextoBotao = '#09090b';
 
-  const temaBarbeariaUrbanBlue = {
-    fundo: 'bg-slate-950',
-    card: 'bg-slate-900',
-    borda: 'border-slate-800',
-    texto: 'text-slate-100',
-    sub: 'text-amber-400',
-    destaque: 'bg-amber-500',
-    serif: false,
+  const temaUrban = {
+    fundo: 'bg-[#111418]',
+    card: 'bg-[#171b20]',
+    borda: 'border-zinc-800/80',
+    texto: 'text-zinc-100',
+    sub: 'text-[#e2c275]',
+    destaque: 'bg-[#d97706]',
   };
 
-  const tagCabecalho = localizacaoTexto
-    ? `${d.nicho || 'CORTE MASCULINO • BARBA • ESTILO'} • ${localizacaoTexto}`
-    : d.nicho || 'CORTE MASCULINO • BARBA • ESTILO';
-
+  const tagCabecalho = `BARBER SHOP • ${localizacaoTexto}`;
   const tituloHero = (
     <span>
-      Seu Visual no <span style={{ color: corAtiva }} className="font-black">Mais Alto Nível.</span>
+      Seu Visual no Mais Alto <span style={{ color: corAtiva }} className="font-black">Nível.</span>
     </span>
   );
-
   const descricaoHero =
-    'unimos a arte da barbearia clássica com as tendências mais modernas do mercado.';
-
+    'unimos a arte da barbearia clássica com as tendências mais modernas, acabamento na navalha e atenção em cada detalhe.';
   const enderecoExibido = d.enderecoCompleto || d.endereco || '';
 
   return (
     <main
       style={{
         '--cor-marca': corAtiva,
+        '--cor-destaque': corDestaqueAtiva,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
-      className="min-h-screen bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950"
+      className="min-h-screen bg-[#0b0c0e] text-zinc-100"
     >
-      {/* 1. HERO SECTION MODULAR COM SPACE ZOOM */}
       <HeroSection
         nome={d.nome}
         nomeCurto={nomeCurto}
         tagSubtitulo={tagCabecalho}
-        complementoSubtitulo="💈 ESTILO E PRECISÃO EM CADA DETALHE"
+        complementoSubtitulo="ESTILO & PRECISÃO EM CADA DETALHE"
         tituloPrincipal={tituloHero}
         descricao={descricaoHero}
         textoBotao="Agendar via WhatsApp"
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
-        fotoHero={fotoFachadaHero}
-        tema={temaBarbeariaUrbanBlue}
+        fotoHero={fotoHeroSelecionada}
+        fitMode="cover"
+        posicaoFoto="object-[50%_28%]"
+        tema={temaUrban}
+        variacao="urban"
       />
 
-      {/* 2. GALERIA DE FOTOS POR ABAS E DADOS GOOGLE */}
       <InfoGoogle
         d={d}
         fotos={fotosTodas}
-        tema={temaBarbeariaUrbanBlue}
+        tema={temaUrban}
         prefixo="barbearia"
       />
 
-      {/* 3. CARD FINAL - NOSSA SEDE */}
       <NossaSedeCard
         nomeCurto={nomeCurto}
-        fotoSede={fotoSedeReal}
+        fotoSede={fotoSede}
         whatsappUrl={d.whatsapp}
         mapaUrl={
           d.mapa && d.mapa !== '#'
@@ -111,11 +113,11 @@ export default async function PaginaBarbeariaModerna({ params }: PageProps) {
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto + ' ' + enderecoExibido)}`
         }
         enderecoCompleto={enderecoExibido}
-        labelSede="Nossa Sede"
-        tema={temaBarbeariaUrbanBlue}
+        labelSede="Nossa Barbearia"
+        tema={temaUrban}
       />
 
-      <footer className="text-center py-8 bg-black text-slate-500 text-xs font-medium border-t border-slate-900">
+      <footer className="text-center py-8 border-t border-zinc-800/80 bg-[#0b0c0e] text-xs text-zinc-400">
         <p>© {new Date().getFullYear()} {d.nome}. Todos os direitos reservados.</p>
       </footer>
     </main>
