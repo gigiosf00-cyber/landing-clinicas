@@ -27,6 +27,7 @@ export interface HeroProps {
   fotoHero?: string;
   fitMode?: 'contain' | 'cover';
   posicaoFoto?: string;
+  layoutFoto?: 'side' | 'full' | 'auto';
   tema: TemaHero;
   variacao?: 'minimalista' | 'urban' | 'vintage';
 }
@@ -45,11 +46,15 @@ export default function HeroSection({
   fotoHero,
   fitMode = 'cover',
   posicaoFoto = 'object-[50%_28%]',
+  layoutFoto = 'auto',
   variacao = 'minimalista'
 }: HeroProps) {
   const eBarbearia =
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barber') ||
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barbearia');
+
+  // Modo automático: Barbearias usam foto ampla empilhada; Clínicas/outros usam foto na lateral
+  const modoLayout = layoutFoto === 'auto' ? (eBarbearia ? 'full' : 'side') : layoutFoto;
 
   const corMarcaPadrao = eBarbearia ? '#e2c275' : '#059669';
   const corDestaquePadrao = eBarbearia ? '#c2592b' : '#ea580c';
@@ -71,10 +76,18 @@ export default function HeroSection({
 
   const seloSecundario = eBarbearia ? 'Hora Marcada' : 'Presencial & Domiciliar';
 
+  // Tratamento de imagem isolado por modelo:
+  // Vintage (fundo claro): preserva luminosidade em 0.98.
+  // Minimalista / Urban (fundo escuro): atenua a 0.92 para equilibrar artes brancas de clínicas.
+  const efeitoBrilho =
+    variacao === 'vintage'
+      ? 'brightness-[0.98] contrast-[1.03]'
+      : 'brightness-[0.92] contrast-[1.02]';
+
   const classeImagem =
     fitMode === 'contain'
-      ? 'w-full h-full object-contain rounded-xl brightness-[0.98] contrast-[1.03]'
-      : `w-full h-full object-cover ${posicaoFoto} rounded-xl brightness-[0.98] contrast-[1.03]`;
+      ? `w-full h-full object-contain rounded-xl ${efeitoBrilho}`
+      : `w-full h-full object-cover ${posicaoFoto} rounded-xl ${efeitoBrilho}`;
 
   // ---------------------------------------------------------
   // 1. MODELO VINTAGE / RETRO (GRAFITE + CINZA + COR DO LEAD)
@@ -103,9 +116,7 @@ export default function HeroSection({
               <h1 className="text-base sm:text-lg font-bold tracking-tight text-[#18181b]">
                 {nomeCurto || nome}
               </h1>
-              <p
-                className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider mt-0.5 text-zinc-700"
-              >
+              <p className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider mt-0.5 text-zinc-700">
                 {servicosTexto}
                 {localizacaoTexto ? ` • ${localizacaoTexto}` : ''}
               </p>
@@ -125,59 +136,73 @@ export default function HeroSection({
           </div>
         </header>
 
-        <section className="max-w-6xl mx-auto px-6 pt-5 pb-6 space-y-4 relative z-10">
-          <div className="space-y-2 text-[#18181b]">
-            <h2 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[#18181b]">
-              {tituloPrincipal}
-            </h2>
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-700 font-sans max-w-3xl">
-              Na <strong className="font-bold text-[#18181b]">{nomeCurto}</strong>, {descricao}
-            </p>
-          </div>
+        <section className="max-w-6xl mx-auto px-6 pt-5 pb-6 relative z-10">
+          <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-4'}>
+            <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-3' : 'space-y-2'}>
+              <h2 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[#18181b]">
+                {tituloPrincipal}
+              </h2>
+              <p className="text-xs sm:text-sm leading-relaxed text-zinc-700 font-sans max-w-3xl">
+                Na <strong className="font-bold text-[#18181b]">{nomeCurto}</strong>, {descricao}
+              </p>
+              {modoLayout === 'side' && temTelefone && (
+                <div className="pt-2">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
+                    className="inline-flex items-center justify-center gap-2 font-sans font-extrabold px-5 py-3 rounded-lg text-xs uppercase tracking-wider shadow-md transition-all hover:brightness-110"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>{textoBotao}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
+            </div>
 
-          {fotoHero && (
-            <div className="w-full">
-              <div className="w-full rounded-2xl border-2 border-zinc-700 bg-zinc-800 overflow-hidden shadow-xl p-1.5">
-                <div className="relative w-full h-[300px] sm:h-[370px] overflow-hidden bg-zinc-900 rounded-xl border border-zinc-600/70">
-                  <img
-                    src={fotoHero}
-                    alt={nome}
-                    className={`w-full h-full ${fitMode === 'contain' ? 'object-contain' : `object-cover ${posicaoFoto}`} rounded-xl brightness-[0.94] contrast-[1.03]`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/35 to-transparent" />
-
-                  <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8 text-white max-w-2xl space-y-2">
-                    <p className="text-2xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-white drop-shadow">
-                      {nomeCurto ? nomeCurto.toUpperCase() : nome.toUpperCase()}
-                    </p>
-
-                    {enderecoExibido && (
-                      <p className="text-xs sm:text-sm font-sans text-zinc-200 flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: corMarcaDinamica }} />
-                        <span>{enderecoExibido}</span>
-                      </p>
-                    )}
-
-                    {temTelefone && (
-                      <div className="pt-2">
-                        <a
-                          href={whatsappUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
-                          className="inline-flex items-center justify-center gap-2 font-sans font-extrabold px-5 py-3 rounded-lg text-xs uppercase tracking-wider shadow-lg transition-all hover:brightness-110"
-                        >
-                          <Calendar className="w-4 h-4" />
-                          <span>{textoBotao}</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </a>
-                      </div>
+            {fotoHero && (
+              <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
+                <div className="w-full rounded-2xl border-2 border-zinc-700 bg-zinc-800 overflow-hidden shadow-xl p-1.5">
+                  <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[320px]' : 'h-[300px] sm:h-[370px]'} overflow-hidden bg-zinc-900 rounded-xl border border-zinc-600/70`}>
+                    <img src={fotoHero} alt={nome} className={classeImagem} />
+                    {modoLayout === 'full' && (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/35 to-transparent" />
+                        <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8 text-white max-w-2xl space-y-2">
+                          <p className="text-2xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-white drop-shadow">
+                            {nomeCurto ? nomeCurto.toUpperCase() : nome.toUpperCase()}
+                          </p>
+                          {enderecoExibido && (
+                            <p className="text-xs sm:text-sm font-sans text-zinc-200 flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: corMarcaDinamica }} />
+                              <span>{enderecoExibido}</span>
+                            </p>
+                          )}
+                          {temTelefone && (
+                            <div className="pt-2">
+                              <a
+                                href={whatsappUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
+                                className="inline-flex items-center justify-center gap-2 font-sans font-extrabold px-5 py-3 rounded-lg text-xs uppercase tracking-wider shadow-lg transition-all hover:brightness-110"
+                              >
+                                <Calendar className="w-4 h-4" />
+                                <span>{textoBotao}</span>
+                                <ChevronRight className="w-4 h-4" />
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
       </div>
     );
@@ -228,67 +253,69 @@ export default function HeroSection({
           </div>
         </header>
 
-        <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 space-y-4 relative z-10">
-          <div className="space-y-2.5">
-            <span
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border font-mono text-[11px] font-bold uppercase tracking-wider shadow-sm"
-              style={{
-                borderColor: `${corMarcaPadrao}55`,
-                backgroundColor: '#14171b',
-                color: corMarcaDinamica
-              }}
-            >
-              <span className="h-1.5 w-1.5 rounded-sm rotate-45" style={{ backgroundColor: corDestaqueDinamica }} />
-              {tagComplementoFinal}
-            </span>
+        <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 relative z-10">
+          <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-4'}>
+            <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-2.5' : 'space-y-2.5'}>
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border font-mono text-[11px] font-bold uppercase tracking-wider shadow-sm"
+                style={{
+                  borderColor: `${corMarcaPadrao}55`,
+                  backgroundColor: '#14171b',
+                  color: corMarcaDinamica
+                }}
+              >
+                <span className="h-1.5 w-1.5 rounded-sm rotate-45" style={{ backgroundColor: corDestaqueDinamica }} />
+                {tagComplementoFinal}
+              </span>
 
-            <h2 className="text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white">
-              {tituloPrincipal}
-            </h2>
+              <h2 className="text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white">
+                {tituloPrincipal}
+              </h2>
 
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 max-w-3xl">
-              Na <strong className="text-white font-bold">{nomeCurto}</strong>, {descricao}
-            </p>
+              <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 max-w-3xl">
+                Na <strong className="text-white font-bold">{nomeCurto}</strong>, {descricao}
+              </p>
 
-            {temTelefone && (
-              <div className="pt-1 space-y-2">
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
-                  className="inline-flex items-center justify-center gap-2.5 font-mono font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:scale-[1.01] hover:brightness-110"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>{textoBotao}</span>
-                  <ChevronRight className="w-4 h-4" />
-                </a>
+              {temTelefone && (
+                <div className="pt-1 space-y-2">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
+                    className="inline-flex items-center justify-center gap-2.5 font-mono font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:scale-[1.01] hover:brightness-110"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>{textoBotao}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </a>
 
-                <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> Atendimento Imediato
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> {seloSecundario}
-                  </span>
+                  <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> Atendimento Imediato
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> {seloSecundario}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {fotoHero && (
+              <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
+                <div className={`w-full rounded-2xl border ${cardFotoUrban} overflow-hidden shadow-2xl p-1.5`}>
+                  <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[310px]' : 'h-[240px] sm:h-[290px]'} overflow-hidden bg-[#0b0c0e] rounded-xl`}>
+                    <img src={fotoHero} alt={nome} className={classeImagem} />
+                    <div className="absolute bottom-3 right-3 bg-[#0b0c0e]/90 backdrop-blur-md border border-zinc-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <span>AVALIAÇÃO GOOGLE</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
-
-          {fotoHero && (
-            <div className="w-full pt-1">
-              <div className={`w-full rounded-2xl border ${cardFotoUrban} overflow-hidden shadow-2xl p-1.5`}>
-                <div className="relative w-full h-[240px] sm:h-[290px] overflow-hidden bg-[#0b0c0e] rounded-xl">
-                  <img src={fotoHero} alt={nome} className={classeImagem} />
-                  <div className="absolute bottom-3 right-3 bg-[#0b0c0e]/90 backdrop-blur-md border border-zinc-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span>AVALIAÇÃO GOOGLE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </section>
       </div>
     );
@@ -320,60 +347,62 @@ export default function HeroSection({
         </div>
       </header>
 
-      <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 space-y-4 relative z-10">
-        <div className="space-y-2.5">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-zinc-700 bg-zinc-900 text-zinc-300 text-[11px] font-bold uppercase tracking-wider shadow-sm">
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: corMarcaDinamica }} />
-            {tagComplementoFinal}
-          </span>
+      <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 relative z-10">
+        <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-4'}>
+          <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-2.5' : 'space-y-2.5'}>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-zinc-700 bg-zinc-900 text-zinc-300 text-[11px] font-bold uppercase tracking-wider shadow-sm">
+              <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: corMarcaDinamica }} />
+              {tagComplementoFinal}
+            </span>
 
-          <h2 className="text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white">
-            {tituloPrincipal}
-          </h2>
+            <h2 className="text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white">
+              {tituloPrincipal}
+            </h2>
 
-          <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 opacity-90 max-w-3xl">
-            Na <strong className="font-bold text-white">{nomeCurto}</strong>, {descricao}
-          </p>
+            <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 opacity-90 max-w-3xl">
+              Na <strong className="font-bold text-white">{nomeCurto}</strong>, {descricao}
+            </p>
 
-          {temTelefone && (
-            <div className="pt-1 space-y-2">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
-                className="inline-flex items-center justify-center gap-2.5 font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:scale-[1.01] hover:brightness-110"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>{textoBotao}</span>
-                <ChevronRight className="w-4 h-4" />
-              </a>
+            {temTelefone && (
+              <div className="pt-1 space-y-2">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
+                  className="inline-flex items-center justify-center gap-2.5 font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:scale-[1.01] hover:brightness-110"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>{textoBotao}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </a>
 
-              <div className="flex items-center gap-3 text-[11px] font-sans text-zinc-400 font-semibold">
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> Atendimento Imediato
-                </span>
-                <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> {seloSecundario}
-                </span>
+                <div className="flex items-center gap-3 text-[11px] font-sans text-zinc-400 font-semibold">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> Atendimento Imediato
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> {seloSecundario}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {fotoHero && (
+            <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
+              <div className="w-full rounded-2xl border border-zinc-800 bg-[#141414] overflow-hidden shadow-2xl p-1.5">
+                <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[310px]' : 'h-[240px] sm:h-[290px]'} overflow-hidden bg-black/50 rounded-xl`}>
+                  <img src={fotoHero} alt={nome} className={classeImagem} />
+                  <div className="absolute bottom-3 right-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 px-2.5 py-1 rounded-lg text-[10px] font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    <span>AVALIAÇÃO GOOGLE</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </div>
-
-        {fotoHero && (
-          <div className="w-full pt-1">
-            <div className="w-full rounded-2xl border border-zinc-800 bg-[#141414] overflow-hidden shadow-2xl p-1.5">
-              <div className="relative w-full h-[240px] sm:h-[290px] overflow-hidden bg-black/50 rounded-xl">
-                <img src={fotoHero} alt={nome} className={classeImagem} />
-                <div className="absolute bottom-3 right-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 px-2.5 py-1 rounded-lg text-[10px] font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                  <span>AVALIAÇÃO GOOGLE</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </section>
     </div>
   );
