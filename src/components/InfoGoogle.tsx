@@ -239,14 +239,19 @@ export default function InfoGoogle({
   const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
   const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
+  // Classes dinâmicas baseadas no objeto tema
+  const cardBg = tema?.card || 'bg-[#022c22]';
+  const fundoBg = tema?.fundo || 'bg-[#011c15]';
+  const bordaClass = tema?.borda || 'border-emerald-900/60';
+
   return (
     <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${tema?.texto || ''}`}>
       
-      {/* 1. BOTÕES DE AÇÕES RÁPIDAS (RESUMO ALINHADO APENAS EMBAIXO DO BOTÃO HORÁRIOS) */}
+      {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
       <section className="max-w-6xl mx-auto px-6 pt-6 pb-12">
         {st.texto && (
           <div className="text-center mb-6">
-            <span className="inline-flex items-center gap-2 border border-emerald-900/60 bg-[#022c22] px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm text-white">
+            <span className={`inline-flex items-center gap-2 border ${bordaClass} ${cardBg} px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm text-white`}>
               <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-400' : 'bg-red-500'}`} />
               {st.texto}
             </span>
@@ -254,12 +259,11 @@ export default function InfoGoogle({
         )}
         
         <div className="flex flex-wrap gap-3 justify-center items-start">
-          {/* AGRUPAMENTO EXCLUSIVO DO BOTÃO DE HORÁRIOS COM SEU RESUMO ABAIXO */}
           <div className="flex flex-col items-center">
             <button
               type="button"
               onClick={() => setHorariosAbertos(!horariosAbertos)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/60 bg-[#022c22] text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer text-white"
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer text-white`}
             >
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Horários
             </button>
@@ -269,25 +273,25 @@ export default function InfoGoogle({
             </p>
           </div>
 
-          <a href="#fotos" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/60 bg-[#022c22] text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white">
+          <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
             <Camera className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Fotos ({safeFotos.length})
           </a>
-          <a href="#avaliacoes" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/60 bg-[#022c22] text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white">
+          <a href="#avaliacoes" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
             <Star className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Avaliações ({totalAval})
           </a>
-          <a href={instaLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/60 bg-[#022c22] text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white">
+          <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
             <InstagramIcon className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Instagram
           </a>
         </div>
 
         {horariosAbertos && (
-          <div className="max-w-md mx-auto mt-6 border border-emerald-900/60 bg-[#022c22] rounded-2xl p-5 shadow-xl">
+          <div className={`max-w-md mx-auto mt-6 border ${bordaClass} ${cardBg} rounded-2xl p-5 shadow-xl`}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2 text-emerald-400">
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Grade de Horários
             </h3>
             <ul className="space-y-2">
               {semana.map((l: string, idx: number) => (
-                <li key={idx} className="flex justify-between text-xs py-1 border-b border-emerald-900/60 last:border-0 text-emerald-100">
+                <li key={idx} className={`flex justify-between text-xs py-1 border-b ${bordaClass} last:border-0 text-emerald-100`}>
                   <span>{l}</span>
                 </li>
               ))}
@@ -298,18 +302,18 @@ export default function InfoGoogle({
 
       {/* 2. SERVIÇOS E ESPECIALIDADES */}
       {!semServicos && (
-        <section className="max-w-6xl mx-auto px-6 py-10 border-t border-emerald-900/40">
+        <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
           <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center gap-2 text-emerald-400">
             <IconeHeader className="w-5 h-5" style={{ color: corDestaqueDinamica }} />
             {tituloSecao}
           </h2>
 
-          <div className="border border-emerald-900/50 bg-[#0d1614] rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div className={`border ${bordaClass} ${fundoBg} rounded-3xl p-6 sm:p-8 shadow-xl space-y-6`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {servicosReais.map((s: any, idx: number) => (
                 <div 
                   key={idx} 
-                  className="border border-emerald-900/60 bg-[#022c22] rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01]"
+                  className={`border ${bordaClass} ${cardBg} rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01]`}
                 >
                   <div>
                     <h3 className="font-bold text-sm sm:text-base mb-2 text-white group-hover:text-emerald-300 transition-colors">
@@ -347,7 +351,7 @@ export default function InfoGoogle({
 
       {/* 3. GALERIA COM ABAS */}
       {safeFotos.length > 0 && (
-        <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-emerald-900/40">
+        <section id="fotos" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-emerald-400">
@@ -358,7 +362,7 @@ export default function InfoGoogle({
               </p>
             </div>
 
-            <div className="flex items-center gap-2 border border-emerald-900/60 bg-[#022c22] p-1.5 rounded-full w-fit">
+            <div className={`flex items-center gap-2 border ${bordaClass} ${cardBg} p-1.5 rounded-full w-fit`}>
               <button
                 onClick={() => setCategoriaFotoAtiva('servicos')}
                 style={categoriaFotoAtiva === 'servicos' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
@@ -388,7 +392,7 @@ export default function InfoGoogle({
               <div 
                 key={i} 
                 onClick={() => setFotoModal(f)} 
-                className="aspect-square rounded-2xl overflow-hidden cursor-pointer border border-emerald-900/60 bg-[#022c22] group relative shadow-md"
+                className={`aspect-square rounded-2xl overflow-hidden cursor-pointer border ${bordaClass} ${cardBg} group relative shadow-md`}
               >
                 <img 
                   src={f} 
@@ -415,12 +419,12 @@ export default function InfoGoogle({
       )}
 
       {/* 4. AVALIAÇÕES DO GOOGLE */}
-      <section id="avaliacoes" className="max-w-6xl mx-auto px-6 py-10 border-t border-emerald-900/40">
+      <section id="avaliacoes" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
           <h2 className="text-xl font-bold tracking-tight text-emerald-400">
             Avaliações no Google ({totalAval})
           </h2>
-          <div className="flex items-center gap-2 text-xs font-bold border border-emerald-900/60 bg-[#022c22] px-3 py-1.5 rounded-full w-fit text-emerald-400">
+          <div className={`flex items-center gap-2 text-xs font-bold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit text-emerald-400`}>
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, idx) => (
                 <Star key={idx} className="w-3.5 h-3.5 fill-current" style={{ color: idx < Math.floor(notaAval) ? corDestaqueDinamica : '#52525b' }} />
@@ -436,7 +440,7 @@ export default function InfoGoogle({
             return (
               <div 
                 key={i} 
-                className="border border-emerald-900/60 bg-[#022c22] rounded-2xl p-5 shadow-sm flex flex-col justify-between transition-all"
+                className={`border ${bordaClass} ${cardBg} rounded-2xl p-5 shadow-sm flex flex-col justify-between transition-all`}
               >
                 <div>
                   <div className="flex gap-1 mb-3">
@@ -457,7 +461,7 @@ export default function InfoGoogle({
       </section>
 
       {/* 5. LOCALIZAÇÃO COM MAPA FORÇADO PARA MODO NOTURNO */}
-      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-emerald-900/40 pb-24">
+      <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-emerald-400">Onde Estamos</h2>
@@ -467,12 +471,12 @@ export default function InfoGoogle({
             </p>
           </div>
           
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/60 bg-[#022c22] text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white">
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
             <Navigation className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Abrir no Google Maps
           </a>
         </div>
 
-        <div className="rounded-2xl overflow-hidden border border-emerald-900/60 bg-[#022c22] h-[380px] shadow-xl relative">
+        <div className={`rounded-2xl overflow-hidden border ${bordaClass} ${cardBg} h-[380px] shadow-xl relative`}>
           <iframe 
             src={mapEmbedUrl} 
             width="100%" 
@@ -490,7 +494,7 @@ export default function InfoGoogle({
 
       {/* DOCK MOBILE FIXO */}
       {telNumero && (
-        <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 backdrop-blur-xl border border-emerald-900/60 bg-[#022c22]/95 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+        <div className={`sm:hidden fixed bottom-4 left-4 right-4 z-50 backdrop-blur-xl border ${bordaClass} ${cardBg}/95 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl`}>
           <a 
             href={`https://wa.me/55${telNumero}`} 
             target="_blank" 

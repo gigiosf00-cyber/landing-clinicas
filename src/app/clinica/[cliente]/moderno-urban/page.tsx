@@ -24,54 +24,53 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
   const d = dadosBase(lead, `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`);
   const fotosTodas = obterFotos(lead);
 
-  // Foto Hero (foto1.jpg ou renovar1.jpg ou fotoCapa)
   const fotoFachadaHero =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg') || f.includes('renovar1.jpg'))) ||
     fotoCapa(lead) ||
     (fotosTodas && fotosTodas[0]) ||
     '';
 
-  // Foto Sede Real (foto11.jpg ou renovar11.jpg com a fachada de vidro)
   const fotoSedeReal =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11') || f.includes('renovar11'))) ||
     fotoFachadaHero;
 
-  // Filtra categorias brutas em inglês vindas do Google Maps
   const eIngles = (str: string) => /physical|therapy|clinic|barber|shop/i.test(str || '');
   const nichoFormatado =
     d.nicho && !eIngles(d.nicho)
       ? d.nicho.toUpperCase()
-      : 'ATENDIMENTO DOMICILIAR • REABILITAÇÃO • QUIROPRAXIA';
+      : 'FISIOTERAPIA • PILATES • ESTÉTICA';
 
   const cidade = (lead.cidade || '').replace(/\s*-\s*[A-Z]{2}$/i, '').trim().toUpperCase();
-  const uf = (lead.uf || lead.estado || '').toUpperCase();
-  const localizacaoTexto = cidade && uf ? `${cidade} - ${uf}` : cidade || uf;
+  const uf = (lead.uf || lead.estado || 'CE').toUpperCase();
+  const localizacaoTexto = cidade ? `${cidade} - ${uf}` : `IGUATU - ${uf}`;
 
   const corAtiva = lead.corMarca || lead.cor_marca || '#10b981';
   const corTextoBotao = '#ffffff';
 
+  // TEMA URBAN COM BASE ESMERALDA TÉCNICA
   const temaModernoUrbanClinica = {
-    fundo: 'bg-[#011c15]',
-    card: 'bg-[#022c22]',
-    borda: 'border-emerald-900/60',
+    fundo: 'bg-[#02140e]',
+    card: 'bg-[#042117]',
+    borda: 'border-emerald-500/40',
     texto: 'text-white',
     sub: 'text-emerald-400',
-    destaque: 'bg-orange-500',
+    destaque: 'bg-[#ea580c]',
     serif: false,
   };
 
-  const tagCabecalho = localizacaoTexto
-    ? `${nichoFormatado} • ${localizacaoTexto}`
-    : nichoFormatado;
+  const tagCabecalho = `${nichoFormatado} • ${localizacaoTexto}`;
 
   const tituloHero = (
     <span>
-      Sua <span style={{ color: corAtiva }} className="font-black">Qualidade de Vida</span> levada a sério.
+      Mais Movimento, <br />
+      <span style={{ color: corAtiva }} className="font-black">
+        Mais Qualidade de Vida.
+      </span>
     </span>
   );
 
   const descricaoHero =
-    'unimos excelência clínica e atendimento humanizado para a sua plena recuperação.';
+    'oferecemos atendimento presencial e domiciliar personalizado de fisioterapia, pilates e estética com foco na sua plena recuperação e bem-estar.';
 
   const enderecoExibido = d.enderecoCompleto || d.endereco || '';
 
@@ -81,24 +80,23 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
         '--cor-marca': corAtiva,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
-      className="min-h-screen bg-[#011c15] text-white selection:bg-orange-500 selection:text-white"
+      className="min-h-screen bg-[#02140e] text-white selection:bg-orange-500 selection:text-white"
     >
-      {/* 1. HERO SECTION MODULAR COM SPACE ZOOM INTEGRADO */}
       <HeroSection
         nome={d.nome}
         nomeCurto={nomeCurto}
         tagSubtitulo={tagCabecalho}
-        complementoSubtitulo="✦ ESPECIALISTA EM ELIMINAR A DOR E DEVOLVER SEU BEM-ESTAR"
+        complementoSubtitulo="FISIOTERAPIA & SAÚDE INTEGRAL"
         tituloPrincipal={tituloHero}
         descricao={descricaoHero}
-        textoBotao="Falar com Especialista"
+        textoBotao="AGENDAR AVALIAÇÃO VIA WHATSAPP"
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
         fotoHero={fotoFachadaHero}
         tema={temaModernoUrbanClinica}
+        variacao="urban"
       />
 
-      {/* 2. GALERIA E DADOS GOOGLE COM MAPA NOTURNO */}
       <InfoGoogle
         d={d}
         fotos={fotosTodas}
@@ -106,7 +104,6 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
         prefixo="clinica"
       />
 
-      {/* 3. CARD FINAL - NOSSA SEDE */}
       <NossaSedeCard
         nomeCurto={nomeCurto}
         fotoSede={fotoSedeReal}
@@ -121,7 +118,7 @@ export default async function PaginaClinicaModerna({ params }: PageProps) {
         tema={temaModernoUrbanClinica}
       />
 
-      <footer className="text-center py-8 bg-[#01140f] text-emerald-600 text-xs font-medium border-t border-emerald-950">
+      <footer className="text-center py-8 bg-[#010b08] text-emerald-600 text-xs font-medium border-t border-emerald-950">
         <p>© {new Date().getFullYear()} {d.nome}. Todos os direitos reservados.</p>
       </footer>
     </main>
