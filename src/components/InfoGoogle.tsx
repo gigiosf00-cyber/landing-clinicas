@@ -192,7 +192,7 @@ export default function InfoGoogle({
     
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}&z=17&output=embed`;
   
-  const notaAval = Number(safeD.avaliacao || safeD.rating || safeD.nota || 4.8);
+  const notaAval = Number(safeD.avaliacao || safeD.rating || safeD.nota || 5.0);
   const totalAval = Number(safeD.user_ratings_total || safeD.totalAval || safeD.total_avaliacoes || 45);
   const telNumero = safeD.tel || safeD.telefone || safeD.phone || '';
 
@@ -254,7 +254,7 @@ export default function InfoGoogle({
   return (
     <div style={{ fontFamily: isVintage ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${isVintage ? 'text-[#1c1917]' : (tema?.texto || 'text-white')}`}>
       
-      {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
+      {/* 1. BOTÕES DE AÇÕES RÁPIDAS COM RESUMOS INFERIORES */}
       <section className="max-w-6xl mx-auto px-6 pt-6 pb-12">
         {st.texto && (
           <div className="text-center mb-6">
@@ -265,7 +265,8 @@ export default function InfoGoogle({
           </div>
         )}
         
-        <div className="flex flex-wrap gap-3 justify-center items-start">
+        <div className="flex flex-wrap gap-4 justify-center items-start">
+          {/* BOTÃO HORÁRIOS + RESUMO */}
           <div className="flex flex-col items-center">
             <button
               type="button"
@@ -274,21 +275,37 @@ export default function InfoGoogle({
             >
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Horários
             </button>
-            
             <p className={`text-xs font-semibold mt-2 tracking-wide text-center transition-colors ${textTituloSecao} whitespace-nowrap`}>
               {resumoHorarios}
             </p>
           </div>
 
-          <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
-            <Camera className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Fotos ({safeFotos.length})
-          </a>
-          <a href="#avaliacoes" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
-            <Star className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Avaliações ({totalAval})
-          </a>
-          <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
-            <InstagramIcon className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Instagram
-          </a>
+          {/* BOTÃO AVALIAÇÕES + RESUMO DO GOOGLE */}
+          <div className="flex flex-col items-center">
+            <a 
+              href="#avaliacoes" 
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}
+            >
+              <Star className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Avaliações
+            </a>
+            <p className={`text-xs font-semibold mt-2 tracking-wide text-center transition-colors ${textTituloSecao} whitespace-nowrap`}>
+              ★ {notaAval.toFixed(1)} • {totalAval} avaliações no Google
+            </p>
+          </div>
+
+          {/* BOTÃO FOTOS */}
+          <div className="flex flex-col items-center">
+            <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
+              <Camera className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Fotos ({safeFotos.length})
+            </a>
+          </div>
+
+          {/* BOTÃO INSTAGRAM */}
+          <div className="flex flex-col items-center">
+            <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
+              <InstagramIcon className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Instagram
+            </a>
+          </div>
         </div>
 
         {horariosAbertos && (
@@ -467,7 +484,7 @@ export default function InfoGoogle({
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO COM MAPA NOCTURNO FORÇADO */}
+      {/* 5. LOCALIZAÇÃO */}
       <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
