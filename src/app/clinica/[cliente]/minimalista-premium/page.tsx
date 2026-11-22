@@ -25,14 +25,14 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const d = dadosBase(lead, msgWhatsApp);
   const fotosTodas = obterFotos(lead);
 
-  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral / Fachada (foto1.jpg ou fotoCapa)
+  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral / Banner (foto1.jpg)
   const fotoColunaHero =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg') || f.includes('renovar1.jpg'))) ||
     fotoCapa(lead) ||
     (fotosTodas && fotosTodas[0]) ||
     '';
 
-  // 2. NOSSA SEDE: Fachada com Porta de Vidro (foto11.jpg / foto8.jpg)
+  // 2. NOSSA SEDE: Fachada com Porta de Vidro (foto11.jpg)
   const fotoFachadaSede =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11') || f.includes('renovar11'))) ||
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto8') || f.includes('renovar8'))) ||
@@ -42,7 +42,8 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const uf = (lead.uf || lead.estado || 'CE').toUpperCase();
   const localizacaoTexto = `${cidade} - ${uf}`;
 
-  const corAtiva = lead.corMarca || lead.cor_marca || '#10b981';
+  const corAtiva = lead.corMarca || lead.cor_marca || '#10b981'; // Verde Esmeralda (Marca)
+  const corDestaque = '#ea580c'; // Laranja Vibrante (Botões e Badges)
   const corTextoBotao = '#ffffff';
 
   const temaClinica = {
@@ -72,11 +73,12 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
     <main
       style={{
         '--cor-marca': corAtiva,
+        '--cor-destaque': corDestaque,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
       className="min-h-screen bg-[#0a0a0a] text-neutral-100 selection:bg-emerald-500 selection:text-black"
     >
-      {/* 1. HERO SECTION MODULAR COM SPACE ZOOM INTEGRADO */}
+      {/* 1. HERO SECTION COM IMAGEM SEM CORTE E BOTÃO LARANJA */}
       <HeroSection
         nome={d.nome}
         nomeCurto={nomeCurto}
@@ -88,6 +90,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
         fotoHero={fotoColunaHero}
+        fitMode="contain"
         tema={temaClinica}
       />
 

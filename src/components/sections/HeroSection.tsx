@@ -22,13 +22,13 @@ export interface HeroProps {
   whatsappUrl: string;
   temTelefone?: boolean;
   fotoHero?: string;
+  fitMode?: 'contain' | 'cover';
   tema: TemaHero;
 }
 
 export default function HeroSection({
   nome,
   nomeCurto,
-  nichoFormatado,
   tagSubtitulo,
   complementoSubtitulo,
   tituloPrincipal,
@@ -37,10 +37,12 @@ export default function HeroSection({
   whatsappUrl,
   temTelefone = true,
   fotoHero,
+  fitMode = 'contain',
   tema
 }: HeroProps) {
-  const corMarcaDinamica = 'var(--cor-marca, #c99e53)';
-  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #09090b)';
+  const corMarcaDinamica = 'var(--cor-marca, #10b981)';
+  const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
+  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
   return (
     <>
@@ -52,7 +54,7 @@ export default function HeroSection({
         </p>
       </div>
 
-      {/* HEADER NAVEGAÇÃO FIXO */}
+      {/* HEADER NAVEGAÇÃO FIXO (SEM O BOTÃO SUPERIOR) */}
       <header className={`sticky top-0 z-40 backdrop-blur-md border-b ${tema?.fundo || 'bg-[#0a0b0e]'}/95 ${tema?.borda || 'border-zinc-800'}`}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
           <div>
@@ -64,25 +66,10 @@ export default function HeroSection({
               {tagSubtitulo}
             </p>
           </div>
-
-          {temTelefone && (
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                backgroundColor: corMarcaDinamica,
-                color: corTextoBotaoDinamica,
-              }}
-              className="hidden sm:inline-flex text-xs font-bold px-5 py-2.5 rounded-full transition shadow-md uppercase tracking-wider shrink-0 hover:brightness-110 hover:scale-[1.02]"
-            >
-              {textoBotao}
-            </a>
-          )}
         </div>
       </header>
 
-      {/* HERO SECTION COM SPACE ZOOM INTEGRADO NA FOTO */}
+      {/* HERO SECTION COM SPACE ZOOM INTEGRADO */}
       <section className={`max-w-6xl mx-auto px-6 py-8 sm:py-10 grid grid-cols-1 ${fotoHero ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-8 items-center`}>
         <div className={`space-y-4 ${!fotoHero ? 'max-w-4xl' : ''}`}>
           {complementoSubtitulo && (
@@ -108,7 +95,7 @@ export default function HeroSection({
                 target="_blank"
                 rel="noreferrer"
                 style={{
-                  backgroundColor: corMarcaDinamica,
+                  backgroundColor: corDestaqueDinamica,
                   color: corTextoBotaoDinamica,
                 }}
                 className="inline-flex items-center justify-center font-bold px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:scale-105 hover:brightness-110"
@@ -119,25 +106,26 @@ export default function HeroSection({
           )}
         </div>
 
-        {/* FOTO DO HERO COM ANIMAÇÃO SPACE ZOOM KEN BURNS */}
+        {/* FOTO HERO COM SPACE ZOOM */}
         {fotoHero && (
           <div className={`relative overflow-hidden rounded-3xl border shadow-2xl aspect-[4/3] sm:aspect-square p-2 flex items-center justify-center ${tema?.card || 'bg-[#131419]'} ${tema?.borda || 'border-zinc-800'}`}>
             <style dangerouslySetInnerHTML={{ __html: `
-              @keyframes kb-zoom {
+              @keyframes space-zoom-float {
                 0% { transform: scale(1); }
-                100% { transform: scale(1.12); }
+                50% { transform: scale(1.06); }
+                100% { transform: scale(1); }
               }
-              .ken-burns-fx {
-                animation: kb-zoom 12s ease-in-out infinite alternate;
+              .animate-space-zoom {
+                animation: space-zoom-float 10s ease-in-out infinite;
+                will-change: transform;
               }
             `}} />
-            <div className="w-full h-full overflow-hidden rounded-2xl relative">
+            <div className="w-full h-full overflow-hidden rounded-2xl relative flex items-center justify-center bg-black/40">
               <img
                 src={fotoHero}
                 alt={nome}
-                className="w-full h-full object-cover ken-burns-fx brightness-[0.85] contrast-[1.05]"
+                className={`w-full h-full ${fitMode === 'contain' ? 'object-contain' : 'object-cover'} animate-space-zoom brightness-[0.95] contrast-[1.02]`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
             </div>
           </div>
         )}
