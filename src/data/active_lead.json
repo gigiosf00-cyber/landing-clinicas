@@ -1,5 +1,5 @@
 {
-  "enviado_em": "2026-11-22T12:13:27-03:00",
+  "enviado_em": "2026-11-22T12:15:12-03:00",
   "lead": {
     "id": "lead_1791579919783007100",
     "nome": "Gusmão barbershop",
@@ -41,12 +41,12 @@
       "/fotos/gusmao-barbershop/foto10.jpg"
     ],
     "criado_em": "2026-10-09T18:05:19.7830071-03:00",
-    "atualizado_em": "2026-11-22T12:13:27.4405377-03:00"
+    "atualizado_em": "2026-11-22T12:15:12.71147-03:00"
   },
   "nicho_pasta": "barbearia",
   "slug": "gusmao-barbershop",
-  "template": "minimalista-premium",
-  "url_demo": "https://www.gef67.com.br/barbearia/gusmao-barbershop/minimalista-premium",
-  "url_local": "http://localhost:3000/barbearia/gusmao-barbershop/minimalista-premium",
+  "template": "vintage-retro",
+  "url_demo": "https://www.gef67.com.br/barbearia/gusmao-barbershop/vintage-retro",
+  "url_local": "http://localhost:3000/barbearia/gusmao-barbershop/vintage-retro",
   "url_oficial": "https://meu-site.vercel.app/gusmao-barbershop"
 }
