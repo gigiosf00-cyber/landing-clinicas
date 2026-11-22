@@ -9,6 +9,7 @@ interface SpaceZoomProps {
   foto: string;
   whatsappUrl?: string;
   temTelefone: boolean;
+  tagSubtitulo?: string;
 }
 
 export default function SpaceZoomHero({
@@ -18,6 +19,7 @@ export default function SpaceZoomHero({
   foto,
   whatsappUrl,
   temTelefone,
+  tagSubtitulo
 }: SpaceZoomProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -25,10 +27,13 @@ export default function SpaceZoomHero({
     setMounted(true);
   }, []);
 
+  const corMarcaDinamica = 'var(--cor-marca, #c99e53)';
+  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #09090b)';
+
   return (
-    <section className="relative h-[72vh] min-h-[500px] max-w-6xl mx-auto overflow-hidden rounded-3xl my-6 border border-neutral-800/80 shadow-2xl bg-neutral-950">
+    <section className="relative h-[72vh] min-h-[500px] max-w-6xl mx-auto overflow-hidden rounded-3xl my-6 border border-current/10 shadow-2xl bg-neutral-950">
       
-      {/* INJEÇÃO DIRETA DE CSS PARA GARANTIR A ANIMAÇÃO DO ZOOM NO NEXT.JS */}
+      {/* ANIMAÇÃO KEN BURNS DO SPACE ZOOM */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes kb-zoom {
           0% { transform: scale(1); }
@@ -39,7 +44,7 @@ export default function SpaceZoomHero({
         }
       `}} />
 
-      {/* FOTO COM A ANIMAÇÃO KEN BURNS E AJUSTE DE ILUMINAÇÃO */}
+      {/* FOTO DE IMPACTO COM EFEITO SPACE ZOOM */}
       {foto && (
         <div className="absolute inset-0 overflow-hidden">
           <img
@@ -51,10 +56,10 @@ export default function SpaceZoomHero({
         </div>
       )}
 
-      {/* GRADIENTE */}
-      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/50 to-transparent z-10" />
+      {/* GRADIENTE DE SOMBREAMENTO */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
 
-      {/* TEXTO E CONTEÚDO */}
+      {/* CONTEÚDO E ANIMAÇÃO DE ENTRADA */}
       <div 
         className="relative z-30 h-full flex items-end p-6 sm:p-10"
         style={{
@@ -64,9 +69,21 @@ export default function SpaceZoomHero({
         }}
       >
         <div className="space-y-4 max-w-2xl">
+          {tagSubtitulo && (
+            <p 
+              className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em]"
+              style={{ color: corMarcaDinamica }}
+            >
+              {tagSubtitulo}
+            </p>
+          )}
+
           {avaliacao > 0 && (
-            <div className="inline-flex items-center gap-2 bg-neutral-900/90 border border-amber-500/40 px-3.5 py-1.5 rounded-full text-xs font-bold text-amber-400 backdrop-blur-sm shadow-md">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+            <div 
+              style={{ borderColor: corMarcaDinamica, color: corMarcaDinamica }}
+              className="inline-flex items-center gap-2 bg-black/80 border px-3.5 py-1.5 rounded-full text-xs font-bold backdrop-blur-sm shadow-md"
+            >
+              <Star className="w-4 h-4 fill-current" />
               <span>{avaliacao.toFixed(1)} no Google Maps</span>
             </div>
           )}
@@ -76,7 +93,8 @@ export default function SpaceZoomHero({
           </h1>
 
           <p className="text-neutral-200 text-xs sm:text-sm flex items-center gap-2 drop-shadow">
-            <MapPin className="w-4 h-4 text-amber-500 shrink-0" /> {endereco}
+            <MapPin className="w-4 h-4 shrink-0" style={{ color: corMarcaDinamica }} /> 
+            <span>{endereco}</span>
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
@@ -85,7 +103,11 @@ export default function SpaceZoomHero({
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black px-7 py-3.5 rounded-full transition text-xs sm:text-sm uppercase tracking-wide flex items-center gap-2 shadow-xl hover:scale-105"
+                style={{
+                  backgroundColor: corMarcaDinamica,
+                  color: corTextoBotaoDinamica
+                }}
+                className="font-black px-7 py-3.5 rounded-full transition text-xs sm:text-sm uppercase tracking-wide flex items-center gap-2 shadow-xl hover:scale-105 hover:brightness-110"
               >
                 <span>Agendar via WhatsApp</span>
                 <ChevronRight className="w-4 h-4" />

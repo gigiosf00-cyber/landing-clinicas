@@ -57,7 +57,64 @@ const SERVICOS_HAMBURGUERIA = [
   { nome: 'Milkshakes & Sobremesas', desc: 'Bebidas cremosas e sobremesas artesanais.' }
 ];
 
-export default function InfoGoogle({ 
+function formatarLinhaHorario(linha: string): string {
+  const limpo = linha.trim();
+  if (!limpo) return '';
+  return limpo.charAt(0).toUpperCase() + limpo.slice(1);
+}
+
+function montarResumoHorarios(linhas: string[]): string {
+  const padrao = 'Seg–Sex 08h–19h • Sáb 08h–13h';
+  if (!Array.isArray(linhas) || linhas.length === 0) return padrao;
+
+  const normalizarFaixa = (raw: string) =>
+    raw
+      .replace(/:00/g, 'h')
+      .replace(/\s*–\s*|\s*-\s*|\s*às\s*/gi, '–')
+      .replace(/\s+/g, '')
+      .trim();
+
+  const segSexLinha = linhas.find((item) => {
+    const k = item.toLowerCase();
+    return (
+      k.includes('segunda') ||
+      k.includes('terça') ||
+      k.includes('terca') ||
+      k.includes('quarta') ||
+      k.includes('quinta') ||
+      k.includes('sexta')
+    );
+  });
+
+  const sabadoLinha = linhas.find((item) => {
+    const k = item.toLowerCase();
+    return k.includes('sábado') || k.includes('sabado');
+  });
+
+  const partes: string[] = [];
+
+  if (segSexLinha) {
+    const idxDoisPontos = segSexLinha.indexOf(':');
+    const trechoHora = idxDoisPontos >= 0 ? segSexLinha.slice(idxDoisPontos + 1).trim() : segSexLinha;
+    const faixaSegSex = normalizarFaixa(trechoHora);
+    if (faixaSegSex && faixaSegSex.toLowerCase() !== 'fechado') {
+      partes.push(`Seg–Sex ${faixaSegSex}`);
+    }
+  }
+
+  if (sabadoLinha) {
+    const idxDoisPontos = sabadoLinha.indexOf(':');
+    const trechoHora = idxDoisPontos >= 0 ? sabadoLinha.slice(idxDoisPontos + 1).trim() : sabadoLinha;
+    const faixaSab = normalizarFaixa(trechoHora);
+    if (faixaSab && faixaSab.toLowerCase() !== 'fechado') {
+      partes.push(`Sáb ${faixaSab}`);
+    }
+  }
+
+  return partes.length > 0 ? partes.join(' • ') : padrao;
+}
+
+export default function InfoGoogle2({ 
   d, 
   fotos, 
   tema, 
@@ -72,30 +129,23 @@ export default function InfoGoogle({
 }) {
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
-  
-  // 1. ABA DE SERVIÇOS SELECIONADA POR PADRÃO
   const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'servicos' | 'instalacoes'>('servicos');
 
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
-
   const safePrefixo = (prefixo || safeD.nicho || safeD.categoria || '').toLowerCase();
 
-  // 2. ADAPTAÇÃO DINÂMICA DOS RÓTULOS POR NICHO
   const eBarbearia = safePrefixo.includes('barbearia') || safePrefixo.includes('barber');
   const eClinica = safePrefixo.includes('clinica') || safePrefixo.includes('fisioterapia') || safePrefixo.includes('medica');
 
   const labelServicos = eBarbearia ? 'Serviços & Cortes' : 'Serviços & Atendimento';
   const labelEspaco = eBarbearia ? 'Nosso Espaço' : eClinica ? 'Instalações & Clínica' : 'Nosso Espaço';
 
-  // FILTRAGEM INTELIGENTE POR NICHO:
   const eFotoInstalacao = (url: string) => {
     const arq = (url?.split('/').pop() || '').toLowerCase();
-    
     if (eBarbearia) {
       return /(?:^|[^0-9])(foto1|foto8|foto11)(?:[^0-9]|$)|(sede|fachada|ambiente|sala|local|espaco)/.test(arq);
     }
-
     return /(?:^|[^0-9])(foto2|foto3|foto11|renovar2|renovar3|renovar11)(?:[^0-9]|$)|(sede|fachada|ambiente|recepcao|consultorio|sala|local|espaco)/.test(arq);
   };
 
@@ -104,27 +154,31 @@ export default function InfoGoogle({
 
   const listaInstalacoesExibir = fotosInstalacoes.length > 0 ? fotosInstalacoes : safeFotos;
   const listaServicosExibir = fotosServicos.length > 0 ? fotosServicos : safeFotos;
-
   const fotosExibidasGaleria = categoriaFotoAtiva === 'servicos' ? listaServicosExibir : listaInstalacoesExibir;
 
   let semana: string[] = [];
   const rawSemana = safeD.horariosSemana || safeD.horarios_semana;
   if (Array.isArray(rawSemana) && rawSemana.length > 0) {
-    semana = rawSemana;
+    semana = rawSemana.map((s: string) => formatarLinhaHorario(String(s))).filter(Boolean);
   } else if (typeof safeD.horarios === 'string' && safeD.horarios.trim().length > 0) {
     const sep = safeD.horarios.includes('•') ? '•' : safeD.horarios.includes('\n') ? '\n' : ',';
-    semana = safeD.horarios.split(sep).map((s: string) => s.trim()).filter(Boolean);
+    semana = safeD.horarios
+      .split(sep)
+      .map((s: string) => formatarLinhaHorario(s))
+      .filter(Boolean);
   } else {
     semana = [
-      'segunda-feira: 08:00 – 19:00',
-      'terça-feira: 08:00 – 19:00',
-      'quarta-feira: 08:00 – 19:00',
-      'quinta-feira: 08:00 – 19:00',
-      'sexta-feira: 08:00 – 19:00',
-      'sábado: 08:00 – 13:00',
-      'domingo: Fechado'
+      'Segunda-feira: 08:00 – 19:00',
+      'Terça-feira: 08:00 – 19:00',
+      'Quarta-feira: 08:00 – 19:00',
+      'Quinta-feira: 08:00 – 19:00',
+      'Sexta-feira: 08:00 – 19:00',
+      'Sábado: 08:00 – 13:00',
+      'Domingo: Fechado'
     ];
   }
+
+  const resumoHorarios = montarResumoHorarios(semana);
 
   const st = safeD.statusAgora || safeD.status_agora || { aberto: true, texto: 'Aberto agora' };
   const nomeEstabelecimento = safeD.nome || 'Estabelecimento';
@@ -132,7 +186,6 @@ export default function InfoGoogle({
   const termoBuscaNicho = (nichoLead + ' ' + nomeEstabelecimento).toLowerCase();
   
   const enderecoBusca = safeD.enderecoCompleto || safeD.endereco || 'Endereço não informado';
-  
   const urlOficialMaps = safeD.mapa && safeD.mapa !== '#' 
     ? safeD.mapa 
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}`;
@@ -164,61 +217,16 @@ export default function InfoGoogle({
   let textoBotaoAgendar = 'Agendar Consulta / Avaliação via WhatsApp';
   let IconeHeader = HeartPulse;
 
-  let estiloCores = {
-    bgCard: 'bg-[#022c22]',
-    bordaCard: 'border-emerald-900/60',
-    hoverBorda: 'hover:border-orange-500',
-    textoTituloGeral: 'text-emerald-400',
-    textoTituloCard: 'text-white group-hover:text-orange-400',
-    textoDescCard: 'text-emerald-100/80',
-    btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-900/50 bg-[#022c22] hover:bg-[#064e3b] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
-    btnWhatsapp: 'w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
-    corIcone: 'text-orange-500',
-    tagStatus: 'bg-[#022c22] border-emerald-900/50 text-emerald-300',
-    gradeHorarioBg: 'bg-[#022c22] border-emerald-900/60',
-    gradeHorarioTexto: 'text-emerald-400'
-  };
-
   if (termoBuscaNicho.includes('barbearia') || termoBuscaNicho.includes('barbeiro') || termoBuscaNicho.includes('barber')) {
     servicosPadraoNicho = SERVICOS_BARBEARIA;
     tituloSecao = 'Nossos Serviços';
     textoBotaoAgendar = 'Agendar Horário via WhatsApp';
     IconeHeader = Scissors;
-
-    estiloCores = {
-      bgCard: 'bg-[#18181b]',
-      bordaCard: 'border-zinc-800',
-      hoverBorda: 'hover:border-amber-500',
-      textoTituloGeral: 'text-amber-500',
-      textoTituloCard: 'text-zinc-100 group-hover:text-amber-400',
-      textoDescCard: 'text-zinc-400',
-      btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-800 bg-[#18181b] hover:bg-zinc-800 hover:border-amber-500 text-zinc-100 text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
-      btnWhatsapp: 'w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
-      corIcone: 'text-amber-500',
-      tagStatus: 'bg-[#18181b] border-zinc-800 text-amber-400',
-      gradeHorarioBg: 'bg-[#18181b] border-zinc-800',
-      gradeHorarioTexto: 'text-amber-400'
-    };
   } else if (termoBuscaNicho.includes('hamburguer') || termoBuscaNicho.includes('burger') || termoBuscaNicho.includes('pizza') || termoBuscaNicho.includes('restaurante')) {
     servicosPadraoNicho = SERVICOS_HAMBURGUERIA;
     tituloSecao = 'Cardápio & Destaques';
     textoBotaoAgendar = 'Fazer Pedido via WhatsApp';
     IconeHeader = Utensils;
-
-    estiloCores = {
-      bgCard: 'bg-[#2a1208]',
-      bordaCard: 'border-amber-900/60',
-      hoverBorda: 'hover:border-orange-500',
-      textoTituloGeral: 'text-orange-500',
-      textoTituloCard: 'text-white group-hover:text-amber-400',
-      textoDescCard: 'text-amber-100/80',
-      btnRapido: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-amber-900/50 bg-[#2a1208] hover:bg-[#431c0a] hover:border-orange-500 text-white text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02]',
-      btnWhatsapp: 'w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]',
-      corIcone: 'text-orange-500',
-      tagStatus: 'bg-[#2a1208] border-amber-900/50 text-amber-400',
-      gradeHorarioBg: 'bg-[#2a1208] border-amber-900/60',
-      gradeHorarioTexto: 'text-amber-400'
-    };
   }
 
   const servicosDoLead = Array.isArray(safeD.servicos) && safeD.servicos.length > 0 
@@ -226,42 +234,67 @@ export default function InfoGoogle({
     : [];
 
   const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : servicosPadraoNicho;
+  const corMarcaDinamica = 'var(--cor-marca, #c99e53)';
+  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #09090b)';
 
   return (
-    <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className="w-full select-none relative scroll-smooth">
+    <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${tema?.texto || ''}`}>
       
       {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
       <section className="max-w-6xl mx-auto px-6 pt-6 pb-10">
         {st.texto && (
           <div className="text-center mb-6">
-            <span className={`inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm ${estiloCores.tagStatus}`}>
+            <span className={`inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}>
               <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-400' : 'bg-red-500'}`} />
               {st.texto}
             </span>
           </div>
         )}
         
-        <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={() => setHorariosAbertos(!horariosAbertos)} className={estiloCores.btnRapido}>
-            <Clock className={`w-4 h-4 ${estiloCores.corIcone}`} /> Horários
-          </button>
-          <a href="#fotos" className={estiloCores.btnRapido}>
-            <Camera className={`w-4 h-4 ${estiloCores.corIcone}`} /> Fotos ({safeFotos.length})
+        <div className="flex flex-wrap gap-3 justify-center items-start">
+          <div className="flex flex-col items-center">
+            <button
+              type="button"
+              onClick={() => setHorariosAbertos(!horariosAbertos)}
+              style={
+                horariosAbertos
+                  ? {
+                      backgroundColor: corMarcaDinamica,
+                      color: corTextoBotaoDinamica,
+                      borderColor: corMarcaDinamica,
+                    }
+                  : undefined
+              }
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}
+            >
+              <Clock className="w-4 h-4" style={{ color: horariosAbertos ? corTextoBotaoDinamica : corMarcaDinamica }} /> Horários
+            </button>
+            
+            <p 
+              className="text-xs font-semibold mt-2 tracking-wide text-center transition-colors"
+              style={{ color: corMarcaDinamica }}
+            >
+              {resumoHorarios}
+            </p>
+          </div>
+
+          <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}>
+            <Camera className="w-4 h-4" style={{ color: corMarcaDinamica }} /> Fotos ({safeFotos.length})
           </a>
-          <a href="#avaliacoes" className={estiloCores.btnRapido}>
-            <Star className={`w-4 h-4 ${estiloCores.corIcone} fill-current`} /> Avaliações ({totalAval})
+          <a href="#avaliacoes" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}>
+            <Star className="w-4 h-4 fill-current" style={{ color: corMarcaDinamica }} /> Avaliações ({totalAval})
           </a>
-          <a href={instaLink} target="_blank" rel="noreferrer" className={estiloCores.btnRapido}>
-            <InstagramIcon className={`w-4 h-4 ${estiloCores.corIcone}`} /> Instagram
+          <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}>
+            <InstagramIcon className="w-4 h-4" style={{ color: corMarcaDinamica }} /> Instagram
           </a>
         </div>
 
         {horariosAbertos && (
-          <div className={`max-w-md mx-auto mt-6 border rounded-2xl p-5 text-neutral-100 shadow-xl ${estiloCores.gradeHorarioBg}`}>
-            <h3 className={`font-bold text-sm mb-3 flex items-center gap-2 ${estiloCores.gradeHorarioTexto}`}><Clock className="w-4 h-4"/> Grade de Horários</h3>
+          <div className={`max-w-md mx-auto mt-6 border rounded-2xl p-5 shadow-xl ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}>
+            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: corMarcaDinamica }}><Clock className="w-4 h-4"/> Grade de Horários</h3>
             <ul className="space-y-2">
               {semana.map((l: string, idx: number) => (
-                <li key={idx} className="flex justify-between text-xs py-1 border-b border-white/10 last:border-0 opacity-90">
+                <li key={idx} className="flex justify-between text-xs py-1 border-b border-current/10 last:border-0 opacity-90">
                   <span>{l}</span>
                 </li>
               ))}
@@ -272,24 +305,28 @@ export default function InfoGoogle({
 
       {/* 2. SERVIÇOS E ESPECIALIDADES */}
       {!semServicos && (
-        <section className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800">
-          <h2 className={`text-xl font-bold tracking-tight mb-6 flex items-center gap-2 ${estiloCores.textoTituloGeral}`}>
-            <IconeHeader className={`w-5 h-5 ${estiloCores.corIcone}`} />
+        <section className="max-w-6xl mx-auto px-6 py-10 border-t border-current/10">
+          <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center gap-2" style={{ color: corMarcaDinamica }}>
+            <IconeHeader className="w-5 h-5" style={{ color: corMarcaDinamica }} />
             {tituloSecao}
           </h2>
 
-          <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div className={`border rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 ${tema?.card || 'bg-zinc-900/60'} ${tema?.borda || 'border-zinc-800'}`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {servicosReais.map((s: any, idx: number) => (
                 <div 
                   key={idx} 
-                  className={`border rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01] ${estiloCores.bgCard} ${estiloCores.bordaCard} ${estiloCores.hoverBorda}`}
+                  className={`border rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01] ${tema?.fundo || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}
                 >
                   <div>
-                    <h3 className={`font-bold text-sm mb-2 transition-colors ${estiloCores.textoTituloCard}`}>
+                    <h3 className="font-bold text-sm mb-2 transition-colors">
                       {s.nome}
                     </h3>
-                    <p className={`text-xs leading-relaxed ${estiloCores.textoDescCard}`}>
+                    {/* APENAS A DESCRIÇÃO RECEBE A COR DA MARCA */}
+                    <p 
+                      className="text-xs leading-relaxed font-medium"
+                      style={{ color: corMarcaDinamica }}
+                    >
                       {s.desc}
                     </p>
                   </div>
@@ -303,7 +340,11 @@ export default function InfoGoogle({
                   href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um horário na ${nomeEstabelecimento}.`)}`} 
                   target="_blank" 
                   rel="noreferrer" 
-                  className={estiloCores.btnWhatsapp}
+                  style={{ 
+                    backgroundColor: corMarcaDinamica,
+                    color: corTextoBotaoDinamica 
+                  }}
+                  className="w-full hover:brightness-110 font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]"
                 >
                   <Calendar className="w-4 h-4"/>
                   <span>{textoBotaoAgendar}</span>
@@ -315,41 +356,36 @@ export default function InfoGoogle({
         </section>
       )}
 
-      {/* 3. GALERIA COM ABAS (SERVIÇOS EM 1º LUGAR, INSTALAÇÕES EM 2º) */}
+      {/* 3. GALERIA COM ABAS */}
       {safeFotos.length > 0 && (
-        <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800">
-          
+        <section id="fotos" className="max-w-6xl mx-auto px-6 py-10 border-t border-current/10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className={`text-xl sm:text-2xl font-bold tracking-tight ${estiloCores.textoTituloGeral}`}>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>
                 Galeria de Fotos
               </h2>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs opacity-70 mt-1">
                 Explore os nossos trabalhos e conheça a nossa estrutura.
               </p>
             </div>
 
-            <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 p-1.5 rounded-full w-fit">
-              {/* 1º BOTÃO: SERVIÇOS & ATENDIMENTO / CORTES (ATIVO POR PADRÃO) */}
+            <div className={`flex items-center gap-2 border p-1.5 rounded-full w-fit ${tema?.card || 'bg-zinc-900'} ${tema?.borda || 'border-zinc-800'}`}>
               <button
                 onClick={() => setCategoriaFotoAtiva('servicos')}
+                style={categoriaFotoAtiva === 'servicos' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva === 'servicos'
-                    ? 'bg-amber-500 text-zinc-950 shadow-md'
-                    : 'text-zinc-400 hover:text-white'
+                  categoriaFotoAtiva !== 'servicos' ? 'opacity-70 hover:opacity-100' : 'shadow-md'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{labelServicos}</span>
               </button>
 
-              {/* 2º BOTÃO: INSTALAÇÕES & SEDE / ESPAÇO */}
               <button
                 onClick={() => setCategoriaFotoAtiva('instalacoes')}
+                style={categoriaFotoAtiva === 'instalacoes' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva === 'instalacoes'
-                    ? 'bg-amber-500 text-zinc-950 shadow-md'
-                    : 'text-zinc-400 hover:text-white'
+                  categoriaFotoAtiva !== 'instalacoes' ? 'opacity-70 hover:opacity-100' : 'shadow-md'
                 }`}
               >
                 <Building2 className="w-3.5 h-3.5" />
@@ -363,7 +399,7 @@ export default function InfoGoogle({
               <div 
                 key={i} 
                 onClick={() => setFotoModal(f)} 
-                className="aspect-square rounded-2xl overflow-hidden cursor-pointer border border-zinc-800 hover:border-amber-500 group relative shadow-md bg-zinc-900"
+                className={`aspect-square rounded-2xl overflow-hidden cursor-pointer border group relative shadow-md ${tema?.card || 'bg-zinc-900'} ${tema?.borda || 'border-zinc-800'}`}
               >
                 <img 
                   src={f} 
@@ -390,15 +426,15 @@ export default function InfoGoogle({
       )}
 
       {/* 4. AVALIAÇÕES DO GOOGLE */}
-      <section id="avaliacoes" className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800">
+      <section id="avaliacoes" className="max-w-6xl mx-auto px-6 py-10 border-t border-current/10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-          <h2 className={`text-xl font-bold tracking-tight ${estiloCores.textoTituloGeral}`}>
+          <h2 className="text-xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>
             Avaliações no Google ({totalAval})
           </h2>
-          <div className="flex items-center gap-2 text-xs text-amber-400 font-bold bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full w-fit">
+          <div className={`flex items-center gap-2 text-xs font-bold border px-3 py-1.5 rounded-full w-fit ${tema?.card || 'bg-zinc-900'} ${tema?.borda || 'border-zinc-800'}`} style={{ color: corMarcaDinamica }}>
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, idx) => (
-                <Star key={idx} className={`w-3.5 h-3.5 fill-current ${idx < Math.floor(notaAval) ? 'text-amber-400' : 'text-zinc-600'}`} />
+                <Star key={idx} className="w-3.5 h-3.5 fill-current" style={{ color: idx < Math.floor(notaAval) ? corMarcaDinamica : '#52525b' }} />
               ))}
             </div>
             <span>{notaAval.toFixed(1)} de 5.0</span>
@@ -411,19 +447,19 @@ export default function InfoGoogle({
             return (
               <div 
                 key={i} 
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-amber-500/50 transition-all"
+                className={`border rounded-2xl p-5 shadow-sm flex flex-col justify-between transition-all ${tema?.card || 'bg-zinc-900'} ${tema?.borda || 'border-zinc-800'}`}
               >
                 <div>
-                  <div className="flex text-amber-400 gap-1 mb-3">
+                  <div className="flex gap-1 mb-3">
                     {[...Array(5)].map((_, idx) => (
-                      <Star key={idx} className={`w-4 h-4 fill-current ${idx < notaCard ? 'text-amber-400' : 'text-zinc-700'}`} />
+                      <Star key={idx} className="w-4 h-4 fill-current" style={{ color: idx < notaCard ? corMarcaDinamica : '#3f3f46' }} />
                     ))}
                   </div>
-                  <p className="text-xs text-zinc-300 mb-4 italic leading-relaxed">“{r.texto || r.text}”</p>
+                  <p className="text-xs mb-4 italic leading-relaxed opacity-85">“{r.texto || r.text}”</p>
                 </div>
-                <strong className="text-xs text-white border-t border-zinc-800/80 pt-3 font-semibold flex items-center justify-between">
+                <strong className="text-xs border-t border-current/10 pt-3 font-semibold flex items-center justify-between">
                   <span>{r.autor || r.author || 'Cliente Google'}</span>
-                  <span className="text-[10px] text-zinc-500 font-normal">Google Review</span>
+                  <span className="text-[10px] opacity-60 font-normal">Google Review</span>
                 </strong>
               </div>
             );
@@ -431,43 +467,55 @@ export default function InfoGoogle({
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO COM MAPA */}
-      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-zinc-800 pb-24">
+      {/* 5. LOCALIZAÇÃO COM MAPA FORÇADO PARA MODO NOTURNO */}
+      <section className="max-w-6xl mx-auto px-6 py-10 border-t border-current/10 pb-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className={`text-xl font-bold tracking-tight ${estiloCores.textoTituloGeral}`}>Onde Estamos</h2>
-            <p className="text-xs text-zinc-400 flex items-center gap-1.5 mt-1" style={{ fontFamily: 'system-ui, sans-serif' }}>
-              <MapPin className={`w-4 h-4 shrink-0 ${estiloCores.corIcone}`} />
+            <h2 className="text-xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>Onde Estamos</h2>
+            <p className="text-xs opacity-75 flex items-center gap-1.5 mt-1">
+              <MapPin className="w-4 h-4 shrink-0" style={{ color: corMarcaDinamica }} />
               <span>{enderecoBusca}</span>
             </p>
           </div>
           
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={estiloCores.btnRapido}>
-            <Navigation className={`w-4 h-4 fill-current ${estiloCores.corIcone}`}/> Abrir no Google Maps
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${tema?.card || 'bg-[#18181b]'} ${tema?.borda || 'border-zinc-800'}`}>
+            <Navigation className="w-4 h-4 fill-current" style={{ color: corMarcaDinamica }}/> Abrir no Google Maps
           </a>
         </div>
 
-        <div className="rounded-2xl overflow-hidden border border-zinc-800 h-[380px] bg-neutral-900 shadow-xl relative">
+        <div className={`rounded-2xl overflow-hidden border h-[380px] shadow-xl relative ${tema?.card || 'bg-neutral-900'} ${tema?.borda || 'border-zinc-800'}`}>
           <iframe 
             src={mapEmbedUrl} 
             width="100%" 
             height="100%" 
-            style={{ border: 0 }} 
+            style={{
+              border: 0,
+              filter: 'invert(0.9) hue-rotate(180deg) contrast(1.25) brightness(0.9)'
+            }} 
             loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade" 
-            className="w-full h-full filter invert-[0.9] hue-rotate-180 contrast-125 brightness-90"
+            className="w-full h-full block"
           />
         </div>
       </section>
 
       {/* DOCK MOBILE FIXO */}
       {telNumero && (
-        <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
-          <a href={`https://wa.me/55${telNumero}`} target="_blank" rel="noreferrer" className="flex-1 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
+        <div className={`sm:hidden fixed bottom-4 left-4 right-4 z-50 backdrop-blur-xl border p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl ${tema?.card || 'bg-zinc-900/95'} ${tema?.borda || 'border-zinc-800'}`}>
+          <a 
+            href={`https://wa.me/55${telNumero}`} 
+            target="_blank" 
+            rel="noreferrer" 
+            style={{ 
+              backgroundColor: corMarcaDinamica,
+              color: corTextoBotaoDinamica 
+            }}
+            className="flex-1 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition"
+          >
             <MessageCircle className="w-4 h-4"/> WhatsApp
           </a>
           <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-zinc-950 text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
-            <Navigation className={`w-4 h-4 ${estiloCores.corIcone}`}/> Como Chegar
+            <Navigation className="w-4 h-4" style={{ color: corMarcaDinamica }}/> Como Chegar
           </a>
         </div>
       )}

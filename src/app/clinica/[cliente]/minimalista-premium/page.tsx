@@ -1,224 +1,122 @@
-import { carregarLead, obterFotos, dadosBase, obterLogo } from '@/lib/lead';
+import React from 'react';
+import { notFound } from 'next/navigation';
+import { carregarLead, dadosBase, fotoCapa, obterFotos } from '@/lib/lead';
 import InfoGoogle from '@/components/InfoGoogle';
-import { HeartPulse, AlertTriangle, ChevronRight, MessageSquare, MapPin, Star, Navigation, MessageCircle } from 'lucide-react';
+import HeroSection from '@/components/sections/HeroSection';
+import NossaSedeCard from '@/components/sections/NossaSedeCard';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-interface PageProps { params: Promise<{ cliente: string }> }
+interface PageProps {
+  params: Promise<{ cliente: string }>;
+}
 
 export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const { cliente } = await params;
-  const lead = carregarLead(cliente);
+  const lead: any = carregarLead(cliente);
 
   if (!lead) {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-6 text-neutral-200 font-sans">
-        <div className="max-w-lg bg-neutral-900 border border-emerald-500/30 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
-          <AlertTriangle className="w-12 h-12 text-emerald-500 mx-auto" />
-          <h1 className="text-xl font-bold text-white">Nenhum cadastro encontrado</h1>
-          <p className="text-xs text-neutral-400">Verifique se o ficheiro do cliente existe na pasta de leads.</p>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
-  const fotosObtidas = obterFotos(lead);
-  const logo = obterLogo(lead);
-  const pastaImagens = `/fotos/${cliente}`;
+  const nomeCurto = lead.nome ? lead.nome.split(/[-|:,]/)[0].trim() : 'Clínica';
+  const msgWhatsApp = `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`;
+  const d = dadosBase(lead, msgWhatsApp);
+  const fotosTodas = obterFotos(lead);
 
-  // FALLBACK ROBUSTO DE SEGURANÇA PARA A VERCEL (GEF67.COM.BR)
-  const fotos = (fotosObtidas && fotosObtidas.length > 0) ? fotosObtidas : [
-    `${pastaImagens}/foto1.jpg`,
-    `${pastaImagens}/foto2.jpg`,
-    `${pastaImagens}/foto3.jpg`,
-    `${pastaImagens}/foto6.jpg`,
-    `${pastaImagens}/foto7.jpg`,
-    `${pastaImagens}/foto8.jpg`,
-    `${pastaImagens}/foto9.jpg`,
-    `${pastaImagens}/foto11.jpg`
-  ];
+  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral / Fachada (foto1.jpg ou fotoCapa)
+  const fotoColunaHero =
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg') || f.includes('renovar1.jpg'))) ||
+    fotoCapa(lead) ||
+    (fotosTodas && fotosTodas[0]) ||
+    '';
 
-  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral (foto1.jpg)
-  const fotoColunaHero = fotos.find((f: string) => f.includes('foto1.jpg')) || fotos[0];
+  // 2. NOSSA SEDE: Fachada com Porta de Vidro (foto11.jpg / foto8.jpg)
+  const fotoFachadaSede =
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11') || f.includes('renovar11'))) ||
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto8') || f.includes('renovar8'))) ||
+    fotoColunaHero;
 
-  // 2. NOSSA SEDE (RODAPÉ): Fachada com Porta de Vidro (foto11.jpg)
-  const fotoFachadaSede = fotos.find((f: string) => f.includes('foto11')) || fotos[fotos.length - 1];
+  const cidade = (lead.cidade || 'Iguatu').replace(/-\s*CE/gi, '').replace(/CE/gi, '').trim().toUpperCase();
+  const uf = (lead.uf || lead.estado || 'CE').toUpperCase();
+  const localizacaoTexto = `${cidade} - ${uf}`;
 
-  // Extrai apenas o nome limpo "Clínica Renovar" para o corpo do texto
-  const nomeCurto = lead.nome.split(/[-|:,]/)[0].trim();
-
-  const d = dadosBase(lead, `Olá! Vi o site da ${nomeCurto} e gostaria de agendar uma consulta.`);
+  const corAtiva = lead.corMarca || lead.cor_marca || '#10b981';
+  const corTextoBotao = '#ffffff';
 
   const temaClinica = {
-    fundo: '#0a0a0a', 
-    card: '#171717', 
-    borda: '#262626', 
-    texto: '#ffffff', 
-    sub: '#a3a3a3', 
-    destaque: '#10b981', 
-    serif: false
+    fundo: 'bg-[#0a0a0a]',
+    card: 'bg-[#171717]',
+    borda: 'border-neutral-800',
+    texto: 'text-neutral-100',
+    sub: 'text-emerald-400',
+    destaque: 'bg-emerald-600',
+    serif: false,
   };
 
-  const localSimples = lead.cidade ? `${lead.cidade}${lead.estado ? ` - ${lead.estado}` : ''}` : 'Atendimento Presencial e Domiciliar';
+  const tagCabecalho = `FISIOTERAPIA • PILATES • ESTÉTICA • ${localizacaoTexto}`;
+
+  const tituloHero = (
+    <span>
+      Mais Movimento, Mais <span style={{ color: corAtiva }} className="font-black">Qualidade de Vida.</span>
+    </span>
+  );
+
+  const descricaoHero =
+    'oferecemos atendimento presencial e domiciliar personalizado de fisioterapia, pilates e estética com foco na sua plena recuperação e bem-estar.';
+
+  const enderecoExibido = d.enderecoCompleto || d.endereco || localizacaoTexto;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-emerald-500 selection:text-black overflow-x-hidden">
+    <main
+      style={{
+        '--cor-marca': corAtiva,
+        '--cor-texto-botao': corTextoBotao,
+      } as React.CSSProperties}
+      className="min-h-screen bg-[#0a0a0a] text-neutral-100 selection:bg-emerald-500 selection:text-black"
+    >
+      {/* 1. HERO SECTION MODULAR COM SPACE ZOOM INTEGRADO */}
+      <HeroSection
+        nome={d.nome}
+        nomeCurto={nomeCurto}
+        tagSubtitulo={tagCabecalho}
+        complementoSubtitulo="🏥 FISIOTERAPIA & SAÚDE INTEGRAL"
+        tituloPrincipal={tituloHero}
+        descricao={descricaoHero}
+        textoBotao="Agendar Avaliação via WhatsApp"
+        whatsappUrl={d.whatsapp}
+        temTelefone={Boolean(d.tel)}
+        fotoHero={fotoColunaHero}
+        tema={temaClinica}
+      />
 
-      {/* BANNER SUPERIOR DE PROPOSTA */}
-      <div className="bg-emerald-950 border-b border-emerald-800/40 text-emerald-400 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-center py-2 px-4">
-        🏥 PROPOSTA DIGITAL EXCLUSIVA PARA {lead.nome} 🏥
-      </div>
+      {/* 2. COMPONENTE PRINCIPAL INFOGOOGLE UNIFICADO */}
+      <InfoGoogle
+        d={d}
+        fotos={fotosTodas}
+        tema={temaClinica}
+        prefixo="clinica"
+      />
 
-      {/* HEADER FIXO DE CLÍNICA */}
-      <header className="sticky top-0 z-40 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-900">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            {logo ? (
-              <img src={logo} alt="Logo" className="h-8 sm:h-10 w-auto max-w-[120px] sm:max-w-[140px] object-contain" />
-            ) : (
-              <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-                <HeartPulse className="w-5 h-5 text-emerald-400" />
-              </div>
-            )}
-            <span className="text-sm sm:text-lg font-black uppercase text-white tracking-wider truncate max-w-[180px] sm:max-w-none">
-              {lead.nome}
-            </span>
-          </div>
-        </div>
-      </header>
+      {/* 3. CARD NOSSA SEDE */}
+      <NossaSedeCard
+        nomeCurto={nomeCurto}
+        fotoSede={fotoFachadaSede}
+        whatsappUrl={d.whatsapp}
+        mapaUrl={
+          d.mapa && d.mapa !== '#'
+            ? d.mapa
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto + ' ' + enderecoExibido)}`
+        }
+        enderecoCompleto={enderecoExibido}
+        labelSede="Nossa Clínica"
+        tema={temaClinica}
+      />
 
-      {/* HERO SECTION DA CLÍNICA */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-        <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-          
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-neutral-900 border border-neutral-800 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold text-emerald-400 shadow-sm">
-              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
-              <span>{d.avaliacao > 0 ? d.avaliacao.toFixed(1) : '5.0'} Google Maps</span>
-              <span className="text-neutral-700">•</span>
-              <span className="text-neutral-400">{d.totalAval || 15} avaliações</span>
-            </div>
-
-            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-neutral-300 bg-neutral-900 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border border-neutral-800">
-              <MapPin className="w-3.5 h-3.5 text-orange-500" />
-              <span>{localSimples}</span>
-            </div>
-          </div>
-
-          <h1 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-white leading-tight">
-            Mais Movimento, Mais Qualidade de Vida.
-          </h1>
-
-          <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-xl">
-            Na <strong className="text-white">{nomeCurto}</strong>, oferecemos atendimento presencial e domiciliar especializado para sua plena recuperação e bem-estar.
-          </p>
-
-          <div className="flex flex-wrap gap-4 pt-2">
-            {d.tel && (
-              <a 
-                href={d.whatsapp} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl transition text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-emerald-950/50 hover:scale-[1.02]"
-              >
-                <span>AGENDAR AVALIAÇÃO NO WHATSAPP</span>
-                <ChevronRight className="w-4 h-4" />
-              </a>
-            )}
-          </div>
-        </div>
-
-        {/* CARD HERO DA COLUNA VERTEBRAL (foto1.jpg) */}
-        <div className="lg:col-span-5">
-          <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl h-[300px] sm:h-[380px] bg-neutral-900 flex items-center justify-center p-3">
-            <img 
-              src={fotoColunaHero} 
-              alt={`Especialidade ${nomeCurto}`} 
-              className="w-full h-full object-contain rounded-2xl brightness-95 hover:scale-105 transition-transform duration-700" 
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* COMPONENTE PRINCIPAL (CARROSSEL DE FOTOS E REVIEWS) */}
-      <InfoGoogle d={d} fotos={fotos} tema={temaClinica} prefixo="clin" />
-
-      {/* BLOCO FINAL - VISITE-NOS OU CHAME ONLINE */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 sm:p-10 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center relative overflow-hidden">
-          
-          {/* COLUNA ESQUERDA: FACHADA COM PORTA DE VIDRO (foto11.jpg) */}
-          <div className="md:col-span-5 relative">
-            <div className="rounded-2xl overflow-hidden border border-neutral-800 shadow-lg h-56 sm:h-64 bg-neutral-950 flex items-center justify-center p-2">
-              <img 
-                src={fotoFachadaSede} 
-                alt={`Sede ${nomeCurto}`} 
-                className="w-full h-full object-contain rounded-xl" 
-              />
-            </div>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-orange-500 text-black font-black text-[10px] uppercase tracking-wider px-4 py-1 rounded-full shadow-md whitespace-nowrap">
-              Nossa Sede
-            </div>
-          </div>
-
-          {/* COLUNA DIREITA: TEXTO E BOTÕES */}
-          <div className="md:col-span-7 space-y-4 text-center md:text-left pt-3 md:pt-0">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Visite-nos ou Chame Online
-            </h2>
-            <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed">
-              Estamos prontos para atender você na nossa clínica ou no conforto do seu lar.
-            </p>
-
-            {/* BOTÕES DE AÇÃO DUPLA */}
-            <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
-              <a 
-                href={d.whatsapp} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-5 sm:px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-950/50 hover:scale-[1.02]"
-              >
-                <MessageCircle className="w-4 h-4 fill-white text-emerald-600" />
-                <span>Chamar no WhatsApp</span>
-              </a>
-
-              <a 
-                href={d.mapa && d.mapa !== '#' ? d.mapa : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto)}`} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="inline-flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-bold px-5 sm:px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider border border-neutral-700 transition"
-              >
-                <Navigation className="w-4 h-4 text-orange-500" />
-                <span>Rota no Mapa</span>
-              </a>
-            </div>
-
-            {/* ENDEREÇO EM TEXTO DISCRETO */}
-            <p className="text-[11px] text-neutral-400 pt-3 border-t border-neutral-800/80">
-              {nomeCurto} — {d.enderecoCompleto || localSimples}
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* BOTÃO FLUTUANTE DIREITO (DESKTOP) */}
-      {d.tel && (
-        <div className="hidden sm:block fixed bottom-6 right-6 z-50">
-          <a
-            href={d.whatsapp}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Agendar WhatsApp"
-            className="relative flex items-center justify-center w-14 h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110"
-          >
-            <span className="absolute -inset-1 rounded-full bg-emerald-500 animate-ping opacity-20"></span>
-            <MessageSquare className="w-6 h-6 relative z-10" />
-          </a>
-        </div>
-      )}
-
-    </div>
+      <footer className="text-center py-8 bg-black text-neutral-500 text-xs font-medium border-t border-neutral-900">
+        <p>© {new Date().getFullYear()} {d.nome}. Todos os direitos reservados.</p>
+      </footer>
+    </main>
   );
 }

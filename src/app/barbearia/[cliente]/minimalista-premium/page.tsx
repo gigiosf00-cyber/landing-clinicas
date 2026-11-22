@@ -1,137 +1,136 @@
-import { carregarLead, obterFotos, dadosBase, obterLogo } from '@/lib/lead';
+import React from 'react';
+import { notFound } from 'next/navigation';
+import { carregarLead, dadosBase, fotoCapa, obterFotos } from '@/lib/lead';
 import InfoGoogle from '@/components/InfoGoogle';
-import SpaceZoomHero from '@/components/SpaceZoomHero';
-import { Scissors, AlertTriangle, ChevronRight, MessageSquare } from 'lucide-react';
+import HeroSection from '@/components/sections/HeroSection';
+import NossaSedeCard from '@/components/sections/NossaSedeCard';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-interface PageProps { params: Promise<{ cliente: string }> }
+interface PageProps {
+  params: Promise<{ cliente: string }>;
+}
 
 export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
   const { cliente } = await params;
-  const lead = carregarLead(cliente);
+  const lead: any = carregarLead(cliente);
 
   if (!lead) {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-6 text-neutral-200 font-sans">
-        <div className="max-w-lg bg-neutral-900 border border-red-500/30 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
-          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto" />
-          <h1 className="text-xl font-bold text-white">JSON não encontrado</h1>
-          <p className="text-xs text-neutral-400">Verifique se o ficheiro do cliente existe na pasta de leads.</p>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
-  const fotosObtidas = obterFotos(lead);
-  const logo = obterLogo(lead);
-  const pastaImagens = `/fotos/${cliente}`;
+  const nomeCurto = lead.nome ? lead.nome.split(/[-|:,]/)[0].trim() : 'Barbearia';
+  const msgWhatsApp = `Olá! Vi o site da ${nomeCurto} e gostaria de agendar um horário.`;
+  const d = dadosBase(lead, msgWhatsApp);
+  const fotosTodas = obterFotos(lead);
 
-  // FALLBACK ROBUSTO DE SEGURANÇA PARA PRODUÇÃO (VERCEL)
-  const fotos = (fotosObtidas && fotosObtidas.length > 0) ? fotosObtidas : [
-    `${pastaImagens}/foto1.jpg`,
-    `${pastaImagens}/foto2.jpg`,
-    `${pastaImagens}/foto3.jpg`,
-    `${pastaImagens}/foto4.jpg`,
-    `${pastaImagens}/foto5.jpg`,
-    `${pastaImagens}/foto6.jpg`
-  ];
+  const fotoHeroBase =
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg'))) ||
+    fotoCapa(lead) ||
+    (fotosTodas && fotosTodas[0]) ||
+    '';
 
-  const fotoHero = fotos[0] || `${pastaImagens}/foto1.jpg`;
-  const nomeCurto = lead.nome.split(/[-|:,]/)[0].trim();
-  const d = dadosBase(lead, `Olá! Gostaria de agendar um horário na ${nomeCurto}.`);
+  const fotoMinimalista =
+    (fotosTodas && fotosTodas.find((f: string) => f.toLowerCase().includes('foto2'))) ||
+    fotoHeroBase;
+
+  const fotoSede =
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11'))) ||
+    (fotosTodas && fotosTodas.find((f: string) => f.includes('foto8'))) ||
+    fotoHeroBase;
+
+  const cidade = (lead.cidade || 'Osasco').replace(/\s*-\s*[A-Z]{2}$/i, '').trim().toUpperCase();
+  const uf = (lead.uf || lead.estado || 'SP').toUpperCase();
+  const localizacaoTexto = `${cidade} - ${uf}`;
+
+  const corAtiva = lead.corMarca || lead.cor_marca || '#e2c275';
+  const corTextoBotao = '#09090b';
 
   const temaMinimalista = {
-    fundo: 'transparent', 
-    card: '#171717', 
-    borda: '#262626', 
-    texto: '#ffffff', 
-    sub: '#a3a3a3', 
-    destaque: '#f59e0b', 
-    serif: false
+    fundo: 'bg-[#050505]',
+    card: 'bg-[#0d0d0e]',
+    borda: 'border-zinc-800/60',
+    texto: 'text-zinc-100',
+    sub: 'text-[#e2c275]',
+    destaque: 'bg-[#e2c275]',
   };
 
+  const tagCabecalho = `CORTES • BARBA • ${localizacaoTexto}`;
+  const tituloHero = (
+    <span>
+      Seu Visual no Mais Alto <span style={{ color: corAtiva }} className="font-black">Nível.</span>
+    </span>
+  );
+  const descricaoHero = 'unimos a arte da barbearia clássica com as tendências mais modernas, acabamento na navalha e atenção em cada detalhe.';
+  const enderecoExibido = d.enderecoCompleto || d.endereco || '';
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-amber-500 selection:text-black overflow-x-hidden">
-
-      {/* BANNER PROMOCIONAL SUPERIOR */}
-      <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-black text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-center py-2 px-4 shadow-md">
-        ✦ PROPOSTA DIGITAL EXCLUSIVA PARA {lead.nome} ✦
-      </div>
-
-      {/* HEADER FIXO MINIMALISTA */}
-      <header className="sticky top-0 z-40 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            {logo ? (
-              <img src={logo} alt="Logo" className="h-8 sm:h-10 w-auto max-w-[120px] sm:max-w-[140px] object-contain" />
-            ) : (
-              <div className="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl">
-                <Scissors className="w-5 h-5 text-amber-500" />
-              </div>
-            )}
-            <span className="text-sm sm:text-lg font-black uppercase text-white tracking-wider truncate max-w-[180px] sm:max-w-none">
-              {lead.nome}
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* HERO SECTION COM SPACE ZOOM */}
-      <SpaceZoomHero
-        nome={lead.nome}
-        endereco={lead.endereco}
-        avaliacao={d.avaliacao}
-        foto={fotoHero}
+    <main
+      style={{
+        '--cor-marca': corAtiva,
+        '--cor-texto-botao': corTextoBotao,
+      } as React.CSSProperties}
+      className={`min-h-screen ${temaMinimalista.fundo} ${temaMinimalista.texto}`}
+    >
+      <HeroSection
+        nome={d.nome}
+        nomeCurto={nomeCurto}
+        tagSubtitulo={tagCabecalho}
+        tituloPrincipal={tituloHero}
+        descricao={descricaoHero}
+        textoBotao="Agendar via WhatsApp"
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
+        fotoHero=""
+        tema={temaMinimalista}
       />
 
-      {/* COMPONENTE PRINCIPAL (SERVIÇOS, GALERIA, AVALIAÇÕES E MAPA) */}
-      <InfoGoogle d={d} fotos={fotos} tema={temaMinimalista} prefixo="min" />
-
-      {/* CHAMADA FINAL PARA AÇÃO (CTA) */}
-      {d.tel && (
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-          <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 rounded-3xl p-6 sm:p-12 text-center shadow-2xl relative overflow-hidden">
-            <div className="relative z-10">
-              <h2 className="text-2xl sm:text-4xl font-black text-black uppercase tracking-tight mb-3 leading-tight">
-                Pronto para renovar o visual?
-              </h2>
-              <p className="text-black/80 text-xs sm:text-sm font-semibold max-w-md mx-auto">
-                Agende o seu horário diretamente pelo WhatsApp sem filas nem complicações.
+      {fotoMinimalista && (
+        <section className="max-w-6xl mx-auto px-6 pb-8">
+          <div className={`relative overflow-hidden rounded-3xl border shadow-2xl h-[340px] sm:h-[460px] ${temaMinimalista.borda}`}>
+            <img
+              src={fotoMinimalista}
+              alt={`${nomeCurto} — Ambiente`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+            <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-10 text-white">
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: corAtiva }}>
+                ESTILO &amp; PRECISÃO
+              </span>
+              <p className="text-lg sm:text-2xl font-black tracking-tight max-w-xl">
+                {nomeCurto} — {localizacaoTexto}
               </p>
-              <a 
-                href={d.whatsapp} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-white font-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm mt-6 transition shadow-2xl transform hover:scale-105"
-              >
-                <span>Agendar via WhatsApp</span>
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-              </a>
             </div>
           </div>
         </section>
       )}
 
-      {/* BOTÃO FLUTUANTE FIXO NO CANTO INFERIOR DIREITO (DESKTOP) */}
-      {d.tel && (
-        <div className="hidden sm:block fixed bottom-6 right-6 z-50">
-          <a
-            href={d.whatsapp}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Agendar WhatsApp"
-            className="relative flex items-center justify-center w-14 h-14 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full shadow-2xl shadow-emerald-950 transition-all duration-300 transform hover:scale-110"
-          >
-            <span className="absolute -inset-1 rounded-full bg-emerald-400 animate-ping opacity-30"></span>
-            <MessageSquare className="w-6 h-6 relative z-10" />
-          </a>
-        </div>
-      )}
+      <InfoGoogle
+        d={d}
+        fotos={fotosTodas}
+        tema={temaMinimalista}
+        prefixo="barbearia"
+      />
 
-    </div>
+      <NossaSedeCard
+        nomeCurto={nomeCurto}
+        fotoSede={fotoSede}
+        whatsappUrl={d.whatsapp}
+        mapaUrl={
+          d.mapa && d.mapa !== '#'
+            ? d.mapa
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto + ' ' + enderecoExibido)}`
+        }
+        enderecoCompleto={enderecoExibido}
+        labelSede="Nossa Barbearia"
+        tema={temaMinimalista}
+      />
+
+      <footer className="text-center py-8 border-t border-white/10 text-xs opacity-60">
+        <p>© {new Date().getFullYear()} {d.nome}. Todos os direitos reservados.</p>
+      </footer>
+    </main>
   );
 }
