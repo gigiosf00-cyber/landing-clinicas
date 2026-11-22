@@ -182,18 +182,20 @@ export default function InfoGoogle({
 
   const st = safeD.statusAgora || safeD.status_agora || { aberto: true, texto: 'Aberto agora' };
   const nomeEstabelecimento = safeD.nome || 'Estabelecimento';
-  const nichoLead = safePrefixo;
-  const termoBuscaNicho = (nichoLead + ' ' + nomeEstabelecimento).toLowerCase();
-  
+  const termoBuscaNicho = (safePrefixo + ' ' + nomeEstabelecimento).toLowerCase();
+
   const enderecoBusca = safeD.enderecoCompleto || safeD.endereco || 'Endereço não informado';
   const urlOficialMaps = safeD.mapa && safeD.mapa !== '#' 
     ? safeD.mapa 
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}`;
-    
+
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}&z=17&output=embed`;
-  
-  const notaAval = Number(safeD.avaliacao || safeD.rating || safeD.nota || 5.0);
-  const totalAval = Number(safeD.user_ratings_total || safeD.totalAval || safeD.total_avaliacoes || 45);
+
+  const notaPadrao = eBarbearia ? 4.5 : 5.0;
+  const totalAvalPadrao = eBarbearia ? 84 : 45;
+  const notaAval = Number(safeD.avaliacao || safeD.rating || safeD.nota || notaPadrao);
+  const totalAval = Number(safeD.user_ratings_total || safeD.totalAval || safeD.total_avaliacoes || totalAvalPadrao);
+
   const telNumero = safeD.tel || safeD.telefone || safeD.phone || '';
 
   const rawInsta = safeD.instagram || safeD.insta || safeD.instaUrl || '';
@@ -207,7 +209,7 @@ export default function InfoGoogle({
   const reviewsReais = Array.isArray(safeD.reviews) && safeD.reviews.length > 0 
     ? safeD.reviews 
     : (Array.isArray(safeD.avaliacoes) && safeD.avaliacoes.length > 0 ? safeD.avaliacoes : []);
-  
+
   const depoimentosParaExibir = reviewsReais.length > 0 
     ? reviewsReais 
     : (termoBuscaNicho.includes('barbearia') || termoBuscaNicho.includes('barber') ? REVIEWS_BARBEARIA : REVIEWS_CLINICA);
@@ -234,39 +236,39 @@ export default function InfoGoogle({
     : [];
 
   const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : servicosPadraoNicho;
-  
-  const corMarcaDinamica = 'var(--cor-marca, #059669)';
-  const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
+
+  const corMarcaPadrao = eBarbearia ? '#d4af37' : '#059669';
+  const corDestaquePadrao = eBarbearia ? '#d97706' : '#ea580c';
+
+  const corMarcaDinamica = `var(--cor-marca, ${corMarcaPadrao})`;
+  const corDestaqueDinamica = `var(--cor-destaque, ${corDestaquePadrao})`;
   const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
   const isVintage = Boolean(tema?.serif);
 
-  const cardBg = isVintage ? 'bg-[#ffffff]' : (tema?.card || 'bg-[#0e1815]');
-  const fundoBg = isVintage ? 'bg-[#f5efe6]' : (tema?.fundo || 'bg-[#060d0a]');
-  const bordaClass = isVintage ? 'border-[#e0d3c1]' : (tema?.borda || 'border-emerald-500/30');
+  const cardBg = isVintage ? 'bg-[#ffffff]' : (tema?.card || (eBarbearia ? 'bg-[#17130d]' : 'bg-[#0e1815]'));
+  const fundoBg = isVintage ? (eBarbearia ? 'bg-[#f6f1e7]' : 'bg-[#f5efe6]') : (tema?.fundo || (eBarbearia ? 'bg-[#0d0b08]' : 'bg-[#060d0a]'));
+  const bordaClass = isVintage ? (eBarbearia ? 'border-[#dfd2b8]' : 'border-[#e0d3c1]') : (tema?.borda || (eBarbearia ? 'border-amber-500/25' : 'border-emerald-500/30'));
 
-  const textTituloSecao = isVintage ? 'text-[#059669]' : 'text-emerald-400';
-  const textSubSecao = isVintage ? 'text-[#44382e]' : 'text-emerald-100/70';
   const textCardTitulo = isVintage ? 'text-[#1c1917]' : 'text-white';
-  const textCardDesc = isVintage ? 'text-[#44382e] font-sans' : 'text-emerald-100/90';
-  const textTabInactive = isVintage ? 'text-[#44382e] hover:text-[#059669]' : 'text-emerald-200 opacity-70 hover:opacity-100';
+  const textCardDesc = isVintage ? 'text-[#44382e] font-sans' : 'text-zinc-200/90';
+  const textTabInactive = isVintage ? 'text-[#44382e]' : 'text-zinc-300 opacity-75 hover:opacity-100';
 
   return (
     <div style={{ fontFamily: isVintage ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${isVintage ? 'text-[#1c1917]' : (tema?.texto || 'text-white')}`}>
       
-      {/* 1. BOTÕES DE AÇÕES RÁPIDAS COM RESUMOS INFERIORES */}
-      <section className="max-w-6xl mx-auto px-6 pt-6 pb-12">
+      {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
+      <section className="max-w-6xl mx-auto px-6 pt-4 pb-10">
         {st.texto && (
-          <div className="text-center mb-6">
+          <div className="text-center mb-5">
             <span className={`inline-flex items-center gap-2 border ${bordaClass} ${cardBg} px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm ${textCardTitulo}`}>
-              <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-500' : 'bg-red-500'}`} />
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: st.aberto ? corMarcaDinamica : '#ef4444' }} />
               {st.texto}
             </span>
           </div>
         )}
         
         <div className="flex flex-wrap gap-4 justify-center items-start">
-          {/* BOTÃO HORÁRIOS + RESUMO */}
           <div className="flex flex-col items-center">
             <button
               type="button"
@@ -275,12 +277,11 @@ export default function InfoGoogle({
             >
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Horários
             </button>
-            <p className={`text-xs font-semibold mt-2 tracking-wide text-center transition-colors ${textTituloSecao} whitespace-nowrap`}>
+            <p className="text-xs font-semibold mt-2 tracking-wide text-center whitespace-nowrap" style={{ color: corMarcaDinamica }}>
               {resumoHorarios}
             </p>
           </div>
 
-          {/* BOTÃO AVALIAÇÕES + RESUMO DO GOOGLE */}
           <div className="flex flex-col items-center">
             <a 
               href="#avaliacoes" 
@@ -288,19 +289,17 @@ export default function InfoGoogle({
             >
               <Star className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Avaliações
             </a>
-            <p className={`text-xs font-semibold mt-2 tracking-wide text-center transition-colors ${textTituloSecao} whitespace-nowrap`}>
+            <p className="text-xs font-semibold mt-2 tracking-wide text-center whitespace-nowrap" style={{ color: corMarcaDinamica }}>
               ★ {notaAval.toFixed(1)} • {totalAval} avaliações no Google
             </p>
           </div>
 
-          {/* BOTÃO FOTOS */}
           <div className="flex flex-col items-center">
             <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
               <Camera className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Fotos ({safeFotos.length})
             </a>
           </div>
 
-          {/* BOTÃO INSTAGRAM */}
           <div className="flex flex-col items-center">
             <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
               <InstagramIcon className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Instagram
@@ -310,7 +309,7 @@ export default function InfoGoogle({
 
         {horariosAbertos && (
           <div className={`max-w-md mx-auto mt-6 border ${bordaClass} ${cardBg} rounded-2xl p-5 shadow-xl`}>
-            <h3 className={`font-bold text-sm mb-3 flex items-center gap-2 ${textTituloSecao}`}>
+            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: corMarcaDinamica }}>
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Grade de Horários
             </h3>
             <ul className="space-y-2">
@@ -324,10 +323,10 @@ export default function InfoGoogle({
         )}
       </section>
 
-      {/* 2. SERVIÇOS E ESPECIALIDADES */}
+      {/* 2. SERVIÇOS */}
       {!semServicos && (
         <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
-          <h2 className={`text-xl sm:text-2xl font-bold tracking-tight mb-6 flex items-center gap-2 ${textTituloSecao}`}>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-6 flex items-center gap-2" style={{ color: corMarcaDinamica }}>
             <IconeHeader className="w-5 h-5" style={{ color: corDestaqueDinamica }} />
             {tituloSecao}
           </h2>
@@ -340,7 +339,7 @@ export default function InfoGoogle({
                   className={`border ${bordaClass} ${cardBg} rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01]`}
                 >
                   <div>
-                    <h3 className={`font-bold text-sm sm:text-base mb-2 ${textCardTitulo} transition-colors`}>
+                    <h3 className={`font-bold text-sm sm:text-base mb-2 ${textCardTitulo}`}>
                       {s.nome}
                     </h3>
                     <p className={`text-xs leading-relaxed font-medium ${textCardDesc}`}>
@@ -378,10 +377,10 @@ export default function InfoGoogle({
         <section id="fotos" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className={`text-xl sm:text-2xl font-bold tracking-tight ${textTituloSecao}`}>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>
                 Galeria de Fotos
               </h2>
-              <p className={`text-xs ${textSubSecao} mt-1`}>
+              <p className={`text-xs ${textCardDesc} opacity-80 mt-1`}>
                 Explore os nossos trabalhos e conheça a nossa estrutura.
               </p>
             </div>
@@ -445,10 +444,10 @@ export default function InfoGoogle({
       {/* 4. AVALIAÇÕES DO GOOGLE */}
       <section id="avaliacoes" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-          <h2 className={`text-xl font-bold tracking-tight ${textTituloSecao}`}>
+          <h2 className="text-xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>
             Avaliações no Google ({totalAval})
           </h2>
-          <div className={`flex items-center gap-2 text-xs font-bold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit ${textTituloSecao}`}>
+          <div className={`flex items-center gap-2 text-xs font-bold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit`} style={{ color: corMarcaDinamica }}>
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, idx) => (
                 <Star key={idx} className="w-3.5 h-3.5 fill-current" style={{ color: idx < Math.floor(notaAval) ? corDestaqueDinamica : '#d1d5db' }} />
@@ -476,7 +475,7 @@ export default function InfoGoogle({
                 </div>
                 <strong className={`text-xs border-t ${bordaClass} pt-3 font-semibold flex items-center justify-between ${textCardTitulo}`}>
                   <span>{r.autor || r.author || 'Cliente Google'}</span>
-                  <span className={`text-[10px] font-normal ${textTituloSecao}`}>Google Review</span>
+                  <span className="text-[10px] font-normal" style={{ color: corMarcaDinamica }}>Google Review</span>
                 </strong>
               </div>
             );
@@ -488,8 +487,8 @@ export default function InfoGoogle({
       <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className={`text-xl font-bold tracking-tight ${textTituloSecao}`}>Onde Estamos</h2>
-            <p className={`text-xs ${textSubSecao} flex items-center gap-1.5 mt-1`}>
+            <h2 className="text-xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>Onde Estamos</h2>
+            <p className={`text-xs ${textCardDesc} opacity-80 flex items-center gap-1.5 mt-1`}>
               <MapPin className="w-4 h-4 shrink-0" style={{ color: corDestaqueDinamica }} />
               <span>{enderecoBusca}</span>
             </p>

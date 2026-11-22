@@ -31,7 +31,7 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
     (fotosTodas && fotosTodas[0]) ||
     '';
 
-  const fotoMinimalista =
+  const fotoHeroSelecionada =
     (fotosTodas && fotosTodas.find((f: string) => f.toLowerCase().includes('foto2'))) ||
     fotoHeroBase;
 
@@ -45,6 +45,7 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
   const localizacaoTexto = `${cidade} - ${uf}`;
 
   const corAtiva = lead.corMarca || lead.cor_marca || '#e2c275';
+  const corDestaqueAtiva = lead.corDestaque || lead.cor_destaque || corAtiva;
   const corTextoBotao = '#09090b';
 
   const temaMinimalista = {
@@ -69,6 +70,7 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
     <main
       style={{
         '--cor-marca': corAtiva,
+        '--cor-destaque': corDestaqueAtiva,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
       className={`min-h-screen ${temaMinimalista.fundo} ${temaMinimalista.texto}`}
@@ -82,30 +84,11 @@ export default async function BarbeariaMinimalistaPage({ params }: PageProps) {
         textoBotao="Agendar via WhatsApp"
         whatsappUrl={d.whatsapp}
         temTelefone={Boolean(d.tel)}
-        fotoHero=""
+        fotoHero={fotoHeroSelecionada}
+        fitMode="cover"
         tema={temaMinimalista}
+        variacao="minimalista"
       />
-
-      {fotoMinimalista && (
-        <section className="max-w-6xl mx-auto px-6 pb-8">
-          <div className={`relative overflow-hidden rounded-3xl border shadow-2xl h-[340px] sm:h-[460px] ${temaMinimalista.borda}`}>
-            <img
-              src={fotoMinimalista}
-              alt={`${nomeCurto} — Ambiente`}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-            <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-10 text-white">
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: corAtiva }}>
-                ESTILO &amp; PRECISÃO
-              </span>
-              <p className="text-lg sm:text-2xl font-black tracking-tight max-w-xl">
-                {nomeCurto} — {localizacaoTexto}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
 
       <InfoGoogle
         d={d}
