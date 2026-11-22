@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Sparkles, Star, Calendar, ChevronRight, CheckCircle2, ShieldCheck, MapPin } from 'lucide-react';
+import { Sparkles, Star, Calendar, ChevronRight, CheckCircle2, ShieldCheck, MapPin, Award } from 'lucide-react';
 
 export interface TemaHero {
   fundo: string;
@@ -25,7 +25,7 @@ export interface HeroProps {
   fotoHero?: string;
   fitMode?: 'contain' | 'cover';
   tema: TemaHero;
-  variacao?: 'minimalista' | 'urban';
+  variacao?: 'minimalista' | 'urban' | 'vintage';
 }
 
 export default function HeroSection({
@@ -43,7 +43,7 @@ export default function HeroSection({
   tema,
   variacao = 'minimalista'
 }: HeroProps) {
-  const corMarcaDinamica = 'var(--cor-marca, #10b981)';
+  const corMarcaDinamica = 'var(--cor-marca, #059669)';
   const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
   const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
@@ -54,17 +54,146 @@ export default function HeroSection({
   const servicosTexto = temLocalizacao ? partesTag.slice(0, -1).join(' • ') : tagSubtitulo;
   const localizacaoTexto = temLocalizacao ? ultItem : '';
 
-  const eUrban = variacao === 'urban';
+  // ---------------------------------------------------------
+  // VARIAÇÃO VINTAGE / RETRO (BEGE + VERDE + LARANJA COM MÉTRICAS)
+  // ---------------------------------------------------------
+  if (variacao === 'vintage') {
+    return (
+      <div className="relative w-full bg-[#f5efe6] text-[#1c1917] overflow-hidden border-b border-[#e0d3c1] font-serif">
+        {/* TEXTURA RETRO SUAVE */}
+        <div className="absolute inset-0 bg-[radial-gradient(#059669_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none" />
+        
+        {/* BANNER SUPERIOR VINTAGE */}
+        <div className="w-full bg-[#064e3b] py-2 px-4 text-center">
+          <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.22em] text-emerald-100 flex items-center justify-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span>PROPOSTA EXCLUSIVA // {nome ? nome.toUpperCase() : ''}</span>
+          </p>
+        </div>
 
-  if (eUrban) {
+        {/* HEADER VINTAGE */}
+        <header className="sticky top-0 z-40 bg-[#f5efe6]/95 backdrop-blur-md border-b border-[#e0d3c1]">
+          <div className="max-w-6xl mx-auto px-6 py-3.5 flex justify-between items-center gap-4">
+            <div>
+              <h1 className="text-base sm:text-xl font-bold tracking-tight text-[#1c1917]">
+                {nome}
+              </h1>
+              <p className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider text-[#059669] mt-0.5">
+                {servicosTexto}
+              </p>
+              {localizacaoTexto && (
+                <p className="text-[10px] sm:text-xs font-sans font-black uppercase tracking-widest mt-1 text-[#ea580c] flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> {localizacaoTexto}
+                </p>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* HERO VINTAGE DE CONTEÚDO COMPLETO */}
+        <section className="max-w-6xl mx-auto px-6 py-10 sm:py-14 grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+          <div className="md:col-span-7 space-y-6">
+            {complementoSubtitulo && (
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#059669]/30 bg-[#059669]/10 text-[#059669] text-xs font-sans font-bold uppercase tracking-wider shadow-sm">
+                <span className="h-2 w-2 rounded-full bg-[#059669] animate-pulse" />
+                {complementoSubtitulo}
+              </span>
+            )}
+
+            <h2 className="text-3xl sm:text-5xl font-normal leading-[1.2] tracking-tight text-[#1c1917]">
+              {tituloPrincipal}
+            </h2>
+
+            <p className="text-sm sm:text-base leading-relaxed text-[#44382e] font-sans">
+              Na <strong className="text-[#064e3b] font-bold">{nomeCurto}</strong>, {descricao}
+            </p>
+
+            {temTelefone && (
+              <div className="pt-2 space-y-3">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    backgroundColor: corDestaqueDinamica,
+                    color: corTextoBotaoDinamica,
+                  }}
+                  className="inline-flex items-center justify-center gap-3 font-sans font-black px-8 py-4 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-[0_4px_25px_rgba(234,88,12,0.35)] hover:scale-[1.02] hover:brightness-110"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>{textoBotao}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </a>
+
+                <div className="flex items-center gap-4 text-[11px] font-sans text-[#059669] font-semibold pt-1">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" /> Atendimento Imediato
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" /> Presencial & Domiciliar
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* BARRA DE MÉTRICAS */}
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-[#e0d3c1] max-w-lg font-sans">
+              <div className="border-l-2 border-[#059669] pl-3">
+                <span className="block text-xl font-black text-[#1c1917]">4.9 ★</span>
+                <span className="text-[10px] font-bold uppercase text-[#059669]">Google Review</span>
+              </div>
+              <div className="border-l-2 border-[#059669] pl-3">
+                <span className="block text-xl font-black text-[#1c1917]">100%</span>
+                <span className="text-[10px] font-bold uppercase text-[#059669]">Personalizado</span>
+              </div>
+              <div className="border-l-2 border-[#ea580c] pl-3">
+                <span className="block text-xl font-black text-[#ea580c]">ATIVO</span>
+                <span className="text-[10px] font-bold uppercase text-[#78350f]">Agenda Aberta</span>
+              </div>
+            </div>
+          </div>
+
+          {/* MOLDURA PARA A FOTO */}
+          {fotoHero && (
+            <div className="md:col-span-5 relative">
+              <div className="rounded-2xl border border-[#e0d3c1] bg-[#ffffff] overflow-hidden shadow-xl">
+                <div className="bg-[#f0e8db] px-4 py-2.5 border-b border-[#e0d3c1] flex items-center justify-between text-[10px] font-sans font-bold text-[#064e3b]">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#059669]" />
+                    {nomeCurto.toUpperCase()}
+                  </span>
+                  <span className="text-[#78350f]">ESTRUTURA VERIFICADA</span>
+                </div>
+
+                <div className="relative aspect-[4/3] sm:aspect-square overflow-hidden bg-stone-50 p-2">
+                  <img
+                    src={fotoHero}
+                    alt={nome}
+                    className={`w-full h-full ${fitMode === 'contain' ? 'object-contain' : 'object-cover'} rounded-xl brightness-[0.98] contrast-[1.02]`}
+                  />
+                  <div className="absolute bottom-4 right-4 bg-[#ffffff]/95 backdrop-blur-md border border-[#e0d3c1] px-3 py-1.5 rounded-lg text-[10px] font-sans font-bold text-[#064e3b] flex items-center gap-1.5 shadow-md">
+                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                    <span>AVALIAÇÃO 5.0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
+
+  // ---------------------------------------------------------
+  // VARIAÇÃO URBAN (TECNOLÓGICO, MODERNO E ESTRUTURADO)
+  // ---------------------------------------------------------
+  if (variacao === 'urban') {
     return (
       <div className="relative w-full bg-[#02140e] text-white overflow-hidden border-b border-emerald-900/50">
-        {/* GRELA TÉCNICA E ILUMINAÇÃO DE FUNDO EXCLUSIVAS DO URBAN */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#052e22_1px,transparent_1px),linear-gradient(to_bottom,#052e22_1px,transparent_1px)] bg-[size:32px_32px] opacity-25 pointer-events-none" />
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-1/2 right-0 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* TOP BANNER URBAN */}
         <div className="w-full bg-[#010b08] border-b border-emerald-900/80 py-2 px-4 text-center">
           <p className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-emerald-400 flex items-center justify-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -72,7 +201,6 @@ export default function HeroSection({
           </p>
         </div>
 
-        {/* HEADER URBAN */}
         <header className="sticky top-0 z-40 bg-[#02140e]/90 backdrop-blur-md border-b border-emerald-900/60">
           <div className="max-w-6xl mx-auto px-6 py-3.5 flex justify-between items-center gap-4">
             <div>
@@ -91,7 +219,6 @@ export default function HeroSection({
           </div>
         </header>
 
-        {/* CONTEÚDO HERO URBAN */}
         <section className="max-w-6xl mx-auto px-6 py-10 sm:py-14 grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
           <div className="md:col-span-7 space-y-6">
             {complementoSubtitulo && (
@@ -137,7 +264,6 @@ export default function HeroSection({
               </div>
             )}
 
-            {/* PAINEL DE METRICAS URBAN */}
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-emerald-900/60 max-w-lg">
               <div className="border-l-2 border-emerald-500 pl-3">
                 <span className="block text-xl font-black text-white">4.9 ★</span>
@@ -154,7 +280,6 @@ export default function HeroSection({
             </div>
           </div>
 
-          {/* MOLDURA TIPO APLICAÇÃO PARA A FOTO NO URBAN */}
           {fotoHero && (
             <div className="md:col-span-5 relative">
               <div className="rounded-2xl border-2 border-emerald-500/50 bg-[#041a13] overflow-hidden shadow-[0_0_35px_rgba(2,20,14,0.9)]">
@@ -185,7 +310,9 @@ export default function HeroSection({
     );
   }
 
-  {/* MODELO MINIMALISTA PREMIUM (CLEAN, NEUTRO E SOBRIO) */}
+  // ---------------------------------------------------------
+  // VARIAÇÃO MINIMALISTA PREMIUM (CLEAN, NEUTRO E SÓBRIO)
+  // ---------------------------------------------------------
   return (
     <div className={`relative w-full ${tema?.fundo || 'bg-[#09090b]'}`}>
       <div className="w-full bg-[#000000] border-b border-zinc-800/80 py-1.5 px-4 text-center">

@@ -235,24 +235,31 @@ export default function InfoGoogle({
 
   const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : servicosPadraoNicho;
   
-  const corMarcaDinamica = 'var(--cor-marca, #10b981)';
+  const corMarcaDinamica = 'var(--cor-marca, #059669)';
   const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
   const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
-  // Classes dinâmicas baseadas no objeto tema
-  const cardBg = tema?.card || 'bg-[#022c22]';
-  const fundoBg = tema?.fundo || 'bg-[#011c15]';
-  const bordaClass = tema?.borda || 'border-emerald-900/60';
+  const isVintage = Boolean(tema?.serif);
+
+  const cardBg = isVintage ? 'bg-[#ffffff]' : (tema?.card || 'bg-[#0e1815]');
+  const fundoBg = isVintage ? 'bg-[#f5efe6]' : (tema?.fundo || 'bg-[#060d0a]');
+  const bordaClass = isVintage ? 'border-[#e0d3c1]' : (tema?.borda || 'border-emerald-500/30');
+
+  const textTituloSecao = isVintage ? 'text-[#059669]' : 'text-emerald-400';
+  const textSubSecao = isVintage ? 'text-[#44382e]' : 'text-emerald-100/70';
+  const textCardTitulo = isVintage ? 'text-[#1c1917]' : 'text-white';
+  const textCardDesc = isVintage ? 'text-[#44382e] font-sans' : 'text-emerald-100/90';
+  const textTabInactive = isVintage ? 'text-[#44382e] hover:text-[#059669]' : 'text-emerald-200 opacity-70 hover:opacity-100';
 
   return (
-    <div style={{ fontFamily: tema?.serif ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${tema?.texto || ''}`}>
+    <div style={{ fontFamily: isVintage ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${isVintage ? 'text-[#1c1917]' : (tema?.texto || 'text-white')}`}>
       
       {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
       <section className="max-w-6xl mx-auto px-6 pt-6 pb-12">
         {st.texto && (
           <div className="text-center mb-6">
-            <span className={`inline-flex items-center gap-2 border ${bordaClass} ${cardBg} px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm text-white`}>
-              <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-400' : 'bg-red-500'}`} />
+            <span className={`inline-flex items-center gap-2 border ${bordaClass} ${cardBg} px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm ${textCardTitulo}`}>
+              <span className={`h-2 w-2 rounded-full ${st.aberto ? 'bg-emerald-500' : 'bg-red-500'}`} />
               {st.texto}
             </span>
           </div>
@@ -263,35 +270,35 @@ export default function InfoGoogle({
             <button
               type="button"
               onClick={() => setHorariosAbertos(!horariosAbertos)}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer text-white`}
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer ${textCardTitulo}`}
             >
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Horários
             </button>
             
-            <p className="text-xs font-semibold mt-2 tracking-wide text-center transition-colors text-emerald-400 whitespace-nowrap">
+            <p className={`text-xs font-semibold mt-2 tracking-wide text-center transition-colors ${textTituloSecao} whitespace-nowrap`}>
               {resumoHorarios}
             </p>
           </div>
 
-          <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
+          <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
             <Camera className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Fotos ({safeFotos.length})
           </a>
-          <a href="#avaliacoes" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
+          <a href="#avaliacoes" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
             <Star className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Avaliações ({totalAval})
           </a>
-          <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
+          <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
             <InstagramIcon className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Instagram
           </a>
         </div>
 
         {horariosAbertos && (
           <div className={`max-w-md mx-auto mt-6 border ${bordaClass} ${cardBg} rounded-2xl p-5 shadow-xl`}>
-            <h3 className="font-bold text-sm mb-3 flex items-center gap-2 text-emerald-400">
+            <h3 className={`font-bold text-sm mb-3 flex items-center gap-2 ${textTituloSecao}`}>
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Grade de Horários
             </h3>
             <ul className="space-y-2">
               {semana.map((l: string, idx: number) => (
-                <li key={idx} className={`flex justify-between text-xs py-1 border-b ${bordaClass} last:border-0 text-emerald-100`}>
+                <li key={idx} className={`flex justify-between text-xs py-1 border-b ${bordaClass} last:border-0 ${textCardDesc}`}>
                   <span>{l}</span>
                 </li>
               ))}
@@ -303,7 +310,7 @@ export default function InfoGoogle({
       {/* 2. SERVIÇOS E ESPECIALIDADES */}
       {!semServicos && (
         <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
-          <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center gap-2 text-emerald-400">
+          <h2 className={`text-xl sm:text-2xl font-bold tracking-tight mb-6 flex items-center gap-2 ${textTituloSecao}`}>
             <IconeHeader className="w-5 h-5" style={{ color: corDestaqueDinamica }} />
             {tituloSecao}
           </h2>
@@ -316,10 +323,10 @@ export default function InfoGoogle({
                   className={`border ${bordaClass} ${cardBg} rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01]`}
                 >
                   <div>
-                    <h3 className="font-bold text-sm sm:text-base mb-2 text-white group-hover:text-emerald-300 transition-colors">
+                    <h3 className={`font-bold text-sm sm:text-base mb-2 ${textCardTitulo} transition-colors`}>
                       {s.nome}
                     </h3>
-                    <p className="text-xs leading-relaxed font-medium text-emerald-200/90">
+                    <p className={`text-xs leading-relaxed font-medium ${textCardDesc}`}>
                       {s.desc}
                     </p>
                   </div>
@@ -349,15 +356,15 @@ export default function InfoGoogle({
         </section>
       )}
 
-      {/* 3. GALERIA COM ABAS */}
+      {/* 3. GALERIA DE FOTOS */}
       {safeFotos.length > 0 && (
         <section id="fotos" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-emerald-400">
+              <h2 className={`text-xl sm:text-2xl font-bold tracking-tight ${textTituloSecao}`}>
                 Galeria de Fotos
               </h2>
-              <p className="text-xs text-emerald-100/70 mt-1">
+              <p className={`text-xs ${textSubSecao} mt-1`}>
                 Explore os nossos trabalhos e conheça a nossa estrutura.
               </p>
             </div>
@@ -367,7 +374,7 @@ export default function InfoGoogle({
                 onClick={() => setCategoriaFotoAtiva('servicos')}
                 style={categoriaFotoAtiva === 'servicos' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva !== 'servicos' ? 'text-emerald-200 opacity-70 hover:opacity-100' : 'shadow-md'
+                  categoriaFotoAtiva !== 'servicos' ? textTabInactive : 'shadow-md'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" style={{ color: categoriaFotoAtiva === 'servicos' ? corTextoBotaoDinamica : corDestaqueDinamica }} />
@@ -378,7 +385,7 @@ export default function InfoGoogle({
                 onClick={() => setCategoriaFotoAtiva('instalacoes')}
                 style={categoriaFotoAtiva === 'instalacoes' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva !== 'instalacoes' ? 'text-emerald-200 opacity-70 hover:opacity-100' : 'shadow-md'
+                  categoriaFotoAtiva !== 'instalacoes' ? textTabInactive : 'shadow-md'
                 }`}
               >
                 <Building2 className="w-3.5 h-3.5" style={{ color: categoriaFotoAtiva === 'instalacoes' ? corTextoBotaoDinamica : corDestaqueDinamica }} />
@@ -410,9 +417,9 @@ export default function InfoGoogle({
 
       {/* MODAL LIGHTBOX FOTOS */}
       {fotoModal && (
-        <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-pointer">
-          <img src={fotoModal} alt="Foto Ampliada" className="max-w-full max-h-[85vh] rounded-2xl border border-emerald-900 shadow-2xl object-contain" />
-          <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-emerald-950 border border-emerald-900 hover:bg-emerald-900 transition">
+        <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer">
+          <img src={fotoModal} alt="Foto Ampliada" className={`max-w-full max-h-[85vh] rounded-2xl border ${bordaClass} shadow-2xl object-contain`} />
+          <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-black/80 border border-white/20 hover:bg-black transition">
             <X className="w-6 h-6"/>
           </button>
         </div>
@@ -421,13 +428,13 @@ export default function InfoGoogle({
       {/* 4. AVALIAÇÕES DO GOOGLE */}
       <section id="avaliacoes" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-          <h2 className="text-xl font-bold tracking-tight text-emerald-400">
+          <h2 className={`text-xl font-bold tracking-tight ${textTituloSecao}`}>
             Avaliações no Google ({totalAval})
           </h2>
-          <div className={`flex items-center gap-2 text-xs font-bold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit text-emerald-400`}>
+          <div className={`flex items-center gap-2 text-xs font-bold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit ${textTituloSecao}`}>
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, idx) => (
-                <Star key={idx} className="w-3.5 h-3.5 fill-current" style={{ color: idx < Math.floor(notaAval) ? corDestaqueDinamica : '#52525b' }} />
+                <Star key={idx} className="w-3.5 h-3.5 fill-current" style={{ color: idx < Math.floor(notaAval) ? corDestaqueDinamica : '#d1d5db' }} />
               ))}
             </div>
             <span>{notaAval.toFixed(1)} de 5.0</span>
@@ -445,14 +452,14 @@ export default function InfoGoogle({
                 <div>
                   <div className="flex gap-1 mb-3">
                     {[...Array(5)].map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-current" style={{ color: idx < notaCard ? corDestaqueDinamica : '#3f3f46' }} />
+                      <Star key={idx} className="w-4 h-4 fill-current" style={{ color: idx < notaCard ? corDestaqueDinamica : '#d1d5db' }} />
                     ))}
                   </div>
-                  <p className="text-xs mb-4 italic leading-relaxed text-emerald-100/90">“{r.texto || r.text}”</p>
+                  <p className={`text-xs mb-4 italic leading-relaxed ${textCardDesc}`}>“{r.texto || r.text}”</p>
                 </div>
-                <strong className="text-xs border-t border-emerald-900/60 pt-3 font-semibold flex items-center justify-between text-white">
+                <strong className={`text-xs border-t ${bordaClass} pt-3 font-semibold flex items-center justify-between ${textCardTitulo}`}>
                   <span>{r.autor || r.author || 'Cliente Google'}</span>
-                  <span className="text-[10px] text-emerald-400 font-normal">Google Review</span>
+                  <span className={`text-[10px] font-normal ${textTituloSecao}`}>Google Review</span>
                 </strong>
               </div>
             );
@@ -460,18 +467,18 @@ export default function InfoGoogle({
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO COM MAPA FORÇADO PARA MODO NOTURNO */}
+      {/* 5. LOCALIZAÇÃO COM MAPA NOCTURNO FORÇADO */}
       <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-emerald-400">Onde Estamos</h2>
-            <p className="text-xs text-emerald-100/80 flex items-center gap-1.5 mt-1">
+            <h2 className={`text-xl font-bold tracking-tight ${textTituloSecao}`}>Onde Estamos</h2>
+            <p className={`text-xs ${textSubSecao} flex items-center gap-1.5 mt-1`}>
               <MapPin className="w-4 h-4 shrink-0" style={{ color: corDestaqueDinamica }} />
               <span>{enderecoBusca}</span>
             </p>
           </div>
           
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] text-white`}>
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
             <Navigation className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Abrir no Google Maps
           </a>
         </div>
@@ -507,7 +514,7 @@ export default function InfoGoogle({
           >
             <MessageCircle className="w-4 h-4"/> WhatsApp
           </a>
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className="flex-1 bg-[#011c15] text-white font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition">
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`flex-1 ${cardBg} ${textCardTitulo} font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition border ${bordaClass}`}>
             <Navigation className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Como Chegar
           </a>
         </div>
