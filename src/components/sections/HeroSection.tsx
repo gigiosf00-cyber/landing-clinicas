@@ -53,15 +53,22 @@ export default function HeroSection({
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barber') ||
     (tagSubtitulo + ' ' + nome).toLowerCase().includes('barbearia');
 
-  // Modo automático: Barbearias usam foto ampla empilhada; Clínicas/outros usam foto na lateral
-  const modoLayout = layoutFoto === 'auto' ? (eBarbearia ? 'full' : 'side') : layoutFoto;
+  // Regra de layout por modelo:
+  // Minimalista e Urban: foto na lateral ('side') por padrão.
+  // Vintage: foto ampla empilhada na base ('full') para barbearias.
+  const modoLayout =
+    layoutFoto !== 'auto'
+      ? layoutFoto
+      : variacao === 'vintage'
+      ? (eBarbearia ? 'full' : 'side')
+      : 'side';
 
   const corMarcaPadrao = eBarbearia ? '#e2c275' : '#059669';
   const corDestaquePadrao = eBarbearia ? '#c2592b' : '#ea580c';
 
   const corMarcaDinamica = `var(--cor-marca, ${corMarcaPadrao})`;
   const corDestaqueDinamica = `var(--cor-destaque, ${corDestaquePadrao})`;
-  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #09090b)';
+  const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
   const partesTag = (tagSubtitulo || '').split('•').map(item => item.trim());
   const ultItem = partesTag.length > 1 ? partesTag[partesTag.length - 1] : '';
@@ -76,21 +83,14 @@ export default function HeroSection({
 
   const seloSecundario = eBarbearia ? 'Hora Marcada' : 'Presencial & Domiciliar';
 
-  // Tratamento de imagem isolado por modelo:
-  // Vintage (fundo claro): preserva luminosidade em 0.98.
-  // Minimalista / Urban (fundo escuro): atenua a 0.92 para equilibrar artes brancas de clínicas.
-  const efeitoBrilho =
-    variacao === 'vintage'
-      ? 'brightness-[0.98] contrast-[1.03]'
-      : 'brightness-[0.92] contrast-[1.02]';
-
+  // Imagem limpa e nítida sem filtros acinzentados
   const classeImagem =
     fitMode === 'contain'
-      ? `w-full h-full object-contain rounded-xl ${efeitoBrilho}`
-      : `w-full h-full object-cover ${posicaoFoto} rounded-xl ${efeitoBrilho}`;
+      ? 'w-full h-full object-contain rounded-xl'
+      : `w-full h-full object-cover ${posicaoFoto} rounded-xl brightness-[0.98] contrast-[1.02]`;
 
   // ---------------------------------------------------------
-  // 1. MODELO VINTAGE / RETRO (GRAFITE + CINZA + COR DO LEAD)
+  // 1. MODELO VINTAGE / RETRO (MANTIDO COM FOTO NA BASE)
   // ---------------------------------------------------------
   if (variacao === 'vintage') {
     const bordaVintage = eBarbearia ? 'border-zinc-300' : 'border-[#e0d3c1]';
@@ -209,7 +209,7 @@ export default function HeroSection({
   }
 
   // ---------------------------------------------------------
-  // 2. MODELO MODERNO / URBAN (ASFALTO GRAFITE + AÇO + COR DO LEAD)
+  // 2. MODELO MODERNO / URBAN (NA LATERAL EM 2 COLUNAS)
   // ---------------------------------------------------------
   if (variacao === 'urban') {
     const fundoUrban = eBarbearia ? 'bg-[#0b0c0e]' : 'bg-[#02140e]';
@@ -254,8 +254,8 @@ export default function HeroSection({
         </header>
 
         <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 relative z-10">
-          <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-4'}>
-            <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-2.5' : 'space-y-2.5'}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div className="lg:col-span-6 space-y-2.5">
               <span
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border font-mono text-[11px] font-bold uppercase tracking-wider shadow-sm"
                 style={{
@@ -303,9 +303,9 @@ export default function HeroSection({
             </div>
 
             {fotoHero && (
-              <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
+              <div className="lg:col-span-6 w-full">
                 <div className={`w-full rounded-2xl border ${cardFotoUrban} overflow-hidden shadow-2xl p-1.5`}>
-                  <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[310px]' : 'h-[240px] sm:h-[290px]'} overflow-hidden bg-[#0b0c0e] rounded-xl`}>
+                  <div className="relative w-full h-[260px] sm:h-[310px] overflow-hidden bg-[#0b0c0e] rounded-xl">
                     <img src={fotoHero} alt={nome} className={classeImagem} />
                     <div className="absolute bottom-3 right-3 bg-[#0b0c0e]/90 backdrop-blur-md border border-zinc-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
@@ -322,7 +322,7 @@ export default function HeroSection({
   }
 
   // ---------------------------------------------------------
-  // 3. MODELO MINIMALISTA PREMIUM
+  // 3. MODELO MINIMALISTA PREMIUM (NA LATERAL EM 2 COLUNAS)
   // ---------------------------------------------------------
   return (
     <div className="relative w-full bg-[#09090b] text-white overflow-hidden border-b border-zinc-800/80">
@@ -348,8 +348,8 @@ export default function HeroSection({
       </header>
 
       <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 relative z-10">
-        <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-4'}>
-          <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-2.5' : 'space-y-2.5'}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="lg:col-span-6 space-y-2.5">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-zinc-700 bg-zinc-900 text-zinc-300 text-[11px] font-bold uppercase tracking-wider shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: corMarcaDinamica }} />
               {tagComplementoFinal}
@@ -369,7 +369,7 @@ export default function HeroSection({
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
+                  style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
                   className="inline-flex items-center justify-center gap-2.5 font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:scale-[1.01] hover:brightness-110"
                 >
                   <Calendar className="w-4 h-4" />
@@ -390,9 +390,9 @@ export default function HeroSection({
           </div>
 
           {fotoHero && (
-            <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
-              <div className="w-full rounded-2xl border border-zinc-800 bg-[#141414] overflow-hidden shadow-2xl p-1.5">
-                <div className={`relative w-full ${modoLayout === 'side' ? 'h-[260px] sm:h-[310px]' : 'h-[240px] sm:h-[290px]'} overflow-hidden bg-black/50 rounded-xl`}>
+            <div className="lg:col-span-6 w-full">
+              <div className="w-full rounded-2xl border border-zinc-700/80 bg-[#18181b] overflow-hidden shadow-2xl p-1.5">
+                <div className="relative w-full h-[260px] sm:h-[310px] overflow-hidden bg-[#09090b] rounded-xl border border-zinc-800">
                   <img src={fotoHero} alt={nome} className={classeImagem} />
                   <div className="absolute bottom-3 right-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 px-2.5 py-1 rounded-lg text-[10px] font-bold text-zinc-200 flex items-center gap-1 shadow-lg">
                     <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
