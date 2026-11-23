@@ -21,13 +21,22 @@ export async function GET() {
 
     const data = JSON.parse(fileData);
 
-    // Formata o número do lead para ser exibido já com 55 na interface
-    if (data && data.telefone) {
-      const apenasNumeros = data.telefone.toString().replace(/\D/g, '');
-      if (apenasNumeros) {
-        data.telefone = (apenasNumeros.length === 10 || apenasNumeros.length === 11) 
-          ? `55${apenasNumeros}` 
-          : apenasNumeros;
+    // Função auxiliar para formatar telefone com DDI 55
+    const formatarDDI = (tel: string | number) => {
+      const apenasNumeros = tel.toString().replace(/\D/g, '');
+      if (!apenasNumeros) return tel;
+      return (apenasNumeros.length === 10 || apenasNumeros.length === 11) 
+        ? `55${apenasNumeros}` 
+        : apenasNumeros;
+    };
+
+    // Formata o telefone na raiz ou dentro de data.lead (gerado pelo Go)
+    if (data) {
+      if (data.telefone) {
+        data.telefone = formatarDDI(data.telefone);
+      }
+      if (data.lead && data.lead.telefone) {
+        data.lead.telefone = formatarDDI(data.lead.telefone);
       }
     }
 
