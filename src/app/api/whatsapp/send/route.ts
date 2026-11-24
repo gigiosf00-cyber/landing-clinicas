@@ -1,56 +1,124 @@
 import { NextResponse } from 'next/server';
 
+type WhatsAppClientLike = {
+  sendMessage?: (chatId: string, content: string) => Promise<unknown>;
+};
+
+const globalForWhatsApp = globalThis as typeof globalThis & {
+  whatsappClient?: WhatsAppClientLike;
+};
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    
-    // Formato esperado do evento de mensagem recebida do WhatsApp
-    const telefoneCliente = body.telefone || body.from;
-    const textoMensagem = (body.mensagem || body.text || body.body || '').trim();
+    let body: Record<string, unknown> = {};
 
-    if (!telefoneCliente || !textoMensagem) {
-      return NextResponse.json({ status: 'ignorado', motivo: 'Sem telefone ou texto' });
+    try {
+      const parsed = await request.json();
+      if (parsed && typeof parsed === 'object') {
+        body = parsed as Record<string, unknown>;
+      }
+    } catch {
+      const rawText = await request.text();
+      if (!rawText || !rawText.trim()) {
+        return NextResponse.json(
+          { status: 'erro', error: 'Corpo da requisição vazio no envio' },
+          { status: 400 }
+        );
+      }
+      body = JSON.parse(rawText) as Record<string, unknown>;
     }
 
-    console.log(`📥 Mensagem recebida de ${telefoneCliente}: "${textoMensagem}"`);
+    const numeroRaw =
+      body.telefone ?? body.number ?? body.to ?? body.chatId ?? '';
+    const textoRaw =
+      body.conteudo ?? body.text ?? body.mensagem ?? body.body ?? '';
 
-    let respostaMapeada = '';
+    const numeroStr = String(numeroRaw).trim();
+    const mensagemTexto = String(textoRaw).trim();
 
-    // Mapeia as opções digitadas pelo cliente para os comandos do motor Go
-    if (textoMensagem === '1' || textoMensagem.toLowerCase().includes('sim')) {
-      respostaMapeada = 'SIM_QUERO_VER';
-    } else if (textoMensagem === '2' || textoMensagem.toLowerCase().includes('nao') || textoMensagem.toLowerCase().includes('não')) {
-      respostaMapeada = 'NAO_OBRIGADO';
-    } else if (textoMensagem === '9' || textoMensagem.toLowerCase().includes('duvida') || textoMensagem.toLowerCase().includes('dúvida')) {
-      respostaMapeada = 'CONVERSAR';
-    } else {
-      respostaMapeada = textoMensagem; // Trata perguntas e textos livres
+    if (!numeroStr || !mensagemTexto) {
+      return NextResponse.json(
+        { status: 'erro', error: 'Telefone e conteúdo são obrigatórios' },
+        { status: 400 }
+      );
     }
 
-    // Limpa o número de telefone
-    const telLimpo = telefoneCliente.toString().replace(/\D/g, '');
+    const telLimpo = numeroStr.replace(/\D/g, '');
+    if (!telLimpo) {
+      return NextResponse.json(
+        { status: 'erro', error: 'Número de telefone inválido' },
+        { status: 400 }
+      );
+    }
 
-    // Envia a instrução para o servidor Go na porta 8083
-    const webhookGoUrl = 'http://127.0.0.1:8083/api/webhook/resposta';
-    
-    const resGo = await fetch(webhookGoUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        telefone: telLimpo,
-        resposta: respostaMapeada,
-        subdominio: body.subdominio || '' // Se vier vazio, o Go localiza na memória pelo telefone
-      }),
-    });
+    const chatId = numeroStr.includes('@') ? numeroStr : `${telLimpo}@c.us`;
+    const client = globalForWhatsApp.whatsappClient;
 
-    const dataGo = await resGo.json();
-    console.log(`✅ Resposta "${respostaMapeada}" enviada ao Go:`, dataGo);
+    console.log(`🚀 [SEND] Solicitação para ${chatId}`);
 
-    return NextResponse.json({ status: 'sucesso', processado: true, respostaMapeada });
+    if (client && typeof client.sendMessage === 'function') {
+      await client.sendMessage(chatId, mensagemTexto);
+      console.log(`✅ [SEND] Mensagem enviada com sucesso para ${chatId}`);
+      return NextResponse.json({
+        status: 'sucesso',
+        enviado: true,
+        destino: chatId,
+      });
+    }
 
+    const botSendUrl =
+      process.env.WHATSAPP_BOT_SEND_URL ||
+      'http://127.0.0.1:3001/api/whatsapp/send';
+
+    try {
+      const resBot = await fetch(botSendUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          telefone: telLimpo,
+          number: chatId,
+          conteudo: mensagemTexto,
+          text: mensagemTexto,
+        }),
+      });
+
+      if (resBot.ok) {
+        const dataBot = await resBot.text();
+        console.log(`✅ [SEND] Encaminhado para o bot (${botSendUrl}):`, dataBot);
+        return NextResponse.json({
+          status: 'sucesso',
+          enviado: true,
+          destino: chatId,
+          via: botSendUrl,
+        });
+      }
+
+      const erroBotTexto = await resBot.text();
+      console.error(
+        `❌ [SEND] Bot respondeu HTTP ${resBot.status} em ${botSendUrl}: ${erroBotTexto}`
+      );
+    } catch (fetchErr: unknown) {
+      const msgFetch =
+        fetchErr instanceof Error ? fetchErr.message : 'Falha de ligação ao bot';
+      console.error(
+        `❌ [SEND] Sem ligação ao serviço do bot em ${botSendUrl}: ${msgFetch}`
+      );
+    }
+
+    return NextResponse.json(
+      {
+        status: 'erro',
+        error: 'Cliente WhatsApp desconectado ou não inicializado na memória',
+      },
+      { status: 500 }
+    );
   } catch (error: unknown) {
-    const mensagem = error instanceof Error ? error.message : 'Erro ao processar webhook';
-    console.error('❌ Erro no webhook de resposta:', error);
-    return NextResponse.json({ status: 'erro', error: mensagem }, { status: 500 });
+    const msgErro =
+      error instanceof Error ? error.message : 'Erro interno ao enviar mensagem';
+    console.error('❌ [SEND] Falha na rota /api/whatsapp/send:', msgErro);
+    return NextResponse.json(
+      { status: 'erro', error: msgErro },
+      { status: 500 }
+    );
   }
 }
