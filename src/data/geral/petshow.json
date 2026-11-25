@@ -1,0 +1,28 @@
+{
+  "enviado_em": "2026-11-25T20:10:24-03:00",
+  "lead": {
+    "id": "lead_1791579919780608600",
+    "nome": "PETSHOW - Pet Shop, puppies, grooming bath, Londrina",
+    "endereco": "PETSHOW - Pet Shop, puppies, grooming bath, Londrina - Av. Juscelino Kubitscheck, 1560 - Ipiranga, Londrina - PR, 86020-000",
+    "telefone": "(43) 3323-5367",
+    "nicho": "",
+    "cidade": "Londrina - PR",
+    "estado": "",
+    "categoria": "Pet store",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "criado_em": "2026-10-09T18:05:19.7806086-03:00",
+    "atualizado_em": "2026-11-25T20:10:24.5768024-03:00"
+  },
+  "nicho_pasta": "geral",
+  "slug": "petshow",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/geral/petshow/minimalista-premium",
+  "url_local": "http://localhost:3000/geral/petshow/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/petshow"
+}
