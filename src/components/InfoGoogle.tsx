@@ -130,7 +130,6 @@ export default function InfoGoogle({
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
   const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'servicos' | 'instalacoes'>('servicos');
-  const [mapaCarregado, setMapaCarregado] = useState<boolean>(false);
 
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
@@ -190,7 +189,7 @@ export default function InfoGoogle({
     ? safeD.mapa 
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}`;
 
-  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(enderecoBusca)}&z=16&output=embed`;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}&z=17&output=embed`;
 
   const notaPadrao = eBarbearia ? 4.5 : 5.0;
   const totalAvalPadrao = eBarbearia ? 84 : 45;
@@ -487,39 +486,27 @@ export default function InfoGoogle({
 
       {/* 5. LOCALIZAÇÃO */}
       <section className={`max-w-5xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 className={`text-xl font-semibold tracking-tight ${isMinimal ? 'text-stone-900' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>Onde Estamos</h2>
-            <p className={`text-xs ${textCardDesc} flex items-center gap-1.5 mt-1`}>
-              <MapPin className="w-4 h-4 shrink-0" style={{ color: corDestaqueDinamica }} />
-              <span>{enderecoBusca}</span>
-            </p>
-          </div>
-          
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border ${bordaClass} ${cardBg} text-xs font-semibold transition ${textCardTitulo}`}>
-            <Navigation className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Abrir no Google Maps
-          </a>
+        <div className="mb-6">
+          <h2 className={`text-xl font-semibold tracking-tight ${isMinimal ? 'text-stone-900' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>Onde Estamos</h2>
+          <p className={`text-xs ${textCardDesc} flex items-center gap-1.5 mt-1`}>
+            <MapPin className="w-4 h-4 shrink-0" style={{ color: corDestaqueDinamica }} />
+            <span>{enderecoBusca}</span>
+          </p>
         </div>
 
         <div className={`rounded-xl overflow-hidden border ${bordaClass} ${cardBg} h-[360px] relative`}>
           <iframe 
-            src={mapEmbedUrl}
-            onLoad={() => setMapaCarregado(true)}
+            src={mapEmbedUrl} 
             width="100%" 
             height="100%" 
             style={{
               border: 0,
               filter: isMinimal ? 'none' : 'invert(0.9) hue-rotate(180deg) contrast(1.25) brightness(0.9)'
             }} 
+            loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade" 
             className="w-full h-full block"
           />
-          {!mapaCarregado && (
-            <div className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center ${cardBg}`}>
-              <MapPin className="w-5 h-5" style={{ color: corDestaqueDinamica }} />
-              <p className={`text-xs ${textCardDesc}`}>Carregando mapa ou bloqueado pelo navegador...</p>
-            </div>
-          )}
         </div>
       </section>
 

@@ -87,9 +87,9 @@ export default function HeroSection({
         100% { transform: rotate(360deg); }
       }
       @keyframes heroFotoMovimentoCover {
-        0% { transform: scale(1) translate3d(0, 0, 0); }
-        50% { transform: scale(1.08) translate3d(-1%, -1%, 0); }
-        100% { transform: scale(1.03) translate3d(1%, 1%, 0); }
+        0% { transform: scale(0.955) translate3d(0, 0, 0); }
+        50% { transform: scale(1.01) translate3d(-0.3%, -0.3%, 0); }
+        100% { transform: scale(0.97) translate3d(0.2%, 0.2%, 0); }
       }
       .glow-border-fx {
         position: relative;
@@ -108,6 +108,7 @@ export default function HeroSection({
       }
       .hero-img-cover-fx {
         animation: heroFotoMovimentoCover 14s ease-in-out infinite alternate;
+        transform-origin: center center;
         will-change: transform;
       }
     `}} />
@@ -162,11 +163,11 @@ export default function HeroSection({
               <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
                 <div className="w-full max-w-4xl mx-auto rounded-2xl glow-border-fx p-[3px] shadow-2xl">
                   <div className="relative z-10 w-full rounded-[14px] bg-[#042117] p-1.5">
-                    <div className={`relative w-full ${modoLayout === 'side' ? 'h-[280px] sm:h-[340px]' : 'h-[320px] sm:h-[390px]'} overflow-hidden rounded-xl bg-white`}>
+                    <div className={`relative w-full ${modoLayout === 'side' ? 'h-[300px] sm:h-[365px]' : 'h-[320px] sm:h-[390px]'} overflow-hidden rounded-xl bg-white`}>
                       <img
                         src={fotoHero}
                         alt={nome}
-                        className="w-full h-full object-cover object-[65%_25%] rounded-xl"
+                        className="w-full h-full object-cover object-[50%_75%] rounded-xl hero-img-cover-fx"
                       />
                     </div>
                   </div>
@@ -241,7 +242,7 @@ export default function HeroSection({
                 <div className="w-full rounded-2xl glow-border-fx p-[3px] shadow-2xl">
                   <div className="relative z-10 w-full rounded-[14px] bg-[#042117] p-1.5">
                     <div className="relative w-full h-[270px] sm:h-[330px] overflow-hidden rounded-xl bg-white border border-emerald-950/50">
-                      <img src={fotoHero} alt={nome} className="w-full h-full object-cover rounded-xl" />
+                      <img src={fotoHero} alt={nome} className="w-full h-full object-cover rounded-xl hero-img-cover-fx" />
                     </div>
                   </div>
                 </div>
@@ -260,6 +261,7 @@ export default function HeroSection({
 
   return (
     <div className="relative w-full bg-[#0a0a0a] text-white border-b border-neutral-800">
+      {styleAnimacoesHero}
       <header className="sticky top-0 z-40 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-neutral-800/80">
         <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap justify-between items-center gap-4">
           <div>
@@ -351,8 +353,8 @@ export default function HeroSection({
                     alt={nome}
                     className={
                       fitMode === 'contain'
-                        ? 'w-full h-full object-contain p-2'
-                        : `w-full h-full object-cover ${posicaoFoto}`
+                        ? 'w-full h-full object-contain p-2 hero-img-cover-fx'
+                        : `w-full h-full object-cover ${posicaoFoto} hero-img-cover-fx`
                     }
                   />
                 </div>
