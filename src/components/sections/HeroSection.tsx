@@ -152,18 +152,22 @@ export default function HeroSection({
         </header>
 
         <section className="max-w-6xl mx-auto px-6 pt-5 pb-6 relative z-10">
-          <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-4'}>
-            <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-3' : 'space-y-2'}>
+          <div className={modoLayout === 'side' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' : 'space-y-6'}>
+            <div className={modoLayout === 'side' ? 'lg:col-span-6 space-y-3' : 'space-y-3 text-center mx-auto max-w-3xl'}>
               <span className="inline-block text-[10px] font-sans font-extrabold tracking-widest text-zinc-500 uppercase">{tagComplementoFinal}</span>
               <h2 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[#18181b]">{tituloPrincipal}</h2>
-              <p className="text-xs sm:text-sm leading-relaxed text-zinc-700 font-sans max-w-3xl">Na <strong className="font-bold text-[#18181b]">{nomeCurto}</strong>, {descricao}</p>
+              <p className="text-xs sm:text-sm leading-relaxed text-zinc-700 font-sans mx-auto max-w-2xl">Na <strong className="font-bold text-[#18181b]">{nomeCurto}</strong>, {descricao}</p>
             </div>
             {fotoHero && (
               <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
-                <div className="w-full rounded-2xl glow-border-fx p-[3px] shadow-2xl">
+                <div className="w-full max-w-4xl mx-auto rounded-2xl glow-border-fx p-[3px] shadow-2xl">
                   <div className="relative z-10 w-full rounded-[14px] bg-[#042117] p-1.5">
-                    <div className={`relative w-full ${modoLayout === 'side' ? 'h-[280px] sm:h-[340px]' : 'h-[310px] sm:h-[380px]'} overflow-hidden rounded-xl bg-white`}>
-                      <img src={fotoHero} alt={nome} className="w-full h-full object-cover rounded-xl" />
+                    <div className={`relative w-full ${modoLayout === 'side' ? 'h-[280px] sm:h-[340px]' : 'h-[320px] sm:h-[390px]'} overflow-hidden rounded-xl bg-white`}>
+                      <img
+                        src={fotoHero}
+                        alt={nome}
+                        className="w-full h-full object-cover object-[65%_25%] rounded-xl"
+                      />
                     </div>
                   </div>
                 </div>
@@ -252,6 +256,8 @@ export default function HeroSection({
   // ---------------------------------------------------------
   // 3. MINIMALISTA PREMIUM (ESCUDO MODERNO COM ALTO CONTRASTE)
   // ---------------------------------------------------------
+  const corAmarelaMinimalista = '#e2c275';
+
   return (
     <div className="relative w-full bg-[#0a0a0a] text-white border-b border-neutral-800">
       <header className="sticky top-0 z-40 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-neutral-800/80">
@@ -260,7 +266,10 @@ export default function HeroSection({
             <h1 className="text-base sm:text-lg font-bold tracking-tight text-white">{nomeCurto || nome}</h1>
             <p className="text-[11px] font-medium text-neutral-400 mt-0.5 uppercase tracking-wider">{servicosTexto}</p>
             {localizacaoTexto && (
-              <p className="text-[11px] font-bold text-emerald-400 mt-0.5 flex items-center gap-1 uppercase tracking-wider">
+              <p
+                style={{ color: corAmarelaMinimalista }}
+                className="text-[11px] font-bold mt-0.5 flex items-center gap-1 uppercase tracking-wider"
+              >
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
                 <span>{localizacaoTexto}</span>
               </p>
@@ -284,8 +293,18 @@ export default function HeroSection({
       <section className="max-w-6xl mx-auto px-6 py-8 sm:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-6 space-y-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-950/40 text-emerald-400 text-[11px] font-bold uppercase tracking-widest">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span
+              style={{
+                borderColor: 'rgba(226, 194, 117, 0.35)',
+                backgroundColor: 'rgba(226, 194, 117, 0.10)',
+                color: corAmarelaMinimalista,
+              }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[11px] font-bold uppercase tracking-widest"
+            >
+              <span
+                style={{ backgroundColor: corAmarelaMinimalista }}
+                className="h-1.5 w-1.5 rounded-full"
+              />
               {tagComplementoFinal}
             </span>
 
@@ -313,10 +332,10 @@ export default function HeroSection({
 
                 <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-neutral-400 pt-1">
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Atendimento Imediato
+                    <CheckCircle2 className="w-4 h-4" style={{ color: corAmarelaMinimalista }} /> Atendimento Imediato
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" /> {seloSecundario}
+                    <ShieldCheck className="w-4 h-4" style={{ color: corAmarelaMinimalista }} /> {seloSecundario}
                   </span>
                 </div>
               </div>
