@@ -114,6 +114,12 @@ function montarResumoHorarios(linhas: string[]): string {
   return partes.length > 0 ? partes.join(' • ') : padrao;
 }
 
+function eImagemBannerOuPrint(url: string): boolean {
+  if (!url) return true;
+  const baixo = url.toLowerCase();
+  return /(banner|print|preview|hero|capa|screenshot|capture|mockup|site_print|pagina)/.test(baixo);
+}
+
 export default function InfoGoogle({ 
   d, 
   fotos, 
@@ -132,7 +138,8 @@ export default function InfoGoogle({
   const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'servicos' | 'instalacoes'>('servicos');
 
   const safeD = d || {};
-  const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
+  const fotosBrutas = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
+  const safeFotos = fotosBrutas.filter((url: string) => !eImagemBannerOuPrint(url));
   const safePrefixo = (prefixo || safeD.nicho || safeD.categoria || '').toLowerCase();
 
   const eBarbearia = safePrefixo.includes('barbearia') || safePrefixo.includes('barber');
