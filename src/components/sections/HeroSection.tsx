@@ -37,7 +37,6 @@ export default function HeroSection({
   nomeCurto,
   tagSubtitulo,
   complementoSubtitulo,
-  enderecoExibido,
   tituloPrincipal,
   descricao,
   textoBotao,
@@ -61,7 +60,7 @@ export default function HeroSection({
       : 'side';
 
   const corMarcaPadrao = eBarbearia ? '#e2c275' : '#059669';
-  const corDestaquePadrao = eBarbearia ? '#c2592b' : '#ea580c';
+  const corDestaquePadrao = eBarbearia ? '#c2592b' : '#0f766e';
 
   const corMarcaDinamica = `var(--cor-marca, ${corMarcaPadrao})`;
   const corDestaqueDinamica = `var(--cor-destaque, ${corDestaquePadrao})`;
@@ -80,9 +79,8 @@ export default function HeroSection({
     (eBarbearia ? 'STREET CUTS • FADE & BARBA NA NAVALHA' : 'ESPECIALISTA EM ELIMINAR A DOR E DEVOLVER SEU BEM-ESTAR');
 
   const seloSecundario = eBarbearia ? 'Hora Marcada' : 'Presencial & Domiciliar';
-  const filtroImagemEscura = fitMode === 'contain' ? 'brightness-[0.91] contrast-[1.02]' : 'brightness-[0.98] contrast-[1.02]';
+  const filtroImagemEscura = fitMode === 'contain' ? 'brightness-[0.96] contrast-[1.01]' : 'brightness-[0.98] contrast-[1.02]';
 
-  // CSS DA BORDA NEON GIRATÓRIA + MOVIMENTO CONTÍNUO NA IMAGEM
   const styleAnimacoesHero = (
     <style dangerouslySetInnerHTML={{ __html: `
       @keyframes spinGlow {
@@ -357,27 +355,18 @@ export default function HeroSection({
   }
 
   // ---------------------------------------------------------
-  // 3. MODELO MINIMALISTA PREMIUM
+  // 3. MODELO MINIMALISTA (CLEAN, CLARO E COM RESPIRO)
   // ---------------------------------------------------------
   return (
-    <div className="relative w-full bg-[#09090b] text-white overflow-hidden border-b border-zinc-800/80">
-      {styleAnimacoesHero}
-
-      <div className="w-full bg-[#000000] border-b border-zinc-800/80 py-1 px-4 text-center">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 flex items-center justify-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full animate-ping" style={{ backgroundColor: corMarcaDinamica }} />
-          <span>PROPOSTA EXCLUSIVA // <span className="text-white font-extrabold">{nome ? nome.toUpperCase() : ''}</span></span>
-        </p>
-      </div>
-
-      <header className="sticky top-0 z-40 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800">
-        <div className="max-w-6xl mx-auto px-6 py-2 flex flex-wrap justify-between items-center gap-4">
+    <div className="relative w-full bg-[#fafaf9] text-stone-900 border-b border-stone-200">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-stone-200">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
           <div>
-            <h1 className="text-sm sm:text-base font-black tracking-tight text-white">{nome}</h1>
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] mt-0.5 text-zinc-400">{servicosTexto}</p>
+            <h1 className="text-base sm:text-lg font-semibold tracking-tight text-stone-900">{nomeCurto || nome}</h1>
+            <p className="text-[11px] font-medium text-stone-500 mt-0.5">{servicosTexto}</p>
             {localizacaoTexto && (
-              <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] mt-0.5 flex items-center gap-1" style={{ color: corDestaqueDinamica }}>
-                <MapPin className="w-3.5 h-3.5 shrink-0" />
+              <p className="text-[11px] font-medium text-stone-600 mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: corDestaqueDinamica }} />
                 <span>{localizacaoTexto}</span>
               </p>
             )}
@@ -389,49 +378,48 @@ export default function HeroSection({
               target="_blank"
               rel="noreferrer"
               style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
-              className="inline-flex items-center justify-center font-bold px-4 py-2 rounded-lg text-[11px] uppercase tracking-wider shadow-md transition-all hover:brightness-110"
+              className="inline-flex items-center justify-center font-medium px-4 py-2 rounded-lg text-xs transition hover:opacity-90"
             >
-              AGENDAR ATENDIMENTO
+              Agendar Atendimento
             </a>
           )}
         </div>
       </header>
 
-      <section className="max-w-6xl mx-auto px-6 pt-4 pb-5 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          <div className="lg:col-span-6 space-y-2.5">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-zinc-700 bg-zinc-900 text-zinc-300 text-[11px] font-bold uppercase tracking-wider shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: corMarcaDinamica }} />
+      <section className="max-w-5xl mx-auto px-6 py-10 sm:py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
+          <div className="lg:col-span-6 space-y-4">
+            <span className="inline-block text-[11px] font-semibold uppercase tracking-widest text-stone-500">
               {tagComplementoFinal}
             </span>
 
-            <h2 className="text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white">
+            <h2 className="text-2xl sm:text-4xl font-semibold leading-snug tracking-tight text-stone-900">
               {tituloPrincipal}
             </h2>
 
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 opacity-90 max-w-3xl">
-              Na <strong className="font-bold text-white">{nomeCurto}</strong>, {descricao}
+            <p className="text-sm leading-relaxed text-stone-600">
+              Na <strong className="font-semibold text-stone-900">{nomeCurto}</strong>, {descricao}
             </p>
 
             {temTelefone && (
-              <div className="pt-1 space-y-2">
+              <div className="pt-2 space-y-3">
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
                   style={{ backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica }}
-                  className="inline-flex items-center justify-center gap-2.5 font-black px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:scale-[1.01] hover:brightness-110"
+                  className="inline-flex items-center justify-center gap-2 font-medium px-6 py-3 rounded-lg text-sm transition hover:opacity-90"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>{textoBotao}</span>
                   <ChevronRight className="w-4 h-4" />
                 </a>
 
-                <div className="flex items-center gap-3 text-[11px] font-sans text-zinc-400 font-semibold">
-                  <span className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-stone-500 pt-1">
+                  <span className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> Atendimento Imediato
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1.5">
                     <ShieldCheck className="w-3.5 h-3.5" style={{ color: corMarcaDinamica }} /> {seloSecundario}
                   </span>
                 </div>
@@ -441,19 +429,17 @@ export default function HeroSection({
 
           {fotoHero && (
             <div className="lg:col-span-6 w-full">
-              <div className="w-full rounded-2xl glow-border-fx p-[3px] shadow-2xl">
-                <div className="relative z-10 w-full rounded-[14px] bg-[#042117] p-1.5">
-                  <div className="relative w-full h-[270px] sm:h-[330px] overflow-hidden rounded-xl bg-white border border-emerald-950">
-                    <img
-                      src={fotoHero}
-                      alt={nome}
-                      className={
-                        fitMode === 'contain'
-                          ? `w-full h-full object-contain rounded-xl p-1 ${filtroImagemEscura} ${classeMovimentoFoto}`
-                          : `w-full h-full object-cover ${posicaoFoto} rounded-xl ${classeMovimentoFoto}`
-                      }
-                    />
-                  </div>
+              <div className="w-full rounded-xl border border-stone-200 bg-white p-3">
+                <div className="relative w-full h-[260px] sm:h-[320px] overflow-hidden rounded-lg bg-stone-50 flex items-center justify-center">
+                  <img
+                    src={fotoHero}
+                    alt={nome}
+                    className={
+                      fitMode === 'contain'
+                        ? `w-full h-full object-contain p-2 ${filtroImagemEscura}`
+                        : `w-full h-full object-cover ${posicaoFoto}`
+                    }
+                  />
                 </div>
               </div>
             </div>

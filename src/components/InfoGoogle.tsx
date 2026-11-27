@@ -238,46 +238,47 @@ export default function InfoGoogle({
   const servicosReais = servicosDoLead.length > 0 ? servicosDoLead : servicosPadraoNicho;
 
   const corMarcaPadrao = eBarbearia ? '#d4af37' : '#059669';
-  const corDestaquePadrao = eBarbearia ? '#d97706' : '#ea580c';
+  const corDestaquePadrao = eBarbearia ? '#d97706' : '#0f766e';
 
   const corMarcaDinamica = `var(--cor-marca, ${corMarcaPadrao})`;
   const corDestaqueDinamica = `var(--cor-destaque, ${corDestaquePadrao})`;
   const corTextoBotaoDinamica = 'var(--cor-texto-botao, #ffffff)';
 
   const isVintage = Boolean(tema?.serif);
+  const isMinimal = !isVintage && (tema?.fundo || '').includes('#fafaf9');
 
-  const cardBg = isVintage ? 'bg-[#ffffff]' : (tema?.card || (eBarbearia ? 'bg-[#17130d]' : 'bg-[#0e1815]'));
-  const fundoBg = isVintage ? (eBarbearia ? 'bg-[#f6f1e7]' : 'bg-[#f5efe6]') : (tema?.fundo || (eBarbearia ? 'bg-[#0d0b08]' : 'bg-[#060d0a]'));
-  const bordaClass = isVintage ? (eBarbearia ? 'border-[#dfd2b8]' : 'border-[#e0d3c1]') : (tema?.borda || (eBarbearia ? 'border-amber-500/25' : 'border-emerald-500/30'));
+  const cardBg = isMinimal ? 'bg-white' : isVintage ? 'bg-[#ffffff]' : (tema?.card || (eBarbearia ? 'bg-[#17130d]' : 'bg-[#0e1815]'));
+  const fundoBg = isMinimal ? 'bg-stone-50/70' : isVintage ? (eBarbearia ? 'bg-[#f6f1e7]' : 'bg-[#f5efe6]') : (tema?.fundo || (eBarbearia ? 'bg-[#0d0b08]' : 'bg-[#060d0a]'));
+  const bordaClass = isMinimal ? 'border-stone-200' : isVintage ? (eBarbearia ? 'border-[#dfd2b8]' : 'border-[#e0d3c1]') : (tema?.borda || (eBarbearia ? 'border-amber-500/25' : 'border-emerald-500/30'));
 
-  const textCardTitulo = isVintage ? 'text-[#1c1917]' : 'text-white';
-  const textCardDesc = isVintage ? 'text-[#44382e] font-sans' : 'text-zinc-200/90';
-  const textTabInactive = isVintage ? 'text-[#44382e]' : 'text-zinc-300 opacity-75 hover:opacity-100';
+  const textCardTitulo = isMinimal ? 'text-stone-900' : isVintage ? 'text-[#1c1917]' : 'text-white';
+  const textCardDesc = isMinimal ? 'text-stone-600' : isVintage ? 'text-[#44382e] font-sans' : 'text-zinc-200/90';
+  const textTabInactive = isMinimal ? 'text-stone-600 hover:text-stone-900' : isVintage ? 'text-[#44382e]' : 'text-zinc-300 opacity-75 hover:opacity-100';
 
   return (
-    <div style={{ fontFamily: isVintage ? 'Georgia, serif' : 'inherit' }} className={`w-full select-none relative scroll-smooth ${isVintage ? 'text-[#1c1917]' : (tema?.texto || 'text-white')}`}>
+    <div style={{ fontFamily: isVintage ? 'Georgia, serif' : 'inherit' }} className={`w-full relative scroll-smooth ${isMinimal ? 'text-stone-900' : isVintage ? 'text-[#1c1917]' : (tema?.texto || 'text-white')}`}>
       
       {/* 1. BOTÕES DE AÇÕES RÁPIDAS */}
-      <section className="max-w-6xl mx-auto px-6 pt-4 pb-10">
+      <section className="max-w-5xl mx-auto px-6 pt-4 pb-10">
         {st.texto && (
           <div className="text-center mb-5">
-            <span className={`inline-flex items-center gap-2 border ${bordaClass} ${cardBg} px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm ${textCardTitulo}`}>
+            <span className={`inline-flex items-center gap-2 border ${bordaClass} ${cardBg} px-4 py-1.5 rounded-full text-xs font-medium ${textCardTitulo}`}>
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: st.aberto ? corMarcaDinamica : '#ef4444' }} />
               {st.texto}
             </span>
           </div>
         )}
         
-        <div className="flex flex-wrap gap-4 justify-center items-start">
+        <div className="flex flex-wrap gap-3 justify-center items-start">
           <div className="flex flex-col items-center">
             <button
               type="button"
               onClick={() => setHorariosAbertos(!horariosAbertos)}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer ${textCardTitulo}`}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border ${bordaClass} ${cardBg} text-xs font-semibold transition cursor-pointer ${textCardTitulo}`}
             >
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Horários
             </button>
-            <p className="text-xs font-semibold mt-2 tracking-wide text-center whitespace-nowrap" style={{ color: corMarcaDinamica }}>
+            <p className={`text-xs mt-2 text-center whitespace-nowrap ${isMinimal ? 'text-stone-600' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>
               {resumoHorarios}
             </p>
           </div>
@@ -285,31 +286,31 @@ export default function InfoGoogle({
           <div className="flex flex-col items-center">
             <a 
               href="#avaliacoes" 
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border ${bordaClass} ${cardBg} text-xs font-semibold transition ${textCardTitulo}`}
             >
               <Star className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Avaliações
             </a>
-            <p className="text-xs font-semibold mt-2 tracking-wide text-center whitespace-nowrap" style={{ color: corMarcaDinamica }}>
+            <p className={`text-xs mt-2 text-center whitespace-nowrap ${isMinimal ? 'text-stone-600' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>
               ★ {notaAval.toFixed(1)} • {totalAval} avaliações no Google
             </p>
           </div>
 
           <div className="flex flex-col items-center">
-            <a href="#fotos" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
+            <a href="#fotos" className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border ${bordaClass} ${cardBg} text-xs font-semibold transition ${textCardTitulo}`}>
               <Camera className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Fotos ({safeFotos.length})
             </a>
           </div>
 
           <div className="flex flex-col items-center">
-            <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
+            <a href={instaLink} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border ${bordaClass} ${cardBg} text-xs font-semibold transition ${textCardTitulo}`}>
               <InstagramIcon className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Instagram
             </a>
           </div>
         </div>
 
         {horariosAbertos && (
-          <div className={`max-w-md mx-auto mt-6 border ${bordaClass} ${cardBg} rounded-2xl p-5 shadow-xl`}>
-            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: corMarcaDinamica }}>
+          <div className={`max-w-md mx-auto mt-6 border ${bordaClass} ${cardBg} rounded-xl p-5`}>
+            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2" style={{ color: isMinimal ? '#1c1917' : corMarcaDinamica }}>
               <Clock className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Grade de Horários
             </h3>
             <ul className="space-y-2">
@@ -325,24 +326,24 @@ export default function InfoGoogle({
 
       {/* 2. SERVIÇOS */}
       {!semServicos && (
-        <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-6 flex items-center gap-2" style={{ color: corMarcaDinamica }}>
+        <section className={`max-w-5xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
+          <h2 className={`text-xl font-semibold tracking-tight mb-6 flex items-center gap-2 ${isMinimal ? 'text-stone-900' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>
             <IconeHeader className="w-5 h-5" style={{ color: corDestaqueDinamica }} />
             {tituloSecao}
           </h2>
 
-          <div className={`border ${bordaClass} ${fundoBg} rounded-3xl p-6 sm:p-8 shadow-xl space-y-6`}>
+          <div className={`border ${bordaClass} ${fundoBg} rounded-2xl p-6 space-y-6`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {servicosReais.map((s: any, idx: number) => (
                 <div 
                   key={idx} 
-                  className={`border ${bordaClass} ${cardBg} rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-md hover:scale-[1.01]`}
+                  className={`border ${bordaClass} ${cardBg} rounded-xl p-4 flex flex-col justify-between transition`}
                 >
                   <div>
-                    <h3 className={`font-bold text-sm sm:text-base mb-2 ${textCardTitulo}`}>
+                    <h3 className={`font-semibold text-sm mb-1.5 ${textCardTitulo}`}>
                       {s.nome}
                     </h3>
-                    <p className={`text-xs leading-relaxed font-medium ${textCardDesc}`}>
+                    <p className={`text-xs leading-relaxed ${textCardDesc}`}>
                       {s.desc}
                     </p>
                   </div>
@@ -351,7 +352,7 @@ export default function InfoGoogle({
             </div>
 
             {telNumero && (
-              <div className="pt-2">
+              <div className="pt-1">
                 <a 
                   href={`https://wa.me/55${telNumero}?text=${encodeURIComponent(`Olá! Gostaria de agendar um horário na ${nomeEstabelecimento}.`)}`} 
                   target="_blank" 
@@ -360,7 +361,7 @@ export default function InfoGoogle({
                     backgroundColor: corDestaqueDinamica,
                     color: corTextoBotaoDinamica 
                   }}
-                  className="w-full hover:brightness-110 font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.005]"
+                  className="w-full hover:opacity-90 font-semibold py-3.5 px-6 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition flex items-center justify-center gap-2"
                 >
                   <Calendar className="w-4 h-4"/>
                   <span>{textoBotaoAgendar}</span>
@@ -374,56 +375,56 @@ export default function InfoGoogle({
 
       {/* 3. GALERIA DE FOTOS */}
       {safeFotos.length > 0 && (
-        <section id="fotos" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
+        <section id="fotos" className={`max-w-5xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>
+              <h2 className={`text-xl font-semibold tracking-tight ${isMinimal ? 'text-stone-900' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>
                 Galeria de Fotos
               </h2>
-              <p className={`text-xs ${textCardDesc} opacity-80 mt-1`}>
+              <p className={`text-xs ${textCardDesc} mt-1`}>
                 Explore os nossos trabalhos e conheça a nossa estrutura.
               </p>
             </div>
 
-            <div className={`flex items-center gap-2 border ${bordaClass} ${cardBg} p-1.5 rounded-full w-fit`}>
+            <div className={`flex items-center gap-1.5 border ${bordaClass} ${cardBg} p-1 rounded-lg w-fit`}>
               <button
                 onClick={() => setCategoriaFotoAtiva('servicos')}
-                style={categoriaFotoAtiva === 'servicos' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
-                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva !== 'servicos' ? textTabInactive : 'shadow-md'
+                style={categoriaFotoAtiva === 'servicos' ? { backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica } : {}}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+                  categoriaFotoAtiva !== 'servicos' ? textTabInactive : ''
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5" style={{ color: categoriaFotoAtiva === 'servicos' ? corTextoBotaoDinamica : corDestaqueDinamica }} />
+                <Sparkles className="w-3.5 h-3.5" />
                 <span>{labelServicos}</span>
               </button>
 
               <button
                 onClick={() => setCategoriaFotoAtiva('instalacoes')}
-                style={categoriaFotoAtiva === 'instalacoes' ? { backgroundColor: corMarcaDinamica, color: corTextoBotaoDinamica } : {}}
-                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                  categoriaFotoAtiva !== 'instalacoes' ? textTabInactive : 'shadow-md'
+                style={categoriaFotoAtiva === 'instalacoes' ? { backgroundColor: corDestaqueDinamica, color: corTextoBotaoDinamica } : {}}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+                  categoriaFotoAtiva !== 'instalacoes' ? textTabInactive : ''
                 }`}
               >
-                <Building2 className="w-3.5 h-3.5" style={{ color: categoriaFotoAtiva === 'instalacoes' ? corTextoBotaoDinamica : corDestaqueDinamica }} />
+                <Building2 className="w-3.5 h-3.5" />
                 <span>{labelEspaco}</span>
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {fotosExibidasGaleria.map((f: string, i: number) => (
               <div 
                 key={i} 
                 onClick={() => setFotoModal(f)} 
-                className={`aspect-square rounded-2xl overflow-hidden cursor-pointer border ${bordaClass} ${cardBg} group relative shadow-md`}
+                className={`aspect-[4/3] rounded-xl overflow-hidden cursor-pointer border ${bordaClass} ${cardBg} group relative`}
               >
                 <img 
                   src={f} 
                   alt={`Foto ${i}`} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" 
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-white drop-shadow-md"/>
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-5 h-5 text-white"/>
                 </div>
               </div>
             ))}
@@ -433,8 +434,8 @@ export default function InfoGoogle({
 
       {/* MODAL LIGHTBOX FOTOS */}
       {fotoModal && (
-        <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer">
-          <img src={fotoModal} alt="Foto Ampliada" className={`max-w-full max-h-[85vh] rounded-2xl border ${bordaClass} shadow-2xl object-contain`} />
+        <div onClick={() => setFotoModal(null)} className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 cursor-pointer">
+          <img src={fotoModal} alt="Foto Ampliada" className={`max-w-full max-h-[85vh] rounded-xl border ${bordaClass} object-contain`} />
           <button className="absolute top-6 right-6 text-white p-2.5 rounded-full bg-black/80 border border-white/20 hover:bg-black transition">
             <X className="w-6 h-6"/>
           </button>
@@ -442,12 +443,12 @@ export default function InfoGoogle({
       )}
 
       {/* 4. AVALIAÇÕES DO GOOGLE */}
-      <section id="avaliacoes" className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
+      <section id="avaliacoes" className={`max-w-5xl mx-auto px-6 py-10 border-t ${bordaClass}`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-          <h2 className="text-xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>
+          <h2 className={`text-xl font-semibold tracking-tight ${isMinimal ? 'text-stone-900' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>
             Avaliações no Google ({totalAval})
           </h2>
-          <div className={`flex items-center gap-2 text-xs font-bold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit`} style={{ color: corMarcaDinamica }}>
+          <div className={`flex items-center gap-2 text-xs font-semibold border ${bordaClass} ${cardBg} px-3 py-1.5 rounded-full w-fit ${isMinimal ? 'text-stone-800' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, idx) => (
                 <Star key={idx} className="w-3.5 h-3.5 fill-current" style={{ color: idx < Math.floor(notaAval) ? corDestaqueDinamica : '#d1d5db' }} />
@@ -463,7 +464,7 @@ export default function InfoGoogle({
             return (
               <div 
                 key={i} 
-                className={`border ${bordaClass} ${cardBg} rounded-2xl p-5 shadow-sm flex flex-col justify-between transition-all`}
+                className={`border ${bordaClass} ${cardBg} rounded-xl p-5 flex flex-col justify-between`}
               >
                 <div>
                   <div className="flex gap-1 mb-3">
@@ -471,11 +472,11 @@ export default function InfoGoogle({
                       <Star key={idx} className="w-4 h-4 fill-current" style={{ color: idx < notaCard ? corDestaqueDinamica : '#d1d5db' }} />
                     ))}
                   </div>
-                  <p className={`text-xs mb-4 italic leading-relaxed ${textCardDesc}`}>“{r.texto || r.text}”</p>
+                  <p className={`text-xs mb-4 leading-relaxed ${textCardDesc}`}>“{r.texto || r.text}”</p>
                 </div>
                 <strong className={`text-xs border-t ${bordaClass} pt-3 font-semibold flex items-center justify-between ${textCardTitulo}`}>
                   <span>{r.autor || r.author || 'Cliente Google'}</span>
-                  <span className="text-[10px] font-normal" style={{ color: corMarcaDinamica }}>Google Review</span>
+                  <span className={`text-[10px] font-normal ${isMinimal ? 'text-stone-500' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>Google Review</span>
                 </strong>
               </div>
             );
@@ -483,30 +484,30 @@ export default function InfoGoogle({
         </div>
       </section>
 
-      {/* 5. LOCALIZAÇÃO (MAPA NOTURNO PERMANENTE) */}
-      <section className={`max-w-6xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
+      {/* 5. LOCALIZAÇÃO */}
+      <section className={`max-w-5xl mx-auto px-6 py-10 border-t ${bordaClass} pb-24`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-xl font-bold tracking-tight" style={{ color: corMarcaDinamica }}>Onde Estamos</h2>
-            <p className={`text-xs ${textCardDesc} opacity-80 flex items-center gap-1.5 mt-1`}>
+            <h2 className={`text-xl font-semibold tracking-tight ${isMinimal ? 'text-stone-900' : ''}`} style={!isMinimal ? { color: corMarcaDinamica } : undefined}>Onde Estamos</h2>
+            <p className={`text-xs ${textCardDesc} flex items-center gap-1.5 mt-1`}>
               <MapPin className="w-4 h-4 shrink-0" style={{ color: corDestaqueDinamica }} />
               <span>{enderecoBusca}</span>
             </p>
           </div>
           
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border ${bordaClass} ${cardBg} text-xs font-bold transition-all duration-300 shadow-md hover:scale-[1.02] ${textCardTitulo}`}>
-            <Navigation className="w-4 h-4 fill-current" style={{ color: corDestaqueDinamica }} /> Abrir no Google Maps
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border ${bordaClass} ${cardBg} text-xs font-semibold transition ${textCardTitulo}`}>
+            <Navigation className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Abrir no Google Maps
           </a>
         </div>
 
-        <div className={`rounded-2xl overflow-hidden border ${bordaClass} ${cardBg} h-[380px] shadow-xl relative`}>
+        <div className={`rounded-xl overflow-hidden border ${bordaClass} ${cardBg} h-[360px] relative`}>
           <iframe 
             src={mapEmbedUrl} 
             width="100%" 
             height="100%" 
             style={{
               border: 0,
-              filter: 'invert(0.9) hue-rotate(180deg) contrast(1.25) brightness(0.9)'
+              filter: isMinimal ? 'none' : 'invert(0.9) hue-rotate(180deg) contrast(1.25) brightness(0.9)'
             }} 
             loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade" 
@@ -517,7 +518,7 @@ export default function InfoGoogle({
 
       {/* DOCK MOBILE FIXO */}
       {telNumero && (
-        <div className={`sm:hidden fixed bottom-4 left-4 right-4 z-50 backdrop-blur-xl border ${bordaClass} ${cardBg}/95 p-2.5 rounded-2xl flex items-center gap-2 shadow-2xl`}>
+        <div className={`sm:hidden fixed bottom-4 left-4 right-4 z-50 backdrop-blur-md border ${bordaClass} ${cardBg}/95 p-2 rounded-xl flex items-center gap-2 shadow-lg`}>
           <a 
             href={`https://wa.me/55${telNumero}`} 
             target="_blank" 
@@ -526,11 +527,11 @@ export default function InfoGoogle({
               backgroundColor: corDestaqueDinamica,
               color: corTextoBotaoDinamica 
             }}
-            className="flex-1 font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition hover:brightness-110"
+            className="flex-1 font-semibold text-xs py-2.5 rounded-lg flex justify-center items-center gap-1.5 transition hover:opacity-90"
           >
             <MessageCircle className="w-4 h-4"/> WhatsApp
           </a>
-          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`flex-1 ${cardBg} ${textCardTitulo} font-bold text-xs py-3 rounded-xl flex justify-center items-center gap-1.5 transition border ${bordaClass}`}>
+          <a href={urlOficialMaps} target="_blank" rel="noreferrer" className={`flex-1 ${cardBg} ${textCardTitulo} font-semibold text-xs py-2.5 rounded-lg flex justify-center items-center gap-1.5 transition border ${bordaClass}`}>
             <Navigation className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Como Chegar
           </a>
         </div>

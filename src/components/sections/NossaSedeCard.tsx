@@ -32,25 +32,27 @@ export default function NossaSedeCard({
   tema,
 }: NossaSedeCardProps) {
   const isVintage = Boolean(tema?.serif);
-  const cardBg = isVintage ? 'bg-[#ffffff]' : (tema?.card || 'bg-[#141414]');
-  const bordaClass = isVintage ? 'border-[#e0d3c1]' : (tema?.borda || 'border-zinc-800');
-  const tituloClass = isVintage ? 'text-[#1c1917]' : 'text-white';
-  const textoClass = isVintage ? 'text-[#44382e]' : 'text-zinc-300';
+  const isMinimal = !isVintage && (tema?.fundo || '').includes('#fafaf9');
 
-  const corDestaqueDinamica = 'var(--cor-destaque, #ea580c)';
+  const cardBg = isMinimal ? 'bg-white' : isVintage ? 'bg-[#ffffff]' : (tema?.card || 'bg-[#141414]');
+  const bordaClass = isMinimal ? 'border-stone-200' : isVintage ? 'border-[#e0d3c1]' : (tema?.borda || 'border-zinc-800');
+  const tituloClass = isMinimal ? 'text-stone-900' : isVintage ? 'text-[#1c1917]' : 'text-white';
+  const textoClass = isMinimal ? 'text-stone-600' : isVintage ? 'text-[#44382e]' : 'text-zinc-300';
+
+  const corDestaqueDinamica = 'var(--cor-destaque, #0f766e)';
   const corMarcaDinamica = 'var(--cor-marca, #059669)';
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-10">
-      <div className={`rounded-3xl border ${bordaClass} ${cardBg} p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center shadow-xl`}>
+    <section className="max-w-5xl mx-auto px-6 py-10">
+      <div className={`rounded-2xl border ${bordaClass} ${cardBg} p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center ${isMinimal ? '' : 'shadow-xl'}`}>
         {fotoSede && (
           <div className="md:col-span-5 flex flex-col items-center">
-            <div className={`w-full aspect-[4/3] rounded-2xl overflow-hidden border ${bordaClass}`}>
+            <div className={`w-full aspect-[4/3] rounded-xl overflow-hidden border ${bordaClass}`}>
               <img src={fotoSede} alt={labelSede} className="w-full h-full object-cover" />
             </div>
             <span
               style={{ backgroundColor: corDestaqueDinamica }}
-              className="mt-3 inline-block px-4 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider text-white shadow-sm"
+              className="mt-3 inline-block px-3.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider text-white"
             >
               {labelSede}
             </span>
@@ -58,7 +60,7 @@ export default function NossaSedeCard({
         )}
 
         <div className={`${fotoSede ? 'md:col-span-7' : 'md:col-span-12'} space-y-4`}>
-          <h2 className={`text-2xl sm:text-3xl font-black tracking-tight ${tituloClass}`}>
+          <h2 className={`text-xl sm:text-2xl font-semibold tracking-tight ${tituloClass}`}>
             Visite-nos ou Chame Online
           </h2>
           <p className={`text-sm leading-relaxed ${textoClass}`}>
@@ -71,7 +73,7 @@ export default function NossaSedeCard({
               target="_blank"
               rel="noreferrer"
               style={{ backgroundColor: corDestaqueDinamica, color: '#ffffff' }}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition hover:brightness-110 shadow-md"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition hover:opacity-90"
             >
               <MessageCircle className="w-4 h-4" /> Chamar no WhatsApp
             </a>
@@ -80,7 +82,7 @@ export default function NossaSedeCard({
               href={mapaUrl}
               target="_blank"
               rel="noreferrer"
-              className={`inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider border ${bordaClass} ${tituloClass} transition hover:opacity-85`}
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider border ${bordaClass} ${tituloClass} transition hover:opacity-80`}
             >
               <Navigation className="w-4 h-4" style={{ color: corDestaqueDinamica }} /> Rota no Mapa
             </a>

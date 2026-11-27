@@ -1,5 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { carregarLead, dadosBase, fotoCapa, obterFotos } from '@/lib/lead';
 import InfoGoogle from '@/components/InfoGoogle';
 import HeroSection from '@/components/sections/HeroSection';
@@ -20,7 +21,6 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
     notFound();
   }
 
-  // Identifica a variação do template a partir da URL (/moderno-urban, /vintage-retro, /minimalista-premium)
   const tempLower = (template || '').toLowerCase();
   const variacaoHero: 'minimalista' | 'urban' | 'vintage' =
     tempLower.includes('urban') || tempLower.includes('moderno')
@@ -34,14 +34,14 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const d = dadosBase(lead, msgWhatsApp);
   const fotosTodas = obterFotos(lead);
 
-  // 1. CAPA HERO DA CLÍNICA: Coluna Vertebral / Banner (foto1.jpg)
+  // 1. FOTO DA CAPA (INICIAL)
   const fotoColunaHero =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto1.jpg') || f.includes('renovar1.jpg'))) ||
     fotoCapa(lead) ||
     (fotosTodas && fotosTodas[0]) ||
     '';
 
-  // 2. NOSSA SEDE: Fachada com Porta de Vidro (foto11.jpg)
+  // 2. FOTO FINAL DA SEDE
   const fotoFachadaSede =
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto11') || f.includes('renovar11'))) ||
     (fotosTodas && fotosTodas.find((f: string) => f.includes('foto8') || f.includes('renovar8'))) ||
@@ -51,19 +51,20 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
   const uf = (lead.uf || lead.estado || 'CE').toUpperCase();
   const localizacaoTexto = `${cidade} - ${uf}`;
 
-  const corAtiva = lead.corMarca || lead.cor_marca || '#10b981'; // Verde Esmeralda (Marca)
-  const corDestaque = '#ea580c'; // Laranja Vibrante (Botões e Badges)
+  const corAtiva = lead.corMarca || lead.cor_marca || '#059669';
+  const corDestaque = '#0f766e';
   const corTextoBotao = '#ffffff';
 
+  const isMinimal = variacaoHero === 'minimalista';
   const isVintage = variacaoHero === 'vintage';
 
   const temaClinica = {
-    fundo: isVintage ? 'bg-[#f5efe6]' : 'bg-[#0a0a0a]',
-    card: isVintage ? 'bg-[#ffffff]' : 'bg-[#171717]',
-    borda: isVintage ? 'border-[#e0d3c1]' : 'border-neutral-800',
-    texto: isVintage ? 'text-[#1c1917]' : 'text-neutral-100',
-    sub: 'text-emerald-400',
-    destaque: 'bg-emerald-600',
+    fundo: isMinimal ? 'bg-[#fafaf9]' : isVintage ? 'bg-[#f5efe6]' : 'bg-[#0a0a0a]',
+    card: isMinimal ? 'bg-[#ffffff]' : isVintage ? 'bg-[#ffffff]' : 'bg-[#171717]',
+    borda: isMinimal ? 'border-stone-200' : isVintage ? 'border-[#e0d3c1]' : 'border-neutral-800',
+    texto: isMinimal ? 'text-stone-900' : isVintage ? 'text-[#1c1917]' : 'text-neutral-100',
+    sub: isMinimal ? 'text-emerald-700' : 'text-emerald-400',
+    destaque: isMinimal ? 'bg-teal-700' : 'bg-emerald-600',
     serif: isVintage,
   };
 
@@ -71,7 +72,7 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
 
   const tituloHero = (
     <span>
-      Mais Movimento, Mais <span style={{ color: corAtiva }} className="font-black">Qualidade de Vida.</span>
+      Mais Movimento, Mais <span style={{ color: corAtiva }} className="font-bold">Qualidade de Vida.</span>
     </span>
   );
 
@@ -87,16 +88,19 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         '--cor-destaque': corDestaque,
         '--cor-texto-botao': corTextoBotao,
       } as React.CSSProperties}
-      className={`min-h-screen selection:bg-emerald-500 selection:text-black ${
-        isVintage ? 'bg-[#f5efe6] text-[#1c1917]' : 'bg-[#0a0a0a] text-neutral-100'
+      className={`min-h-screen ${
+        isMinimal
+          ? 'bg-[#fafaf9] text-stone-900 selection:bg-teal-200 selection:text-stone-900'
+          : isVintage
+          ? 'bg-[#f5efe6] text-[#1c1917] selection:bg-emerald-500 selection:text-black'
+          : 'bg-[#0a0a0a] text-neutral-100 selection:bg-emerald-500 selection:text-black'
       }`}
     >
-      {/* 1. HERO SECTION COM VARIAÇÃO DINÂMICA */}
       <HeroSection
         nome={d.nome}
         nomeCurto={nomeCurto}
         tagSubtitulo={tagCabecalho}
-        complementoSubtitulo="🏥 FISIOTERAPIA & SAÚDE INTEGRAL"
+        complementoSubtitulo="FISIOTERAPIA & SAÚDE INTEGRAL"
         tituloPrincipal={tituloHero}
         descricao={descricaoHero}
         textoBotao="Agendar Avaliação via WhatsApp"
@@ -108,7 +112,6 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         variacao={variacaoHero}
       />
 
-      {/* 2. COMPONENTE PRINCIPAL INFOGOOGLE UNIFICADO */}
       <InfoGoogle
         d={d}
         fotos={fotosTodas}
@@ -116,7 +119,6 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
         prefixo="clinica"
       />
 
-      {/* 3. CARD NOSSA SEDE */}
       <NossaSedeCard
         nomeCurto={nomeCurto}
         fotoSede={fotoFachadaSede}
@@ -127,14 +129,29 @@ export default async function PaginaClinicaMinimalista({ params }: PageProps) {
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeCurto + ' ' + enderecoExibido)}`
         }
         enderecoCompleto={enderecoExibido}
-        labelSede="Nossa Clínica"
+        labelSede="Nossa Sede"
         tema={temaClinica}
       />
 
-      <footer className={`text-center py-8 text-xs font-medium border-t ${
-        isVintage ? 'bg-[#eae3d5] text-stone-600 border-[#e0d3c1]' : 'bg-black text-neutral-500 border-neutral-900'
-      }`}>
+      <footer
+        className={`text-center py-8 px-4 text-xs border-t ${
+          isMinimal
+            ? 'bg-white text-stone-600 border-stone-200'
+            : isVintage
+            ? 'bg-[#eae3d5] text-stone-600 border-[#e0d3c1]'
+            : 'bg-black text-neutral-500 border-neutral-900'
+        }`}
+      >
         <p>© {new Date().getFullYear()} {d.nome}. Todos os direitos reservados.</p>
+        <p className="mt-2 flex items-center justify-center gap-3">
+          <Link href="/termos" className="underline hover:opacity-80">
+            Termos de Serviço
+          </Link>
+          <span>•</span>
+          <Link href="/privacidade" className="underline hover:opacity-80">
+            Política de Privacidade
+          </Link>
+        </p>
       </footer>
     </main>
   );
