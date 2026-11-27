@@ -130,6 +130,7 @@ export default function InfoGoogle({
   const [fotoModal, setFotoModal] = useState<string | null>(null);
   const [horariosAbertos, setHorariosAbertos] = useState<boolean>(false);
   const [categoriaFotoAtiva, setCategoriaFotoAtiva] = useState<'servicos' | 'instalacoes'>('servicos');
+  const [mapaCarregado, setMapaCarregado] = useState<boolean>(false);
 
   const safeD = d || {};
   const safeFotos = Array.isArray(fotos) && fotos.length > 0 ? fotos : (Array.isArray(safeD.fotos) ? safeD.fotos : []);
@@ -189,7 +190,7 @@ export default function InfoGoogle({
     ? safeD.mapa 
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}`;
 
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(nomeEstabelecimento + ' ' + enderecoBusca)}&z=17&output=embed`;
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(enderecoBusca)}&z=16&output=embed`;
 
   const notaPadrao = eBarbearia ? 4.5 : 5.0;
   const totalAvalPadrao = eBarbearia ? 84 : 45;
@@ -502,17 +503,23 @@ export default function InfoGoogle({
 
         <div className={`rounded-xl overflow-hidden border ${bordaClass} ${cardBg} h-[360px] relative`}>
           <iframe 
-            src={mapEmbedUrl} 
+            src={mapEmbedUrl}
+            onLoad={() => setMapaCarregado(true)}
             width="100%" 
             height="100%" 
             style={{
               border: 0,
               filter: isMinimal ? 'none' : 'invert(0.9) hue-rotate(180deg) contrast(1.25) brightness(0.9)'
             }} 
-            loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade" 
             className="w-full h-full block"
           />
+          {!mapaCarregado && (
+            <div className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center ${cardBg}`}>
+              <MapPin className="w-5 h-5" style={{ color: corDestaqueDinamica }} />
+              <p className={`text-xs ${textCardDesc}`}>Carregando mapa ou bloqueado pelo navegador...</p>
+            </div>
+          )}
         </div>
       </section>
 

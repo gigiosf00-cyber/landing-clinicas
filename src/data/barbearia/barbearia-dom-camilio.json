@@ -1,0 +1,38 @@
+{
+  "enviado_em": "2026-11-27T17:12:54-03:00",
+  "lead": {
+    "id": "lead_1791579919782994400",
+    "nome": "Barbearia Dom Camilio.",
+    "endereco": "Barbearia Dom Camilio. - Av. Santo Antônio, 1653 - Vila Osasco, Osasco - SP, 06086-075",
+    "telefone": "5511961816547",
+    "nicho": "",
+    "cidade": "Osasco - SP",
+    "estado": "",
+    "categoria": "Barber shop",
+    "status": "SITE CRIADO",
+    "tem_site": false,
+    "website": "",
+    "cnpj": "",
+    "razao_social": "",
+    "situacao_cadastral": "",
+    "abertura_data": "",
+    "fotos": [
+      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80\u0026w=1000",
+      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80\u0026w=1000",
+      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80\u0026w=1000"
+    ],
+    "fotos_ambiente": [
+      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80\u0026w=1000",
+      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80\u0026w=1000",
+      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80\u0026w=1000"
+    ],
+    "criado_em": "2026-10-09T18:05:19.7829944-03:00",
+    "atualizado_em": "2026-11-27T17:12:54.8506889-03:00"
+  },
+  "nicho_pasta": "barbearia",
+  "slug": "barbearia-dom-camilio",
+  "template": "minimalista-premium",
+  "url_demo": "https://www.gef67.com.br/barbearia/barbearia-dom-camilio/minimalista-premium",
+  "url_local": "http://localhost:3000/barbearia/barbearia-dom-camilio/minimalista-premium",
+  "url_oficial": "https://meu-site.vercel.app/barbearia-dom-camilio"
+}
