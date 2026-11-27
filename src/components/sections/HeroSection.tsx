@@ -80,6 +80,8 @@ export default function HeroSection({
 
   const seloSecundario = eBarbearia ? 'Hora Marcada' : 'Presencial & Domiciliar';
 
+  const posicaoVintage = eBarbearia ? 'object-[74%_20%]' : 'object-[50%_75%]';
+
   const styleAnimacoesHero = (
     <style dangerouslySetInnerHTML={{ __html: `
       @keyframes spinGlow {
@@ -163,11 +165,11 @@ export default function HeroSection({
               <div className={modoLayout === 'side' ? 'lg:col-span-6 w-full' : 'w-full pt-1'}>
                 <div className="w-full max-w-4xl mx-auto rounded-2xl glow-border-fx p-[3px] shadow-2xl">
                   <div className="relative z-10 w-full rounded-[14px] bg-[#042117] p-1.5">
-                    <div className={`relative w-full ${modoLayout === 'side' ? 'h-[300px] sm:h-[365px]' : 'h-[320px] sm:h-[390px]'} overflow-hidden rounded-xl bg-white`}>
+                    <div className={`relative w-full ${modoLayout === 'side' ? 'h-[300px] sm:h-[365px]' : 'h-[330px] sm:h-[400px]'} overflow-hidden rounded-xl bg-white`}>
                       <img
                         src={fotoHero}
                         alt={nome}
-                        className="w-full h-full object-cover object-[50%_75%] rounded-xl hero-img-cover-fx"
+                        className={`w-full h-full object-cover ${posicaoVintage} rounded-xl hero-img-cover-fx`}
                       />
                     </div>
                   </div>
